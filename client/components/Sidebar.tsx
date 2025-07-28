@@ -9,7 +9,27 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-[55px] h-screen bg-[rgb(253,248,241)] dark:bg-[hsl(var(--tutory-sidebar-bg))] border-l border-[rgb(239,238,238)] dark:border-[hsl(var(--tutory-border))] flex flex-col items-center py-[25px] shrink-0 relative transition-all duration-300 ease-in-out z-20">
+    <aside
+      className="w-[55px] h-screen flex flex-col items-center py-[25px] shrink-0 relative z-20 border-l border-solid border-l-[rgb(239,238,238)] dark:border-l-[hsl(var(--tutory-border))]"
+      style={{
+        backgroundColor: 'rgb(253, 248, 241)',
+        borderRightStyle: 'solid',
+        borderRightWidth: '1px',
+        flexDirection: 'column',
+        flexFlow: 'column nowrap',
+        flexShrink: 0,
+        paddingBottom: '25px',
+        paddingTop: '25px',
+        position: 'relative',
+        transitionBehavior: 'normal, normal',
+        transitionDelay: '0s, 0s',
+        transitionDuration: '0.3s, 0.3s',
+        transitionProperty: 'background-color, border-color',
+        transitionTimingFunction: 'ease, ease',
+        width: '55px',
+        zIndex: 20,
+      }}
+    >
       <nav className="flex flex-col items-center gap-6">
         {/* New Chat Button */}
         <button 
