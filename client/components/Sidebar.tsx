@@ -201,6 +201,7 @@ export default function Sidebar() {
         {/* Learn Icon */}
         <div
           className="cursor-pointer flex justify-center relative"
+          onClick={handleLearn}
           style={{
             cursor: 'pointer',
             display: 'flex',
