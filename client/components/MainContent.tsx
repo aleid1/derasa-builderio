@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export default function MainContent() {
+  const navigate = useNavigate();
   return (
     <main className="flex-1 bg-white dark:bg-gray-900 h-screen flex flex-col items-center justify-center p-8 text-center">
       <div className="max-w-2xl mx-auto">
