@@ -78,10 +78,33 @@ export default function Sidebar() {
             width: '27px'
           }}
         >
-          <img 
+          <img
             src="https://storage.googleapis.com/tutory-assets/add.png"
-            alt="محا��ثة جديدة"
-            className="w-5 h-5 opacity-80 pointer-events-none transition-all duration-200 ease-in-out"
+            alt="محادثة جديدة"
+            style={{
+              borderColor: 'rgb(0, 0, 0)',
+              color: 'rgb(0, 0, 0)',
+              cursor: 'pointer',
+              fontFamily: 'arial',
+              fontSize: '13.3333px',
+              height: '20px',
+              lineHeight: 'normal',
+              opacity: 0.8,
+              outlineColor: 'rgb(0, 0, 0)',
+              overflowClipMargin: 'content-box',
+              overflowX: 'clip',
+              overflowY: 'clip',
+              pointerEvents: 'none',
+              textAlign: 'center',
+              textDecorationColor: 'rgb(0, 0, 0)',
+              textEmphasisColor: 'rgb(0, 0, 0)',
+              transitionBehavior: 'normal, normal',
+              transitionDelay: '0s, 0s',
+              transitionDuration: '0.2s, 0.3s',
+              transitionProperty: 'opacity, filter',
+              transitionTimingFunction: 'ease, ease',
+              width: '20px'
+            }}
           />
         </button>
 
@@ -119,7 +142,7 @@ export default function Sidebar() {
         >
           <img 
             src="https://storage.googleapis.com/tutory-assets/moon.png"
-            alt="التبديل إلى الوضع المظلم"
+            alt="التبديل ��لى الوضع المظلم"
             className="w-5 h-5 opacity-60 transition-all duration-200 ease-in-out hover:opacity-100"
           />
         </button>
