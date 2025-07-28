@@ -39,6 +39,11 @@
 
     --radius: 0.5rem;
 
+    /* Tutory-style colors */
+    --tutory-sidebar-bg: 45 42% 97%;
+    --tutory-primary: 45 93% 66%;
+    --tutory-border: 220 13% 91%;
+
     --sidebar-background: 0 0% 98%;
 
     --sidebar-foreground: 240 5.3% 26.1%;
