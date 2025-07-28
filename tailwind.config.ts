@@ -57,6 +57,11 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        tutory: {
+          sidebar: "hsl(var(--tutory-sidebar-bg))",
+          primary: "hsl(var(--tutory-primary))",
+          border: "hsl(var(--tutory-border))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
