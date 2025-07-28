@@ -126,6 +126,7 @@ export default function Sidebar() {
         {/* Chats Icon */}
         <div
           className="cursor-pointer flex justify-center relative"
+          onClick={handleChats}
           style={{
             cursor: 'pointer',
             display: 'flex',
