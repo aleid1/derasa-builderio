@@ -44,13 +44,43 @@ export default function Sidebar() {
         }}
       >
         {/* New Chat Button */}
-        <button 
+        <button
           aria-label="محادثة جديدة"
-          className="w-[27px] h-[27px] bg-[rgb(252,199,81)] rounded-full flex items-center justify-center mb-[10px] transition-all duration-200 ease-in-out hover:scale-110 cursor-pointer"
+          className="flex items-center justify-center cursor-pointer"
+          style={{
+            alignItems: 'center',
+            appearance: 'auto',
+            backgroundColor: 'rgb(252, 199, 81)',
+            borderBottomLeftRadius: '50%',
+            borderBottomRightRadius: '50%',
+            borderColor: 'rgb(0, 0, 0)',
+            borderRadius: '50%',
+            borderTopLeftRadius: '50%',
+            borderTopRightRadius: '50%',
+            color: 'rgb(0, 0, 0)',
+            cursor: 'pointer',
+            display: 'flex',
+            fontFamily: 'arial',
+            fontSize: '13.3333px',
+            height: '27px',
+            justifyContent: 'center',
+            lineHeight: 'normal',
+            marginBottom: '10px',
+            outlineColor: 'rgb(0, 0, 0)',
+            textAlign: 'center',
+            textDecorationColor: 'rgb(0, 0, 0)',
+            textEmphasisColor: 'rgb(0, 0, 0)',
+            transitionBehavior: 'normal, normal',
+            transitionDelay: '0s, 0s',
+            transitionDuration: '0.2s, 0.1s',
+            transitionProperty: 'background-color, transform',
+            transitionTimingFunction: 'ease, ease',
+            width: '27px'
+          }}
         >
           <img 
             src="https://storage.googleapis.com/tutory-assets/add.png"
-            alt="محادثة جديدة"
+            alt="محا��ثة جديدة"
             className="w-5 h-5 opacity-80 pointer-events-none transition-all duration-200 ease-in-out"
           />
         </button>
