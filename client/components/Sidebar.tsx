@@ -183,13 +183,75 @@ export default function Sidebar() {
         </div>
 
         {/* Learn Icon */}
-        <div className="relative flex justify-center cursor-pointer group">
-          <img 
+        <div
+          className="cursor-pointer flex justify-center relative"
+          style={{
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'relative'
+          }}
+        >
+          <img
             src="https://storage.googleapis.com/tutory-assets/learn.png"
             alt="تعلم"
-            className="w-[21px] h-[21px] opacity-60 pointer-events-none transition-all duration-200 ease-in-out group-hover:opacity-100"
+            style={{
+              cursor: 'pointer',
+              height: '21px',
+              opacity: 0.6,
+              overflowClipMargin: 'content-box',
+              overflowX: 'clip',
+              overflowY: 'clip',
+              pointerEvents: 'none',
+              transitionBehavior: 'normal, normal',
+              transitionDelay: '0s, 0s',
+              transitionDuration: '0.2s, 0.3s',
+              transitionProperty: 'opacity, filter',
+              transitionTimingFunction: 'ease, ease',
+              width: '21px'
+            }}
           />
-          <div className="absolute right-full top-1/2 -translate-y-1/2 mr-2 mt-2 bg-black/80 text-white text-xs px-2 py-1 rounded whitespace-nowrap opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 delay-200 z-[100] pointer-events-none">
+          <div
+            className="hidden"
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              borderBottomLeftRadius: '4px',
+              borderBottomRightRadius: '4px',
+              borderColor: 'rgb(255, 255, 255)',
+              borderRadius: '4px',
+              borderTopLeftRadius: '4px',
+              borderTopRightRadius: '4px',
+              color: 'rgb(255, 255, 255)',
+              cursor: 'pointer',
+              display: 'none',
+              fontSize: '12px',
+              left: '100%',
+              lineHeight: '19.2px',
+              marginLeft: '8px',
+              marginTop: '8px',
+              opacity: 0,
+              outlineColor: 'rgb(255, 255, 255)',
+              paddingBottom: '4px',
+              paddingLeft: '8px',
+              paddingRight: '8px',
+              paddingTop: '4px',
+              pointerEvents: 'none',
+              position: 'absolute',
+              textDecorationColor: 'rgb(255, 255, 255)',
+              textEmphasisColor: 'rgb(255, 255, 255)',
+              textWrap: 'nowrap',
+              top: '50%',
+              transformOrigin: '0% 50%',
+              transitionBehavior: 'normal, normal, normal',
+              transitionDelay: '0s, 0.2s, 0s, 0s',
+              transitionDuration: '0.2s, 0.3s, 0.3s',
+              transitionProperty: 'opacity, visibility, transform, background-color, color',
+              transitionTimingFunction: 'ease, ease, ease',
+              visibility: 'hidden',
+              whiteSpace: 'nowrap',
+              zIndex: 100
+            }}
+          >
             تعلم
           </div>
         </div>
