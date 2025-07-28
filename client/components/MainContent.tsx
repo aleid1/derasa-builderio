@@ -5,7 +5,7 @@ import SuggestionPills from "./SuggestionPills";
 export default function MainContent() {
   const navigate = useNavigate();
   return (
-    <main className="flex-1 bg-tutory-sidebar h-screen overflow-y-auto" dir="rtl">
+    <main className="flex-1 bg-tutory-sidebar" dir="rtl">
       {/* Hero Section */}
       <section className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
         <div className="w-full max-w-6xl mx-auto">
@@ -15,7 +15,7 @@ export default function MainContent() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-8 bg-white">
+      <section id="features" className="py-16 px-8 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">
             كيف نساعدك؟
