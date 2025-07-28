@@ -34,8 +34,8 @@ export default function MainContent() {
           </p>
 
           {/* Chat Input Card */}
-          <div className="w-full max-w-3xl mx-auto mb-16">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="w-[95%] md:w-[75%] max-w-3xl mx-auto mb-16">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-4 md:p-6">
               {/* Input Container */}
               <div className="flex items-center gap-3 mb-4 bg-gray-50 dark:bg-gray-700 rounded-xl p-3">
                 {/* Send Button */}
