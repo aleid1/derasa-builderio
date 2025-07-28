@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Sidebar() {
   const [isDark, setIsDark] = useState(false);
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     setIsDark(!isDark);
