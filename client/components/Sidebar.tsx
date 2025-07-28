@@ -60,6 +60,7 @@ export default function Sidebar() {
         {/* New Chat Button */}
         <button
           aria-label="محادثة جديدة"
+          onClick={handleNewChat}
           className="flex items-center justify-center cursor-pointer"
           style={{
             alignItems: 'center',
