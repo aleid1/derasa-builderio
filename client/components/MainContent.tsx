@@ -21,7 +21,10 @@ export default function MainContent() {
         </p>
 
         {/* CTA Button */}
-        <button className="bg-[rgb(252,199,81)] hover:bg-[rgb(248,185,61)] text-black font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 ease-in-out hover:scale-105 shadow-lg">
+        <button
+          onClick={() => navigate('/chat')}
+          className="bg-[rgb(252,199,81)] hover:bg-[rgb(248,185,61)] text-black font-semibold px-8 py-4 rounded-full text-lg transition-all duration-200 ease-in-out hover:scale-105 shadow-lg"
+        >
           ابدأ التعلم الآن
         </button>
 
