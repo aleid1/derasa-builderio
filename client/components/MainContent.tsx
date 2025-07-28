@@ -39,25 +39,25 @@ export default function MainContent() {
               {/* Input Container */}
               <div className="flex items-center gap-2 md:gap-3 mb-4 bg-gray-50 dark:bg-gray-700 rounded-xl p-2 md:p-3" dir="rtl">
                 {/* Send Button */}
-                <button 
+                <button
                   onClick={handleSend}
-                  className="flex-shrink-0 w-10 h-10 bg-[#2E7D32] hover:bg-[#1B5E20] text-white rounded-lg flex items-center justify-center transition-colors duration-200"
+                  className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 bg-[#2E7D32] hover:bg-[#1B5E20] text-white rounded-lg flex items-center justify-center transition-colors duration-200"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </button>
 
                 {/* Microphone Icon */}
-                <button className="flex-shrink-0 w-10 h-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg flex items-center justify-center transition-colors duration-200">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg flex items-center justify-center transition-colors duration-200">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
                   </svg>
                 </button>
 
                 {/* Attach Photo Icon */}
-                <button className="flex-shrink-0 w-10 h-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg flex items-center justify-center transition-colors duration-200">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <button className="flex-shrink-0 w-8 h-8 md:w-10 md:h-10 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 rounded-lg flex items-center justify-center transition-colors duration-200">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
                 </button>
