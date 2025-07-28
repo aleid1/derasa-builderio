@@ -112,5 +112,7 @@
 
   body {
     @apply bg-background text-foreground;
+    direction: rtl;
+    font-family: 'Arial', 'Tahoma', sans-serif;
   }
 }
