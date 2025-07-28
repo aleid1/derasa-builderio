@@ -30,7 +30,19 @@ export default function Sidebar() {
         zIndex: 20,
       }}
     >
-      <nav className="flex flex-col items-center gap-6">
+      <nav
+        className="flex flex-col items-center"
+        style={{
+          alignItems: 'center',
+          display: 'flex',
+          flexDirection: 'column',
+          flexFlow: 'column nowrap',
+          gap: '25px',
+          gridGap: '25px',
+          gridRowGap: '25px',
+          rowGap: '25px'
+        }}
+      >
         {/* New Chat Button */}
         <button 
           aria-label="محادثة جديدة"
