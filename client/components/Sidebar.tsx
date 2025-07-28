@@ -258,16 +258,63 @@ export default function Sidebar() {
       </nav>
 
       {/* Theme Toggle Button at Bottom */}
-      <div className="mt-auto pb-[10px]">
-        <button 
+      <div
+        style={{
+          marginTop: 'auto',
+          paddingBottom: '10px'
+        }}
+      >
+        <button
           aria-label="تبديل السمة"
           onClick={toggleTheme}
-          className="flex items-center justify-center p-[5px] bg-transparent cursor-pointer"
+          style={{
+            alignItems: 'center',
+            appearance: 'auto',
+            borderColor: 'rgb(0, 0, 0)',
+            color: 'rgb(0, 0, 0)',
+            cursor: 'pointer',
+            display: 'flex',
+            fontFamily: 'arial',
+            fontSize: '13.3333px',
+            justifyContent: 'center',
+            lineHeight: 'normal',
+            outlineColor: 'rgb(0, 0, 0)',
+            paddingBottom: '5px',
+            paddingLeft: '5px',
+            paddingRight: '5px',
+            paddingTop: '5px',
+            textAlign: 'center',
+            textDecorationColor: 'rgb(0, 0, 0)',
+            textEmphasisColor: 'rgb(0, 0, 0)',
+            backgroundColor: 'rgba(0, 0, 0, 0)'
+          }}
         >
-          <img 
+          <img
             src="https://storage.googleapis.com/tutory-assets/moon.png"
             alt="التبديل إلى الوضع المظلم"
-            className="w-5 h-5 opacity-60 transition-all duration-200 ease-in-out hover:opacity-100"
+            style={{
+              borderColor: 'rgb(0, 0, 0)',
+              color: 'rgb(0, 0, 0)',
+              cursor: 'pointer',
+              fontFamily: 'arial',
+              fontSize: '13.3333px',
+              height: '20px',
+              lineHeight: 'normal',
+              opacity: 0.6,
+              outlineColor: 'rgb(0, 0, 0)',
+              overflowClipMargin: 'content-box',
+              overflowX: 'clip',
+              overflowY: 'clip',
+              textAlign: 'center',
+              textDecorationColor: 'rgb(0, 0, 0)',
+              textEmphasisColor: 'rgb(0, 0, 0)',
+              transitionBehavior: 'normal, normal',
+              transitionDelay: '0s, 0s',
+              transitionDuration: '0.2s, 0.3s',
+              transitionProperty: 'opacity, filter',
+              transitionTimingFunction: 'ease, ease',
+              width: '20px'
+            }}
           />
         </button>
       </div>
