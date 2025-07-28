@@ -24,14 +24,6 @@ export default function HeroChatCard() {
             <Mic className="w-5 h-5" />
           </button>
 
-          {/* Text Input */}
-          <input
-            type="text"
-            placeholder="اكتب سؤالك هنا…"
-            dir="rtl"
-            className="flex-1 text-lg bg-transparent border-none outline-none placeholder-gray-500"
-          />
-
           {/* Attach Photo Button */}
           <button
             aria-label="إرفاق صورة"
@@ -39,6 +31,14 @@ export default function HeroChatCard() {
           >
             <Paperclip className="w-5 h-5" />
           </button>
+
+          {/* Text Input */}
+          <input
+            type="text"
+            placeholder="اكتب سؤالك هنا…"
+            dir="rtl"
+            className="flex-1 text-lg bg-transparent border-none outline-none placeholder-gray-500"
+          />
 
           {/* Send Button */}
           <button
