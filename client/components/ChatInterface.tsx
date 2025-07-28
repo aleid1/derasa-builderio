@@ -16,7 +16,7 @@ export default function ChatInterface() {
       };
       setMessages([...messages, newMessage]);
       setInputValue("");
-      
+
       // Simulate AI response
       setTimeout(() => {
         const aiResponse = {
@@ -43,152 +43,95 @@ export default function ChatInterface() {
   ];
 
   return (
-    <main className="flex-1 bg-tutory-sidebar" dir="rtl">
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* Header with Back Button */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              محادثة جديدة مع درّسة
-            </h1>
-            <p className="text-gray-600">
-              اسأل أي سؤال واحصل على إجابات مفصلة وشروحات واضحة
-            </p>
-          </div>
+    <main className="flex-1 bg-white" dir="rtl">
+      <div className="h-full flex flex-col max-w-4xl mx-auto">
+        {/* Minimal Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-100">
+          <h1 className="text-lg font-medium text-gray-900">درّسة</h1>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="text-gray-500 hover:text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors"
           >
-            <Home className="w-4 h-4" />
-            العودة للرئيسية
+            <Home className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Chat Container */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
-          {/* Messages Area */}
-          <div className="h-96 p-6 overflow-y-auto bg-gray-50">
-            {messages.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center">
-                <div className="w-20 h-20 bg-[#2E7D32] rounded-full flex items-center justify-center mb-6">
-                  <span className="text-white text-2xl font-bold">د</span>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  مرحباً! أنا درّسة، معلمك الشخصي الذكي
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  اسأل أي سؤال أو اطلب المساعدة في أي موضوع تعليمي
-                </p>
-                
-                {/* Suggestion Pills */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-md">
-                  {suggestions.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setInputValue(suggestion)}
-                      className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto p-4">
+          {messages.length === 0 ? (
+            <div className="h-full flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 bg-[#2E7D32] rounded-full flex items-center justify-center mb-4">
+                <span className="text-white text-lg font-bold">د</span>
               </div>
-            ) : (
-              <div className="space-y-4">
-                {messages.map((message, index) => (
-                  <div
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                مرحباً! كيف يمكنني مساعدتك؟
+              </h3>
+              <p className="text-gray-600 mb-8 max-w-md">
+                اسأل أي سؤال أو اطلب المساعدة في أي موضوع تعليمي
+              </p>
+
+              {/* Minimal Suggestion Pills */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 max-w-lg">
+                {suggestions.map((suggestion, index) => (
+                  <button
                     key={index}
-                    className={`flex ${message.isUser ? 'justify-start' : 'justify-end'}`}
+                    onClick={() => setInputValue(suggestion)}
+                    className="p-3 text-left bg-gray-50 hover:bg-gray-100 rounded-lg text-sm text-gray-700 transition-colors border border-gray-200"
                   >
-                    <div
-                      className={`max-w-[70%] px-4 py-3 rounded-2xl ${
-                        message.isUser
-                          ? 'bg-[#2E7D32] text-white'
-                          : 'bg-white border border-gray-200 text-gray-800'
-                      }`}
-                    >
-                      <p className="leading-relaxed">{message.text}</p>
-                      <span className={`text-xs mt-1 block ${
-                        message.isUser ? 'text-green-100' : 'text-gray-500'
-                      }`}>
-                        {message.timestamp.toLocaleTimeString('ar-SA', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </span>
-                    </div>
-                  </div>
+                    {suggestion}
+                  </button>
                 ))}
               </div>
-            )}
-          </div>
+            </div>
+          ) : (
+            <div className="space-y-6 max-w-3xl mx-auto">
+              {messages.map((message, index) => (
+                <div key={index} className="space-y-2">
+                  <div className={`flex ${message.isUser ? 'justify-start' : 'justify-end'}`}>
+                    <div className="flex items-start gap-3 max-w-[80%]">
+                      {message.isUser && (
+                        <div className="w-6 h-6 bg-[#2E7D32] rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <span className="text-white text-xs font-bold">أ</span>
+                        </div>
+                      )}
+                      <div className="flex-1">
+                        <p className="text-gray-900 leading-relaxed">{message.text}</p>
+                      </div>
+                      {!message.isUser && (
+                        <div className="w-6 h-6 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                          <span className="text-gray-600 text-xs font-bold">د</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
-          {/* Input Area */}
-          <div className="p-6 bg-white border-t border-gray-100">
-            <div className="flex items-center gap-3">
-              {/* Microphone Button */}
-              <button className="flex items-center justify-center w-12 h-12 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                <Mic className="w-5 h-5" />
-              </button>
-
-              {/* Attach Button */}
-              <button className="flex items-center justify-center w-12 h-12 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors">
-                <Paperclip className="w-5 h-5" />
-              </button>
-
-              {/* Text Input */}
-              <input
-                type="text"
-                placeholder="اكتب سؤالك هنا…"
-                dir="rtl"
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 text-lg bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#2E7D32] focus:border-transparent"
-              />
-
-              {/* Send Button */}
+        {/* Minimal Input Area */}
+        <div className="p-4 border-t border-gray-100">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-end gap-2">
+              <div className="flex-1 relative">
+                <input
+                  type="text"
+                  placeholder="اكتب رسالتك هنا..."
+                  dir="rtl"
+                  value={inputValue}
+                  onChange={(e) => setInputValue(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#2E7D32] focus:border-[#2E7D32] resize-none"
+                />
+              </div>
               <button
                 onClick={handleSendMessage}
                 disabled={!inputValue.trim()}
-                className="flex items-center justify-center w-12 h-12 rounded-lg bg-[#2E7D32] text-white hover:bg-[#1B5E20] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                className="p-3 bg-[#2E7D32] text-white rounded-lg hover:bg-[#1B5E20] transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-4 h-4" />
               </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Tips Section */}
-        <div className="mt-8 bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">نصائح للحصول على أفضل النتائج</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-blue-600 font-bold text-sm">1</span>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-800 mb-1">كن محددًا</h4>
-                <p className="text-sm text-gray-600">اطرح أسئلة واضحة ومحددة للحصول على إجابات دقيقة</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-green-600 font-bold text-sm">2</span>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-800 mb-1">اطلب أمثلة</h4>
-                <p className="text-sm text-gray-600">لا تتردد في طلب أمثلة وتطبيقات عملية</p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <span className="text-purple-600 font-bold text-sm">3</span>
-              </div>
-              <div>
-                <h4 className="font-medium text-gray-800 mb-1">اطلب التوضيح</h4>
-                <p className="text-sm text-gray-600">إذا لم تفهم شيئًا، اطلب مني توضيحه بطريقة أخرى</p>
-              </div>
             </div>
           </div>
         </div>
