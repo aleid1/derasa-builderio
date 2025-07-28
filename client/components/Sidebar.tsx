@@ -10,6 +10,18 @@ export default function Sidebar() {
     document.documentElement.classList.toggle('dark');
   };
 
+  const handleNewChat = () => {
+    navigate('/chat');
+  };
+
+  const handleChats = () => {
+    navigate('/chat');
+  };
+
+  const handleLearn = () => {
+    navigate('/learn');
+  };
+
   return (
     <aside
       className="w-[55px] h-screen flex flex-col items-center py-[25px] shrink-0 relative z-20 border-l border-solid border-l-[rgb(239,238,238)] dark:border-l-[hsl(var(--tutory-border))]"
