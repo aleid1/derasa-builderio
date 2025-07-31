@@ -6,7 +6,7 @@ export default function HeroChatCard() {
       {/* Header Text */}
       <div className="text-center mb-10">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
-          مرحبًا بك في درّسة — معلمك الشخصي الذكي
+          مرحباً بك في دِراسة — معلمك الذكي الشخصي
         </h1>
         <p className="text-xl md:text-2xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
           تعلم مع الذكاء الاصطناعي بطريقة ��فاعلية وذكية
