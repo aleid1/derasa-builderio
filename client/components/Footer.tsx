@@ -9,10 +9,9 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-6">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
                 alt="دِراسة Logo"
                 className="w-12 h-12 ml-4 rounded-full"
-                style={{ objectFit: 'cover', objectPosition: 'left center' }}
                 onError={(e) => {
                   e.currentTarget.style.display = 'none';
                   e.currentTarget.nextElementSibling.style.display = 'flex';

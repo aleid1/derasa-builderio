@@ -44,7 +44,7 @@ export default function ChatInterface() {
     "ساعدني في حل معادلة رياضية",
     "ما هي قواعد اللغة العربية؟",
     "كيف أتعلم البرمجة؟",
-    "اش��ح لي دورة الم��ء في الطبيعة",
+    "اشرح لي دورة الم��ء في الطبيعة",
     "ما هو الذكاء الاصطناعي؟"
   ];
 
@@ -70,10 +70,9 @@ export default function ChatInterface() {
               {/* AI Avatar */}
               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20 overflow-hidden">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                  src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
                   alt="دِراسة AI"
                   className="w-20 h-20 rounded-full"
-                  style={{ objectFit: 'cover', objectPosition: 'left center' }}
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                     e.currentTarget.parentElement.classList.add('bg-primary');
@@ -132,14 +131,14 @@ export default function ChatInterface() {
                         <p className="text-neutral-900 leading-relaxed text-lg">{message.text}</p>
                       </div>
                       {!message.isUser && (
-                        <div className="w-8 h-8 bg-primary rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
+                        <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                           <img
-                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                            src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
                             alt="دِراسة"
                             className="w-full h-full rounded-full"
-                            style={{ objectFit: 'cover', objectPosition: 'left center' }}
                             onError={(e) => {
                               e.currentTarget.style.display = 'none';
+                              e.currentTarget.parentElement.classList.add('bg-primary');
                               e.currentTarget.parentElement.innerHTML = '<span class="text-white text-xs font-bold">د</span>';
                             }}
                           />
@@ -157,17 +156,17 @@ export default function ChatInterface() {
                     <div className="flex-1 bg-neutral-50 rounded-2xl p-4">
                       <div className="flex items-center gap-2 text-neutral-500">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>يكتب...</span>
+                        <span>��كتب...</span>
                       </div>
                     </div>
-                    <div className="w-8 h-8 bg-primary rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
+                    <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                       <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                        src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
                         alt="دِراسة"
                         className="w-full h-full rounded-full"
-                        style={{ objectFit: 'cover', objectPosition: 'left center' }}
                         onError={(e) => {
                           e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement.classList.add('bg-primary');
                           e.currentTarget.parentElement.innerHTML = '<span class="text-white text-xs font-bold">د</span>';
                         }}
                       />
