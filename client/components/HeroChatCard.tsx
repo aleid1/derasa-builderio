@@ -2,19 +2,19 @@ import { Mic, Paperclip, Send } from "lucide-react";
 
 export default function HeroChatCard() {
   return (
-    <div className="w-[95%] md:w-[75%] mx-auto mb-8">
+    <div className="w-full max-w-4xl mx-auto mb-12">
       {/* Header Text */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4">
+      <div className="text-center mb-10">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-neutral-900 mb-6 leading-tight">
           مرحبًا بك في درّسة — معلمك الشخصي الذكي
         </h1>
-        <p className="text-lg md:text-xl text-gray-600 leading-relaxed">
+        <p className="text-xl md:text-2xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
           تعلم مع الذكاء الاصطناعي بطريقة ��فاعلية وذكية
         </p>
       </div>
 
       {/* Chat Input Card */}
-      <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 md:p-6">
+      <div className="bg-white rounded-3xl shadow-xl border border-neutral-200 p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
         <div className="flex items-center gap-4" dir="rtl">
           {/* Microphone Button */}
           <button
