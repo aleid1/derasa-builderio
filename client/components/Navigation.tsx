@@ -53,6 +53,12 @@ export default function Navigation() {
               >
                 المزايا
               </button>
+              <button
+                onClick={() => navigate('/contact')}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-all min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                تواصل معنا
+              </button>
             </div>
           </div>
 
