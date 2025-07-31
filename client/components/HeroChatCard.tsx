@@ -9,7 +9,7 @@ export default function HeroChatCard() {
           مرحباً بك في دِراسة — معلمك الذكي الشخصي
         </h1>
         <p className="text-xl md:text-2xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
-          تعلم مع الذكاء الاصطناعي بطريقة ��فاعلية وذكية
+          دِراسة تدلك خطوة بخطوة كالمعلم، لا تعطيك الجواب فوراً؛ تجربة آمنة، حساسة ثقافيّاً، وقائمة على قيمنا الإسلامية.
         </p>
       </div>
 
