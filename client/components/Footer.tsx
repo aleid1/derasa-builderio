@@ -32,30 +32,30 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">روابط سريعة</h3>
-            <ul className="space-y-2">
+            <h3 className="text-xl font-bold text-neutral-900 mb-6">روابط سريعة</h3>
+            <ul className="space-y-3">
               <li>
-                <a href="/" className="text-gray-600 hover:text-[#2E7D32] transition-colors">
+                <a href="/" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
                   الرئيسية
                 </a>
               </li>
               <li>
-                <a href="/chat" className="text-gray-600 hover:text-[#2E7D32] transition-colors">
+                <a href="/chat" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
                   المحادثة
                 </a>
               </li>
               <li>
-                <a href="/learn" className="text-gray-600 hover:text-[#2E7D32] transition-colors">
+                <a href="/learn" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
                   التعلم
                 </a>
               </li>
               <li>
-                <a href="#features" className="text-gray-600 hover:text-[#2E7D32] transition-colors">
+                <a href="#features" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
                   المزايا
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-600 hover:text-[#2E7D32] transition-colors">
+                <a href="#" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
                   الأسئلة الشائعة
                 </a>
               </li>
@@ -64,38 +64,38 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">تواصل معنا</h3>
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <Mail className="w-4 h-4 text-gray-400 ml-3" />
-                <span className="text-gray-600">info@dorrasa.com</span>
+            <h3 className="text-xl font-bold text-neutral-900 mb-6">تواصل معنا</h3>
+            <div className="space-y-4">
+              <div className="flex items-center min-h-[44px]">
+                <Mail className="w-5 h-5 text-neutral-400 ml-4" />
+                <span className="text-neutral-500 text-lg">info@dorrasa.com</span>
               </div>
-              <div className="flex items-center">
-                <Phone className="w-4 h-4 text-gray-400 ml-3" />
-                <span className="text-gray-600">+966 50 123 4567</span>
+              <div className="flex items-center min-h-[44px]">
+                <Phone className="w-5 h-5 text-neutral-400 ml-4" />
+                <span className="text-neutral-500 text-lg">+966 50 123 4567</span>
               </div>
-              <div className="flex items-center">
-                <MapPin className="w-4 h-4 text-gray-400 ml-3" />
-                <span className="text-gray-600">الرياض، المملكة العربية السعودية</span>
+              <div className="flex items-center min-h-[44px]">
+                <MapPin className="w-5 h-5 text-neutral-400 ml-4" />
+                <span className="text-neutral-500 text-lg">الرياض، المملكة العربية السعودية</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-200 mt-8 pt-8">
+        <div className="border-t border-neutral-200 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-500 text-sm">
+            <p className="text-neutral-500 text-lg">
               © 2024 درّسة. جميع الحقوق محفوظة.
             </p>
-            <div className="flex space-x-6 space-x-reverse mt-4 md:mt-0">
-              <a href="#" className="text-gray-500 hover:text-[#2E7D32] text-sm transition-colors">
+            <div className="flex space-x-8 space-x-reverse mt-6 md:mt-0">
+              <a href="#" className="text-neutral-500 hover:text-primary text-lg transition-colors duration-200 min-h-[44px] flex items-center">
                 سياسة الخصوصية
               </a>
-              <a href="#" className="text-gray-500 hover:text-[#2E7D32] text-sm transition-colors">
+              <a href="#" className="text-neutral-500 hover:text-primary text-lg transition-colors duration-200 min-h-[44px] flex items-center">
                 شروط الاستخدام
               </a>
-              <a href="#" className="text-gray-500 hover:text-[#2E7D32] text-sm transition-colors">
+              <a href="#" className="text-neutral-500 hover:text-primary text-lg transition-colors duration-200 min-h-[44px] flex items-center">
                 اتفاقية الخدمة
               </a>
             </div>
