@@ -22,7 +22,7 @@ export default function ChatInterface() {
       // Simulate AI response
       setTimeout(() => {
         const aiResponse = {
-          text: "شكرًا لك على سؤالك! أنا هنا لمساعدتك في رحلتك التعليمية. كيف يمكنني مساعدتك أكثر؟",
+          text: "شكرًا لك على سؤالك! أنا هنا لمساعدتك في رحلتك التعليمية. كيف ي��كنني مساعدتك أكثر؟",
           isUser: false,
           timestamp: new Date()
         };
@@ -68,11 +68,12 @@ export default function ChatInterface() {
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center">
               {/* AI Avatar */}
-              <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20">
+              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20 overflow-hidden">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=200&height=200&fit=crop&crop=left"
                   alt="دِراسة AI"
-                  className="w-16 h-16"
+                  className="w-20 h-20 rounded-full"
+                  style={{ objectFit: 'cover', objectPosition: 'left center' }}
                 />
               </div>
               
@@ -126,11 +127,12 @@ export default function ChatInterface() {
                         <p className="text-neutral-900 leading-relaxed text-lg">{message.text}</p>
                       </div>
                       {!message.isUser && (
-                        <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 p-1">
+                        <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                           <img
-                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=100&height=100&fit=crop&crop=left"
                             alt="دِراسة"
-                            className="w-full h-full"
+                            className="w-full h-full rounded-full"
+                            style={{ objectFit: 'cover', objectPosition: 'left center' }}
                           />
                         </div>
                       )}
@@ -149,11 +151,12 @@ export default function ChatInterface() {
                         <span>يكتب...</span>
                       </div>
                     </div>
-                    <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 p-1">
+                    <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                       <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=100&height=100&fit=crop&crop=left"
                         alt="دِراسة"
-                        className="w-full h-full"
+                        className="w-full h-full rounded-full"
+                        style={{ objectFit: 'cover', objectPosition: 'left center' }}
                       />
                     </div>
                   </div>

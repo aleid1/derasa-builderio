@@ -9,9 +9,10 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-6">
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=200&height=200&fit=crop&crop=left"
                 alt="دِراسة Logo"
-                className="w-12 h-12 ml-4"
+                className="w-12 h-12 ml-4 rounded-full"
+                style={{ objectFit: 'cover', objectPosition: 'left center' }}
               />
               <span className="text-3xl font-bold text-neutral-900">دِراسة</span>
             </div>

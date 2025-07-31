@@ -25,9 +25,10 @@ export default function Navigation() {
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
             >
               <img
-                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=80"
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=200&height=200&fit=crop&crop=left"
                 alt="دِراسة Logo"
-                className="w-10 h-10 ml-3 group-hover:scale-105 transition-transform"
+                className="w-10 h-10 ml-3 group-hover:scale-105 transition-transform rounded-full"
+                style={{ objectFit: 'cover', objectPosition: 'left center' }}
               />
               <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">دِراسة</span>
             </button>
