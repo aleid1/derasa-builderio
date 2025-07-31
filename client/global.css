@@ -39,10 +39,26 @@
 
     --radius: 0.5rem;
 
-    /* Tutory-style colors */
-    --tutory-sidebar-bg: 45 42% 95%;
-    --tutory-primary: 45 93% 66%;
-    --tutory-border: 220 13% 91%;
+    /* 2025 Design System Colors */
+    --primary: 142 71% 45%; /* Green #2E7D32 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 85% 62%; /* Warm accent #F5A623 */
+    --secondary-foreground: 0 0% 0%;
+    --neutral-50: 0 0% 98%;
+    --neutral-100: 0 0% 96%;
+    --neutral-200: 0 0% 90%;
+    --neutral-300: 0 0% 83%;
+    --neutral-400: 0 0% 64%;
+    --neutral-500: 0 0% 45%; /* Enhanced contrast 4.5:1 */
+    --neutral-600: 0 0% 32%;
+    --neutral-700: 0 0% 25%;
+    --neutral-800: 0 0% 15%;
+    --neutral-900: 0 0% 9%;
+
+    /* Legacy mappings for backwards compatibility */
+    --tutory-sidebar-bg: var(--neutral-50);
+    --tutory-primary: var(--secondary);
+    --tutory-border: var(--neutral-200);
 
     --sidebar-background: 0 0% 98%;
 
