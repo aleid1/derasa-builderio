@@ -1,21 +1,67 @@
+import { useEffect, useState } from "react";
+
 export default function SuggestionPills() {
+  const [isVisible, setIsVisible] = useState(false);
+  
   const suggestions = [
     "اطلب تلميحًا",
-    "اشرح خطوة",
+    "اشرح خطوة بخطوة",
     "مثال إضافي",
-    "تغيير الموضوع"
+    "تغيير الموضوع",
+    "حل مسألة رياضية",
+    "شرح مفهوم علمي",
+    "تحليل نص أدبي",
+    "مراجعة قواعد اللغة"
   ];
 
+  useEffect(() => {
+    // Trigger animation on mount
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="flex flex-wrap gap-4 justify-center" dir="rtl">
-      {suggestions.map((suggestion, index) => (
-        <button
-          key={index}
-          className="px-6 py-3 bg-white border border-gray-200 rounded-full text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors font-medium shadow-sm"
+    <div className="w-full max-w-4xl mx-auto" dir="rtl">
+      <div className="relative">
+        {/* Horizontal scroll container */}
+        <div 
+          className="overflow-x-auto scrollbar-hide pb-4"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
         >
-          {suggestion}
-        </button>
-      ))}
+          <div className="flex gap-3 px-6 min-w-max">
+            {suggestions.map((suggestion, index) => (
+              <button
+                key={index}
+                className={`
+                  px-6 py-3 bg-white border border-neutral-200 rounded-full text-neutral-700 
+                  hover:bg-neutral-50 hover:border-neutral-300 hover:shadow-md
+                  active:scale-95 transition-all duration-300 font-medium whitespace-nowrap
+                  min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary
+                  transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
+                `}
+                style={{
+                  transitionDelay: `${index * 100}ms`,
+                }}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        {/* Fade out edges */}
+        <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-neutral-50 to-transparent pointer-events-none"></div>
+        <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none"></div>
+      </div>
+      
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </div>
   );
 }
