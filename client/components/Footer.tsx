@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-6">
               <img
-                src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2F49f3aa3e3a324a28b9e41587038c40c6?format=webp&width=96"
                 alt="دِراسة Logo"
                 className="w-12 h-12 ml-4 rounded-full"
                 onError={(e) => {
@@ -26,7 +26,7 @@ export default function Footer() {
               <span className="text-3xl font-bold text-neutral-900">دِراسة</span>
             </div>
             <p className="text-neutral-500 mb-8 leading-relaxed text-lg max-w-md">
-              منصة تعليمية ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية.
+              منصة تعليم��ة ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية.
               نساعدك في تحقيق أهدافك التعليمية بطريقة سهلة وممتعة.
             </p>
             <div className="flex space-x-6 space-x-reverse">

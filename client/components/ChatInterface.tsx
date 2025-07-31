@@ -43,7 +43,7 @@ export default function ChatInterface() {
     "اشرح لي مفهوم الجاذبية",
     "ساعدني في حل معادلة رياضية",
     "ما هي قواعد اللغة العربية؟",
-    "كيف أتعلم البرمجة؟",
+    "كيف أتعلم ��لبرمجة؟",
     "اشرح لي دورة الم��ء في الطبيعة",
     "ما هو الذكاء الاصطناعي؟"
   ];
@@ -70,7 +70,7 @@ export default function ChatInterface() {
               {/* AI Avatar */}
               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20 overflow-hidden">
                 <img
-                  src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
+                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2F49f3aa3e3a324a28b9e41587038c40c6?format=webp&width=160"
                   alt="دِراسة AI"
                   className="w-20 h-20 rounded-full"
                   onError={(e) => {
@@ -133,7 +133,7 @@ export default function ChatInterface() {
                       {!message.isUser && (
                         <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                           <img
-                            src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
+                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2F49f3aa3e3a324a28b9e41587038c40c6?format=webp&width=64"
                             alt="دِراسة"
                             className="w-full h-full rounded-full"
                             onError={(e) => {
@@ -161,7 +161,7 @@ export default function ChatInterface() {
                     </div>
                     <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                       <img
-                        src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
+                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2F49f3aa3e3a324a28b9e41587038c40c6?format=webp&width=64"
                         alt="دِراسة"
                         className="w-full h-full rounded-full"
                         onError={(e) => {

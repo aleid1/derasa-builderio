@@ -25,7 +25,7 @@ export default function Navigation() {
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
             >
               <img
-                src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2F49f3aa3e3a324a28b9e41587038c40c6?format=webp&width=80"
                 alt="دِراسة Logo"
                 className="w-10 h-10 ml-3 group-hover:scale-105 transition-transform rounded-full"
                 onError={(e) => {
