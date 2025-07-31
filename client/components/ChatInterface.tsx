@@ -70,7 +70,7 @@ export default function ChatInterface() {
               {/* AI Avatar */}
               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20 overflow-hidden">
                 <img
-                  src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
+                  src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
                   alt="دِراسة AI"
                   className="w-20 h-20 rounded-full"
                   onError={(e) => {
@@ -133,7 +133,7 @@ export default function ChatInterface() {
                       {!message.isUser && (
                         <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                           <img
-                            src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
+                            src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
                             alt="دِراسة"
                             className="w-full h-full rounded-full"
                             onError={(e) => {
@@ -156,12 +156,12 @@ export default function ChatInterface() {
                     <div className="flex-1 bg-neutral-50 rounded-2xl p-4">
                       <div className="flex items-center gap-2 text-neutral-500">
                         <Loader2 className="w-4 h-4 animate-spin" />
-                        <span>��كتب...</span>
+                        <span>يكتب...</span>
                       </div>
                     </div>
                     <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                       <img
-                        src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Faa3eda9e914344cc8a33219d964a7f55?alt=media&token=eb821ec4-72b0-4916-900e-ee69e0bb184c&apiKey=fe102fa1240345669888b6698e27bb27"
+                        src="https://cdn.builder.io/o/assets%2Ffe102fa1240345669888b6698e27bb27%2Fdc29c54b1a6d4057bb00617015993510?alt=media&token=aba47304-5616-4af1-be45-42a947225cef&apiKey=fe102fa1240345669888b6698e27bb27"
                         alt="دِراسة"
                         className="w-full h-full rounded-full"
                         onError={(e) => {
