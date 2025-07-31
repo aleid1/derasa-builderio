@@ -45,13 +45,13 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/learn" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
-                  التعلم
+                <a href="/features" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
+                  المزايا
                 </a>
               </li>
               <li>
-                <a href="#features" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
-                  المزايا
+                <a href="/contact" className="text-neutral-500 hover:text-primary transition-colors duration-200 text-lg min-h-[44px] flex items-center">
+                  تواصل معنا
                 </a>
               </li>
               <li>

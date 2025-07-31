@@ -51,7 +51,7 @@ export default function Navigation() {
                 onClick={() => navigate('/features')}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-all min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                المزا��ا
+                المزايا
               </button>
             </div>
           </div>
@@ -95,13 +95,24 @@ export default function Navigation() {
                   {item.label}
                 </button>
               ))}
-              <a
-                href="#features"
+              <button
+                onClick={() => {
+                  navigate('/features');
+                  setIsMenuOpen(false);
+                }}
                 className="block w-full text-right px-4 py-3 rounded-lg text-base font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 min-h-[44px] transition-all focus:outline-none focus:ring-2 focus:ring-primary"
-                onClick={() => setIsMenuOpen(false)}
               >
                 المزايا
-              </a>
+              </button>
+              <button
+                onClick={() => {
+                  navigate('/contact');
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-right px-4 py-3 rounded-lg text-base font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 min-h-[44px] transition-all focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                تواصل معنا
+              </button>
               <button className="flex items-center justify-center bg-primary text-white px-4 py-3 rounded-xl hover:bg-primary/90 transition-all font-medium mt-4 w-full min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 <User className="w-4 h-4 ml-2" />
                 تسجيل الدخول
