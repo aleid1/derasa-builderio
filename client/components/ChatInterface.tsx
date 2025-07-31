@@ -43,7 +43,7 @@ export default function ChatInterface() {
     "اشرح لي مفهوم الجاذبية",
     "ساعدني في حل معادلة رياضية",
     "ما هي قواعد اللغة العربية؟",
-    "كيف أتعلم ��لبرمجة؟",
+    "كيف أتعلم البرمجة؟",
     "اشرح لي دورة الم��ء في الطبيعة",
     "ما هو الذكاء الاصطناعي؟"
   ];
@@ -51,18 +51,6 @@ export default function ChatInterface() {
   return (
     <main className="flex-1 bg-white" dir="rtl">
       <div className="h-full flex flex-col max-w-4xl mx-auto">
-        {/* Minimal Header */}
-        <div className="flex items-center justify-between p-6 border-b border-neutral-100">
-          <h1 className="text-xl font-semibold text-neutral-900">دِراسة</h1>
-          <button
-            onClick={() => navigate('/')}
-            className="text-neutral-500 hover:text-neutral-700 p-3 rounded-xl hover:bg-neutral-100 transition-all duration-200 min-h-[44px] min-w-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
-            aria-label="العودة للرئيسية"
-          >
-            <Home className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* Messages Area */}
         <div className="flex-1 overflow-y-auto p-6">
           {messages.length === 0 ? (
@@ -86,7 +74,7 @@ export default function ChatInterface() {
                 ابدأ بطرح أي سؤال…
               </h3>
               <p className="text-lg text-neutral-500 mb-12 max-w-md leading-relaxed">
-                أنا هنا لمساعدتك في تعلم أي موضوع تريده. اسأل واحصل على إجابات مفصلة وواضحة
+                أنا ه��ا لمساعدتك في تعلم أي موضوع تريده. اسأل واحصل على إجابات مفصلة وواضحة
               </p>
               
               {/* Horizontal Scrolling Suggestion Pills */}
