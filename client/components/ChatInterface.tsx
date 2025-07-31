@@ -44,7 +44,7 @@ export default function ChatInterface() {
     "ساعدني في حل معادلة رياضية",
     "ما هي قواعد اللغة العربية؟",
     "كيف أتعلم البرمجة؟",
-    "اشرح لي دورة الماء في الطبيعة",
+    "اشرح لي دورة الم��ء في الطبيعة",
     "ما هو الذكاء الاصطناعي؟"
   ];
 
@@ -53,7 +53,7 @@ export default function ChatInterface() {
       <div className="h-full flex flex-col max-w-4xl mx-auto">
         {/* Minimal Header */}
         <div className="flex items-center justify-between p-6 border-b border-neutral-100">
-          <h1 className="text-xl font-semibold text-neutral-900">درّسة</h1>
+          <h1 className="text-xl font-semibold text-neutral-900">دِراسة</h1>
           <button
             onClick={() => navigate('/')}
             className="text-neutral-500 hover:text-neutral-700 p-3 rounded-xl hover:bg-neutral-100 transition-all duration-200 min-h-[44px] min-w-[44px] focus:outline-none focus:ring-2 focus:ring-primary"

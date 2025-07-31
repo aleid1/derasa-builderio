@@ -11,7 +11,7 @@ export default function Footer() {
               <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center ml-4">
                 <span className="text-white font-bold text-xl">د</span>
               </div>
-              <span className="text-3xl font-bold text-neutral-900">درّسة</span>
+              <span className="text-3xl font-bold text-neutral-900">دِراسة</span>
             </div>
             <p className="text-neutral-500 mb-8 leading-relaxed text-lg max-w-md">
               منصة تعليمية ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية.
@@ -86,7 +86,7 @@ export default function Footer() {
         <div className="border-t border-neutral-200 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-neutral-500 text-lg">
-              © 2024 درّسة. جميع الحقوق محفوظة.
+              © 2024 دِراسة. جميع الحقوق محفوظة.
             </p>
             <div className="flex space-x-8 space-x-reverse mt-6 md:mt-0">
               <a href="#" className="text-neutral-500 hover:text-primary text-lg transition-colors duration-200 min-h-[44px] flex items-center">

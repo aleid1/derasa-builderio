@@ -12,7 +12,7 @@ export default function Navigation() {
   const navItems = [
     { path: '/', label: 'الرئيسية' },
     { path: '/chat', label: 'المحادثة' },
-    { path: '/learn', label: 'التعلم' },
+
   ];
 
   return (
@@ -28,7 +28,7 @@ export default function Navigation() {
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center ml-3 group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-xl">د</span>
               </div>
-              <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">درّسة</span>
+              <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">دِراسة</span>
             </button>
           </div>
 
