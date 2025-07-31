@@ -68,8 +68,12 @@ export default function ChatInterface() {
           {messages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-center">
               {/* AI Avatar */}
-              <div className="w-24 h-24 bg-gradient-to-br from-primary to-primary/80 rounded-3xl flex items-center justify-center mb-8 shadow-lg">
-                <span className="text-white text-2xl font-bold">د</span>
+              <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20">
+                <img
+                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                  alt="دِراسة AI"
+                  className="w-16 h-16"
+                />
               </div>
               
               {/* Welcome Message */}
@@ -122,8 +126,12 @@ export default function ChatInterface() {
                         <p className="text-neutral-900 leading-relaxed text-lg">{message.text}</p>
                       </div>
                       {!message.isUser && (
-                        <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                          <span className="text-white text-sm font-bold">د</span>
+                        <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 p-1">
+                          <img
+                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                            alt="دِراسة"
+                            className="w-full h-full"
+                          />
                         </div>
                       )}
                     </div>
@@ -141,8 +149,12 @@ export default function ChatInterface() {
                         <span>يكتب...</span>
                       </div>
                     </div>
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                      <span className="text-white text-sm font-bold">د</span>
+                    <div className="w-8 h-8 bg-white rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 p-1">
+                      <img
+                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
+                        alt="دِراسة"
+                        className="w-full h-full"
+                      />
                     </div>
                   </div>
                 </div>

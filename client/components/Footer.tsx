@@ -8,9 +8,11 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-6">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center ml-4">
-                <span className="text-white font-bold text-xl">د</span>
-              </div>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
+                alt="دِراسة Logo"
+                className="w-12 h-12 ml-4"
+              />
               <span className="text-3xl font-bold text-neutral-900">دِراسة</span>
             </div>
             <p className="text-neutral-500 mb-8 leading-relaxed text-lg max-w-md">

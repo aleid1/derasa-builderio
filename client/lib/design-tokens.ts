@@ -11,11 +11,11 @@
 export const DESIGN_TOKENS = {
   // Color Palette - LOCKED
   colors: {
-    // Primary Brand Colors
+    // Primary Brand Colors - Updated to match logo
     primary: {
-      DEFAULT: 'hsl(142, 71%, 45%)', // #2E7D32 - Green
-      light: 'hsl(142, 71%, 55%)',
-      dark: 'hsl(142, 71%, 35%)',
+      DEFAULT: 'hsl(171, 50%, 55%)', // #5CBDB2 - Teal from logo
+      light: 'hsl(171, 50%, 65%)',
+      dark: 'hsl(171, 50%, 45%)',
       foreground: 'hsl(0, 0%, 100%)',
     },
     // Secondary Accent
@@ -226,7 +226,7 @@ export const getFontSize = (size: keyof TypographyTokens['fontSize']) => {
 // Validation function to ensure tokens are not accidentally modified
 export const validateTokens = (): boolean => {
   // Check if primary color hasn't been changed
-  const expectedPrimary = 'hsl(142, 71%, 45%)';
+  const expectedPrimary = 'hsl(171, 50%, 55%)';
   if (DESIGN_TOKENS.colors.primary.DEFAULT !== expectedPrimary) {
     console.error('⚠️ Design tokens have been modified! Primary color changed.');
     return false;

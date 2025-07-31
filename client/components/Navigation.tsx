@@ -20,13 +20,15 @@ export default function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
-            <button 
+            <button
               onClick={() => navigate('/')}
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
             >
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center ml-3 group-hover:scale-105 transition-transform">
-                <span className="text-white font-bold text-xl">د</span>
-              </div>
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=80"
+                alt="دِراسة Logo"
+                className="w-10 h-10 ml-3 group-hover:scale-105 transition-transform"
+              />
               <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">دِراسة</span>
             </button>
           </div>
