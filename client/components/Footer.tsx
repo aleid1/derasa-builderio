@@ -2,30 +2,30 @@ import { Mail, Phone, MapPin, Github, Twitter, Linkedin } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="bg-gray-50 border-t border-gray-200" dir="rtl">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="bg-neutral-50 border-t border-neutral-200" dir="rtl">
+      <div className="max-w-6xl mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* Brand Section */}
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center mb-4">
-              <div className="w-10 h-10 bg-[#2E7D32] rounded-lg flex items-center justify-center ml-3">
+            <div className="flex items-center mb-6">
+              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center ml-4">
                 <span className="text-white font-bold text-xl">د</span>
               </div>
-              <span className="text-2xl font-bold text-gray-800">درّسة</span>
+              <span className="text-3xl font-bold text-neutral-900">درّسة</span>
             </div>
-            <p className="text-gray-600 mb-4 leading-relaxed">
-              منصة تعليمية ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية. 
+            <p className="text-neutral-500 mb-8 leading-relaxed text-lg max-w-md">
+              منصة تعليمية ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية.
               نساعدك في تحقيق أهدافك التعليمية بطريقة سهلة وممتعة.
             </p>
-            <div className="flex space-x-4 space-x-reverse">
-              <a href="#" className="text-gray-400 hover:text-[#2E7D32] transition-colors">
-                <Twitter className="w-5 h-5" />
+            <div className="flex space-x-6 space-x-reverse">
+              <a href="#" className="text-neutral-400 hover:text-primary transition-colors duration-200 p-2 hover:bg-primary/10 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <Twitter className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#2E7D32] transition-colors">
-                <Linkedin className="w-5 h-5" />
+              <a href="#" className="text-neutral-400 hover:text-primary transition-colors duration-200 p-2 hover:bg-primary/10 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <Linkedin className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-[#2E7D32] transition-colors">
-                <Github className="w-5 h-5" />
+              <a href="#" className="text-neutral-400 hover:text-primary transition-colors duration-200 p-2 hover:bg-primary/10 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <Github className="w-6 h-6" />
               </a>
             </div>
           </div>
