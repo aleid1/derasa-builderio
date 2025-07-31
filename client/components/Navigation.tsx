@@ -12,7 +12,6 @@ export default function Navigation() {
   const navItems = [
     { path: '/', label: 'الرئيسية' },
     { path: '/chat', label: 'المحادثة' },
-
   ];
 
   return (
@@ -48,12 +47,12 @@ export default function Navigation() {
                   {item.label}
                 </button>
               ))}
-              <a
-                href="#features"
+              <button
+                onClick={() => navigate('/features')}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-all min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                المزايا
-              </a>
+                المزا��ا
+              </button>
             </div>
           </div>
 
