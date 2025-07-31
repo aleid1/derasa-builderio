@@ -22,7 +22,7 @@ export default function ChatInterface() {
       // Simulate AI response
       setTimeout(() => {
         const aiResponse = {
-          text: "شكرًا لك على سؤالك! أنا هنا لمساعدتك في رحلتك التعليمية. كيف ي��كنني مساعدتك أكثر؟",
+          text: "شكرًا لك على سؤالك! أنا هنا لمساعدتك في رحلتك التعليمية. كيف يمكنني مساعدتك أكثر؟",
           isUser: false,
           timestamp: new Date()
         };
@@ -44,7 +44,7 @@ export default function ChatInterface() {
     "ساعدني في حل معادلة رياضية",
     "ما هي قواعد اللغة العربية؟",
     "كيف أتعلم البرمجة؟",
-    "اشرح لي دورة الم��ء في الطبيعة",
+    "اش��ح لي دورة الم��ء في الطبيعة",
     "ما هو الذكاء الاصطناعي؟"
   ];
 
@@ -70,10 +70,15 @@ export default function ChatInterface() {
               {/* AI Avatar */}
               <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center mb-8 shadow-lg border-2 border-primary/20 overflow-hidden">
                 <img
-                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=200&height=200&fit=crop&crop=left"
+                  src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=96"
                   alt="دِراسة AI"
                   className="w-20 h-20 rounded-full"
                   style={{ objectFit: 'cover', objectPosition: 'left center' }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                    e.currentTarget.parentElement.classList.add('bg-primary');
+                    e.currentTarget.parentElement.innerHTML = '<span class="text-white text-2xl font-bold">د</span>';
+                  }}
                 />
               </div>
               
@@ -127,12 +132,16 @@ export default function ChatInterface() {
                         <p className="text-neutral-900 leading-relaxed text-lg">{message.text}</p>
                       </div>
                       {!message.isUser && (
-                        <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
+                        <div className="w-8 h-8 bg-primary rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                           <img
-                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=100&height=100&fit=crop&crop=left"
+                            src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
                             alt="دِراسة"
                             className="w-full h-full rounded-full"
                             style={{ objectFit: 'cover', objectPosition: 'left center' }}
+                            onError={(e) => {
+                              e.currentTarget.style.display = 'none';
+                              e.currentTarget.parentElement.innerHTML = '<span class="text-white text-xs font-bold">د</span>';
+                            }}
                           />
                         </div>
                       )}
@@ -151,12 +160,16 @@ export default function ChatInterface() {
                         <span>يكتب...</span>
                       </div>
                     </div>
-                    <div className="w-8 h-8 rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
+                    <div className="w-8 h-8 bg-primary rounded-full border border-primary/20 flex items-center justify-center flex-shrink-0 mt-1 overflow-hidden">
                       <img
-                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=100&height=100&fit=crop&crop=left"
+                        src="https://cdn.builder.io/api/v1/image/assets%2Ffe102fa1240345669888b6698e27bb27%2Fb55662995558458e8ac9ff09aa05bcfd?format=webp&width=32"
                         alt="دِراسة"
                         className="w-full h-full rounded-full"
                         style={{ objectFit: 'cover', objectPosition: 'left center' }}
+                        onError={(e) => {
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement.innerHTML = '<span class="text-white text-xs font-bold">د</span>';
+                        }}
                       />
                     </div>
                   </div>
