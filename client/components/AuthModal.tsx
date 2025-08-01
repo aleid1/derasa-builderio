@@ -75,7 +75,7 @@ export default function AuthModal({
         <div className="p-6 border-b border-neutral-200">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-neutral-900">
-              {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب جديد"}
+              {mode === "login" ? "تسجيل ال��خول" : "إنشاء حساب جديد"}
             </h2>
             <button
               onClick={onClose}
@@ -91,8 +91,24 @@ export default function AuthModal({
           </p>
         </div>
 
+        {/* Google Sign-In */}
+        <div className="p-6 pb-0">
+          <div className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm text-neutral-600 mb-4">🌟 سجل دخولك بسهولة مع Gmail</p>
+              <div ref={googleButtonRef} className="flex justify-center"></div>
+            </div>
+
+            <div className="flex items-center">
+              <div className="flex-1 border-t border-neutral-200"></div>
+              <span className="px-4 text-sm text-neutral-500">أو</span>
+              <div className="flex-1 border-t border-neutral-200"></div>
+            </div>
+          </div>
+        </div>
+
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="p-6 pt-0 space-y-4">
           {mode === "signup" && (
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
