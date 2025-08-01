@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SuggestionPills() {
   const [isVisible, setIsVisible] = useState(false);
+  const navigate = useNavigate();
   
   const suggestions = [
     "اطلب تلميحًا",
@@ -35,12 +37,14 @@ export default function SuggestionPills() {
             {suggestions.map((suggestion, index) => (
               <button
                 key={index}
+                onClick={() => navigate('/chat', { state: { initialMessage: suggestion } })}
                 className={`
-                  px-6 py-3 bg-white border border-neutral-200 rounded-full text-neutral-700 
+                  px-6 py-3 bg-white border border-neutral-200 rounded-full text-neutral-700
                   hover:bg-neutral-50 hover:border-neutral-300 hover:shadow-md
                   active:scale-95 transition-all duration-300 font-medium whitespace-nowrap
                   min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary
                   transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
+                  cursor-pointer
                 `}
                 style={{
                   transitionDelay: `${index * 100}ms`,
