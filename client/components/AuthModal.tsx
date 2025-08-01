@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { X, Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import { useAuth } from "../lib/auth-context";
+import { googleAuth } from "../lib/google-auth";
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -20,8 +21,42 @@ export default function AuthModal({
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const googleButtonRef = useRef<HTMLDivElement>(null);
 
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, signInWithGoogle } = useAuth();
+
+  useEffect(() => {
+    if (isOpen) {
+      initializeGoogleAuth();
+    }
+  }, [isOpen]);
+
+  const initializeGoogleAuth = async () => {
+    try {
+      await googleAuth.initialize();
+
+      googleAuth.initializeGoogleSignIn(
+        async (user) => {
+          try {
+            await signInWithGoogle(user.email, user.name, user.picture);
+            onClose();
+          } catch (err) {
+            setError('فشل تسجيل الدخول بـ Google');
+          }
+        },
+        (error) => {
+          setError('فشل تسجيل الدخول بـ Google');
+        }
+      );
+
+      // Render Google button
+      if (googleButtonRef.current) {
+        googleAuth.renderSignInButton(googleButtonRef.current, 'outline');
+      }
+    } catch (error) {
+      console.error('Google Auth initialization failed:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
