@@ -1,11 +1,15 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { User, Menu, X } from "lucide-react";
+import { User, Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
+import { useAuth } from '../lib/auth-context';
+import AuthModal from './AuthModal';
 
 export default function Navigation() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const { user, signOut, isAuthenticated } = useAuth();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -74,12 +78,28 @@ export default function Navigation() {
             </div>
           </div>
 
-          {/* Login Button */}
+          {/* Auth Button */}
           <div className="hidden md:block">
-            <button className="flex items-center bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-all font-medium min-h-[44px] hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-              <User className="w-4 h-4 ml-2" />
-              تسجيل الدخول
-            </button>
+            {isAuthenticated ? (
+              <div className="flex items-center gap-4">
+                <span className="text-neutral-700 text-sm">مرحباً، {user?.name}</span>
+                <button
+                  onClick={signOut}
+                  className="flex items-center bg-neutral-100 text-neutral-700 px-4 py-2.5 rounded-xl hover:bg-neutral-200 transition-all font-medium min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                >
+                  <LogOut className="w-4 h-4 ml-2" />
+                  تسجيل الخروج
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="flex items-center bg-primary text-white px-5 py-2.5 rounded-xl hover:bg-primary/90 transition-all font-medium min-h-[44px] hover:shadow-lg hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              >
+                <User className="w-4 h-4 ml-2" />
+                تسجيل الدخول
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -131,14 +151,42 @@ export default function Navigation() {
               >
                 تواصل معنا
               </button>
-              <button className="flex items-center justify-center bg-primary text-white px-4 py-3 rounded-xl hover:bg-primary/90 transition-all font-medium mt-4 w-full min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
-                <User className="w-4 h-4 ml-2" />
-                تسجيل الدخول
-              </button>
+              {isAuthenticated ? (
+                <div className="mt-4 pt-4 border-t border-neutral-200">
+                  <div className="text-neutral-700 text-sm mb-3 px-4">مرحباً، {user?.name}</div>
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center bg-neutral-100 text-neutral-700 px-4 py-3 rounded-xl hover:bg-neutral-200 transition-all font-medium w-full min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                  >
+                    <LogOut className="w-4 h-4 ml-2" />
+                    تسجيل الخروج
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => {
+                    setIsAuthModalOpen(true);
+                    setIsMenuOpen(false);
+                  }}
+                  className="flex items-center justify-center bg-primary text-white px-4 py-3 rounded-xl hover:bg-primary/90 transition-all font-medium mt-4 w-full min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                >
+                  <User className="w-4 h-4 ml-2" />
+                  تسجيل الدخول
+                </button>
+              )}
             </div>
           </div>
         )}
       </div>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+      />
     </nav>
   );
 }
