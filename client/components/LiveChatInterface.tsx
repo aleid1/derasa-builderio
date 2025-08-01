@@ -165,7 +165,7 @@ export default function LiveChatInterface({
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-sm transition-colors"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 text-neutral-700 rounded-xl text-sm transition-all duration-300 hover:scale-105 hover:shadow-md border-2 border-transparent hover:border-primary/20 transform-gpu"
                 >
                   {suggestion}
                 </button>
@@ -228,7 +228,7 @@ export default function LiveChatInterface({
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="اكتب رسالتك هنا..."
+            placeholder="🤔 ما الذي تريد أن تتعلمه اليوم؟"
             className="flex-1 bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
             disabled={isLoading}
           />
