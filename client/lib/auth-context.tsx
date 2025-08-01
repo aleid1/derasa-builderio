@@ -95,6 +95,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const signInWithGoogle = async (email: string, name: string, avatar?: string) => {
+    setIsLoading(true);
+    try {
+      // Create user with Google credentials
+      const googleUser: User = {
+        id: "google-" + Date.now(),
+        email,
+        name,
+        avatar,
+        createdAt: new Date(),
+      };
+
+      setUser(googleUser);
+      localStorage.setItem("user", JSON.stringify(googleUser));
+    } catch (error) {
+      console.error("Google sign in failed:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const signOut = async () => {
     try {
       setUser(null);
