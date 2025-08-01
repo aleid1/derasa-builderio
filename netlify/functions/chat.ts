@@ -1,4 +1,5 @@
 import { Handler } from '@netlify/functions';
+import { dbService } from './db-service.js';
 
 // Arabic tutoring system prompt for the AI
 const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت معلم ذكي اسمك "دراسة" متخصص في التوجيه التدريجي للطلاب العرب والسعوديين.
@@ -15,7 +16,7 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت معلم ذكي اسمك "دراسة"
 الطالب: "كيف أحل هذه المسألة الرياضية؟"
 أنت: "ممتاز! لنبدأ معاً. أولاً، ما نوع هذه المسألة؟ هل هي جمع، طرح، أم شيء آخر؟ وما هي المعطيات المتوفرة لدينا؟"
 
-الطالب: "ما هو التمثيل الضوئي��"
+الطالب: "ما هو التمثيل الضوئي؟"
 أنت: "سؤال علمي رائع! قبل أن نتعمق، هل تعرف ماذا تحتاج النباتات لتنمو؟ فكر في النباتات التي تراها في حديقة بيتك أو في المدرسة."
 
 تذكر: هدفك هو تطوير قدرة الطالب على التفكير والوصول للمعرفة بنفسه، وليس إعطاء إجابات جاهزة.`;
@@ -75,6 +76,25 @@ const generateAIResponse = async (message: string): Promise<string> => {
   }
 };
 
+// Helper function to detect subject area from message
+function detectSubjectArea(message: string): string | null {
+  const messageWords = message.toLowerCase();
+
+  if (messageWords.includes('رياض') || messageWords.includes('حساب') || messageWords.includes('جبر') || messageWords.includes('هندسة')) {
+    return 'رياضيات';
+  } else if (messageWords.includes('علوم') || messageWords.includes('فيزياء') || messageWords.includes('كيمياء') || messageWords.includes('أحياء')) {
+    return 'علوم';
+  } else if (messageWords.includes('لغة') || messageWords.includes('نحو') || messageWords.includes('أدب') || messageWords.includes('قواعد')) {
+    return 'لغة عربية';
+  } else if (messageWords.includes('انجليزي') || messageWords.includes('english')) {
+    return 'لغة انجليزية';
+  } else if (messageWords.includes('تاريخ') || messageWords.includes('جغرافيا') || messageWords.includes('اجتماعيات')) {
+    return 'دراسات اجتماعية';
+  }
+
+  return null;
+}
+
 export const handler: Handler = async (event, context) => {
   // CORS headers
   const headers = {
@@ -102,7 +122,7 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
-    const { message, sessionId } = JSON.parse(event.body || '{}');
+    const { message, sessionId, userId } = JSON.parse(event.body || '{}');
 
     if (!message) {
       return {
@@ -112,21 +132,49 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
+    // Get or create user (for now, create guest if no userId provided)
+    let user;
+    if (userId) {
+      user = await dbService.getUserById(userId);
+      if (!user) {
+        user = await dbService.createGuestUser();
+      }
+    } else {
+      user = await dbService.createGuestUser();
+    }
+
+    // Get or create chat session
+    let session;
+    if (sessionId) {
+      session = await dbService.getChatSession(sessionId);
+      if (!session) {
+        session = await dbService.createChatSession(user.id);
+      }
+    } else {
+      session = await dbService.createChatSession(user.id);
+    }
+
+    // Save user message to database
+    const userMessage = await dbService.addChatMessage(session.id, message, 'user');
+
     // Generate AI response
-    const response = await generateAIResponse(message);
+    const aiResponse = await generateAIResponse(message);
 
-    // Simulate streaming by sending the response in chunks
-    const chunks = response.split(' ');
-    let streamedResponse = '';
+    // Save AI response to database
+    const assistantMessage = await dbService.addChatMessage(session.id, aiResponse, 'assistant');
 
-    // For now, return the complete response
-    // In production, this would be a true streaming response
-    streamedResponse = response;
+    // Analyze subject area from message for progress tracking
+    const subjectArea = detectSubjectArea(message);
+    if (subjectArea) {
+      await dbService.updateUserProgress(user.id, subjectArea, 'general');
+    }
 
     const streamingData = {
-      content: streamedResponse,
+      content: aiResponse,
       isComplete: true,
-      messageId: Date.now().toString(),
+      messageId: assistantMessage.id,
+      sessionId: session.id,
+      userId: user.id,
     };
 
     return {
