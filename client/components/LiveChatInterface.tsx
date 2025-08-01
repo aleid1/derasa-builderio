@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send, Mic, Paperclip, MoreVertical, Sparkles } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { ChatMessage, StreamingResponse } from '../lib/chat-types';
 import { chatService } from '../lib/chat-service';
 
@@ -15,10 +16,19 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const location = useLocation();
 
   useEffect(() => {
     // Load initial suggestions
     chatService.getSuggestedQuestions().then(setSuggestions);
+
+    // Handle initial message from navigation
+    const state = location.state as { initialMessage?: string };
+    if (state?.initialMessage) {
+      handleSendMessage(state.initialMessage);
+      // Clear the state to prevent resending on re-renders
+      window.history.replaceState({}, document.title);
+    }
   }, []);
 
   useEffect(() => {
