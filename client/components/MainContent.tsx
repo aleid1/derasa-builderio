@@ -33,10 +33,10 @@ export default function MainContent() {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-neutral-900 mb-6 group-hover:text-primary transition-colors duration-300">
-                إرشاد توجيهي
+                توجيه وإرشاد فعّال
               </h3>
               <p className="text-neutral-500 leading-relaxed text-lg">
-                خطوة بخطوة حتى تصل للإجابة بنفسك، كما يفعل المعلم.
+                ندعمك خطوة بخطوة لتصل إلى الإجابة بنفسك كما لو أنك في فصل مع معلمك.
               </p>
             </div>
 
@@ -51,10 +51,10 @@ export default function MainContent() {
                 </svg>
               </div>
               <h3 className="text-2xl font-bold text-neutral-900 mb-6 group-hover:text-secondary transition-colors duration-300">
-                مواد متوافقة مع قيمنا
+                محتوى ينسجم مع ثقافتنا
               </h3>
               <p className="text-neutral-500 leading-relaxed text-lg">
-                محتوى تعليمي يتماشى مع الثقافة الإسلامية واحتياجات الطالب.
+                نقدم محتوى تعليمياً ملائماً لثقافتنا الإسلامية وتطلعات طلابنا.
               </p>
             </div>
 
