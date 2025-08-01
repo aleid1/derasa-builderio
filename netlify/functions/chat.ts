@@ -1,5 +1,8 @@
 import { Handler } from "@netlify/functions";
 import { dbService } from "./db-service.js";
+import { neon } from "@netlify/neon";
+
+const sql = neon();
 
 // Arabic tutoring system prompt for the AI
 const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت معلم ذكي اسمك "دراسة" متخصص في التوجيه التدريجي للطلاب العرب والسعوديين.
@@ -121,6 +124,69 @@ function detectSubjectArea(message: string): string | null {
   return null;
 }
 
+// Initialize database tables if they don't exist
+async function initializeDatabase() {
+  try {
+    await sql`
+      CREATE TABLE IF NOT EXISTS users (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        email TEXT UNIQUE,
+        name TEXT NOT NULL,
+        avatar_url TEXT,
+        auth_provider TEXT DEFAULT 'email',
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS chat_sessions (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        title TEXT NOT NULL DEFAULT 'محادثة جديدة',
+        subject_area TEXT,
+        grade_level TEXT,
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS chat_messages (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        session_id UUID REFERENCES chat_sessions(id) ON DELETE CASCADE,
+        content TEXT NOT NULL,
+        role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+        message_type TEXT DEFAULT 'text',
+        metadata JSONB,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `;
+
+    await sql`
+      CREATE TABLE IF NOT EXISTS user_progress (
+        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+        subject_area TEXT NOT NULL,
+        topic TEXT NOT NULL,
+        skill_level INTEGER DEFAULT 1 CHECK (skill_level BETWEEN 1 AND 10),
+        sessions_count INTEGER DEFAULT 0,
+        last_session_at TIMESTAMPTZ,
+        strengths TEXT[],
+        improvement_areas TEXT[],
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE(user_id, subject_area, topic)
+      )
+    `;
+
+    console.log('✅ Database tables initialized');
+  } catch (error) {
+    console.log('Database initialization:', error.message);
+  }
+}
+
 export const handler: Handler = async (event, context) => {
   // CORS headers
   const headers = {
@@ -148,6 +214,9 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
+    // Initialize database tables on first run
+    await initializeDatabase();
+
     const { message, sessionId, userId } = JSON.parse(event.body || "{}");
 
     if (!message) {
