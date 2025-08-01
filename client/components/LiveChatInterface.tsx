@@ -99,7 +99,7 @@ export default function LiveChatInterface({
       // Add error message
       const errorMessage: ChatMessage = {
         id: (Date.now() + 2).toString(),
-        content: "عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.",
+        content: "عذراً، حدث خط�� في الاتصال. يرجى المحاولة مرة أخرى.",
         role: "assistant",
         timestamp: new Date(),
       };
@@ -134,7 +134,7 @@ export default function LiveChatInterface({
             </div>
             <div>
               <h3 className="font-bold text-neutral-900">
-                دراسة - معلمك الذكي
+                🤖 دراسة - صديقك المعلم
               </h3>
               <p className="text-sm text-neutral-500">متصل ومستعد للمساعدة</p>
             </div>
