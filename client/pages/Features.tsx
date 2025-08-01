@@ -11,10 +11,10 @@ export default function Features() {
         <section className="py-20 px-6 bg-white">
           <div className="max-w-6xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-neutral-900 mb-6">
-              مزايا دِراسة
+              مزايا منصة دراسة
             </h1>
             <p className="text-xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
-              اكتشف كيف تساعدك دِراسة في رحلتك التعليمية بطريقة آمنة ومناسبة لثقافتنا
+              تعرف على كيفية مساعدتك في رحلتك التعليمية بشكل آمن وملائم لقيمنا الثقافية والإسلامية.
             </p>
           </div>
         </section>
@@ -41,8 +41,8 @@ export default function Features() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.94-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-4">حساسة ثقافياً</h3>
-                <p className="text-neutral-500 leading-relaxed">تفهم وتحترم الثقافة العربية والإسلامية في جميع التفاعلات والمحتوى</p>
+                <h3 className="text-xl font-bold text-neutral-900 mb-4">تراعي الثقافة والقيم</h3>
+                <p className="text-neutral-500 leading-relaxed">محتوى وتفاعل يراعي قيمنا العربية والإسلامية ويحترم خصوصيتنا الثقافية.</p>
               </div>
 
               {/* Feature 3 */}
@@ -53,7 +53,7 @@ export default function Features() {
                   </svg>
                 </div>
                 <h3 className="text-xl font-bold text-neutral-900 mb-4">إرشاد تدريجي</h3>
-                <p className="text-neutral-500 leading-relaxed">يدلك خطوة ��خطوة للوصول للحل بنفسك، بدلاً من إعطاء الإجابة مباشرة</p>
+                <p className="text-neutral-500 leading-relaxed">نرشدك خطوة بخطوة للوصول إلى الحل بنفسك بدلاً من إعطائك الإجابة مباشرة.</p>
               </div>
 
               {/* Feature 4 */}
@@ -74,8 +74,8 @@ export default function Features() {
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-neutral-900 mb-4">جودة عالية</h3>
-                <p className="text-neutral-500 leading-relaxed">محتوى تعليمي عالي الجودة ومراجع موثوقة لضمان دقة المعلومات</p>
+                <h3 className="text-xl font-bold text-neutral-900 mb-4">محتوى موثوق وعالي الجودة</h3>
+                <p className="text-neutral-500 leading-relaxed">معلومات دقيقة مستندة إلى مصادر موثوقة لضمان أفضل تجربة تعليمية.</p>
               </div>
 
               {/* Feature 6 */}

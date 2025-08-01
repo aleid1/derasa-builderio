@@ -26,8 +26,7 @@ export default function Footer() {
               <span className="text-3xl font-bold text-neutral-900">دِراسة</span>
             </div>
             <p className="text-neutral-500 mb-8 leading-relaxed text-lg max-w-md">
-              منصة تعليم��ة ذكية تستخدم الذكاء الاصطناعي لتوفير تجربة تعلم مخصصة وتفاعلية.
-              نساعدك في تحقيق أهدافك التعليمية بطريقة سهلة وممتعة.
+              منصة تعليمية ذكية تعتمد على الذكاء الاصطناعي لتوفير تجربة تعليمية مخصصة وتفاعلية، تساعدك على تحقيق أهدافك بأسلوب سهل وممتع.
             </p>
             <div className="flex space-x-6 space-x-reverse">
               <a href="#" className="text-neutral-400 hover:text-primary transition-colors duration-200 p-2 hover:bg-primary/10 rounded-lg min-h-[44px] min-w-[44px] flex items-center justify-center">
