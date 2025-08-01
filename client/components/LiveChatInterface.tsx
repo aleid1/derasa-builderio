@@ -1,0 +1,220 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { Send, Mic, Paperclip, MoreVertical, Sparkles } from 'lucide-react';
+import { ChatMessage, StreamingResponse } from '../lib/chat-types';
+import { chatService } from '../lib/chat-service';
+
+interface LiveChatInterfaceProps {
+  sessionId?: string;
+  onNewSession?: (sessionId: string) => void;
+}
+
+export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatInterfaceProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Load initial suggestions
+    chatService.getSuggestedQuestions().then(setSuggestions);
+  }, []);
+
+  useEffect(() => {
+    // Auto-scroll to bottom when new messages arrive
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSendMessage = async (content: string) => {
+    if (!content.trim() || isLoading) return;
+
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      content: content.trim(),
+      role: 'user',
+      timestamp: new Date(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setInputValue('');
+    setIsLoading(true);
+
+    try {
+      // Create streaming assistant message
+      const assistantMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: '',
+        role: 'assistant',
+        timestamp: new Date(),
+        isStreaming: true,
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+
+      // Start streaming response
+      const stream = await chatService.sendMessage(content, sessionId);
+      const reader = stream.getReader();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const response: StreamingResponse = value;
+        
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === assistantMessage.id 
+              ? { ...msg, content: response.content, isStreaming: !response.isComplete }
+              : msg
+          )
+        );
+
+        if (response.isComplete) {
+          setIsLoading(false);
+          break;
+        }
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setIsLoading(false);
+      
+      // Add error message
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 2).toString(),
+        content: 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.',
+        role: 'assistant',
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion);
+    inputRef.current?.focus();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage(inputValue);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full bg-white rounded-3xl shadow-xl overflow-hidden" dir="rtl">
+      {/* Chat Header */}
+      <div className="bg-primary/5 px-6 py-4 border-b border-neutral-200">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3 space-x-reverse">
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h3 className="font-bold text-neutral-900">دراسة - معلمك الذكي</h3>
+              <p className="text-sm text-neutral-500">متصل ومستعد للمساعدة</p>
+            </div>
+          </div>
+          <button className="p-2 hover:bg-white/50 rounded-lg transition-colors">
+            <MoreVertical className="w-5 h-5 text-neutral-500" />
+          </button>
+        </div>
+      </div>
+
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-6 space-y-4">
+        {messages.length === 0 && (
+          <div className="text-center py-12">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-8 h-8 text-primary" />
+            </div>
+            <h3 className="text-xl font-bold text-neutral-900 mb-2">مرحباً بك!</h3>
+            <p className="text-neutral-500 mb-6">أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.</p>
+            
+            {/* Suggestions */}
+            <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
+              {suggestions.map((suggestion, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-700 rounded-xl text-sm transition-colors"
+                >
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${message.role === 'user' ? 'justify-start' : 'justify-end'}`}
+          >
+            <div
+              className={`max-w-[80%] p-4 rounded-2xl ${
+                message.role === 'user'
+                  ? 'bg-primary text-white'
+                  : 'bg-neutral-100 text-neutral-900'
+              }`}
+            >
+              <p className="text-sm md:text-base leading-relaxed">{message.content}</p>
+              {message.isStreaming && (
+                <div className="flex items-center mt-2">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-current rounded-full animate-pulse"></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-pulse delay-75"></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-pulse delay-150"></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+        
+        <div ref={messagesEndRef} />
+      </div>
+
+      {/* Input Area */}
+      <div className="p-6 border-t border-neutral-200 bg-neutral-50">
+        <div className="flex items-center gap-3">
+          <button
+            className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="تسجيل صوتي"
+          >
+            <Mic className="w-5 h-5" />
+          </button>
+          
+          <button
+            className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="إرفاق ملف"
+          >
+            <Paperclip className="w-5 h-5" />
+          </button>
+
+          <input
+            ref={inputRef}
+            type="text"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="اكتب رسالتك هنا..."
+            className="flex-1 bg-white border border-neutral-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+            disabled={isLoading}
+          />
+
+          <button
+            onClick={() => handleSendMessage(inputValue)}
+            disabled={!inputValue.trim() || isLoading}
+            className="bg-primary text-white p-3 rounded-xl hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="إرسال"
+          >
+            <Send className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
