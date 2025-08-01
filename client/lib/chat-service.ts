@@ -18,7 +18,7 @@ class ChatService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = '/api/chat';
+    this.baseUrl = '/.netlify/functions/chat';
   }
 
   async sendMessage(message: string, sessionId?: string): Promise<ReadableStream<StreamingResponse>> {
@@ -38,40 +38,13 @@ class ChatService {
       throw new Error('Failed to send message');
     }
 
-    const reader = response.body?.getReader();
-    if (!reader) {
-      throw new Error('No response stream available');
-    }
+    // For now, handle as JSON response (will be upgraded to streaming later)
+    const data = await response.json();
 
     return new ReadableStream({
       start(controller) {
-        function pump(): Promise<void> {
-          return reader.read().then(({ done, value }) => {
-            if (done) {
-              controller.close();
-              return;
-            }
-
-            // Parse the streaming response
-            const chunk = new TextDecoder().decode(value);
-            const lines = chunk.split('\n').filter(line => line.trim());
-            
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                try {
-                  const data = JSON.parse(line.slice(6));
-                  controller.enqueue(data);
-                } catch (e) {
-                  console.error('Failed to parse streaming data:', e);
-                }
-              }
-            }
-
-            return pump();
-          });
-        }
-
-        return pump();
+        controller.enqueue(data);
+        controller.close();
       },
     });
   }
