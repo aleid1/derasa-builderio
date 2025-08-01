@@ -57,11 +57,7 @@ export default function SuggestionPills() {
         <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none"></div>
       </div>
       
-      <style jsx>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
+
     </div>
   );
 }
