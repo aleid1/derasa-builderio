@@ -1,8 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { User, Menu, X, LogOut } from "lucide-react";
 import { useState } from "react";
-import { useAuth } from '../lib/auth-context';
-import AuthModal from './AuthModal';
+import { useAuth } from "../lib/auth-context";
+import AuthModal from "./AuthModal";
 
 export default function Navigation() {
   const navigate = useNavigate();
@@ -14,18 +14,21 @@ export default function Navigation() {
   const isActive = (path: string) => location.pathname === path;
 
   const navItems = [
-    { path: '/', label: 'الرئيسية' },
-    { path: '/chat', label: 'المحادثة' },
+    { path: "/", label: "الرئيسية" },
+    { path: "/chat", label: "المحادثة" },
   ];
 
   return (
-    <nav className="bg-white border-b border-neutral-200 sticky top-0 z-50" dir="rtl">
+    <nav
+      className="bg-white border-b border-neutral-200 sticky top-0 z-50"
+      dir="rtl"
+    >
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex justify-between items-center h-16">
           {/* Logo and Brand */}
           <div className="flex items-center">
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate("/")}
               className="flex items-center group focus:outline-none focus:ring-2 focus:ring-primary rounded-lg p-1"
             >
               <img
@@ -33,17 +36,19 @@ export default function Navigation() {
                 alt="دِراسة Logo"
                 className="w-10 h-10 ml-3 group-hover:scale-105 transition-transform rounded-full"
                 onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                  e.currentTarget.nextElementSibling.style.display = 'flex';
+                  e.currentTarget.style.display = "none";
+                  e.currentTarget.nextElementSibling.style.display = "flex";
                 }}
               />
               <div
                 className="w-10 h-10 bg-primary rounded-full flex items-center justify-center ml-3 group-hover:scale-105 transition-transform hidden"
-                style={{ display: 'none' }}
+                style={{ display: "none" }}
               >
                 <span className="text-white font-bold text-lg">د</span>
               </div>
-              <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">دِراسة</span>
+              <span className="text-2xl font-bold text-neutral-900 group-hover:text-primary transition-colors">
+                دِراسة
+              </span>
             </button>
           </div>
 
@@ -56,21 +61,21 @@ export default function Navigation() {
                   onClick={() => navigate(item.path)}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all min-h-[44px] min-w-[44px] ${
                     isActive(item.path)
-                      ? 'text-primary font-bold bg-primary/10 border-b-2 border-primary'
-                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
+                      ? "text-primary font-bold bg-primary/10 border-b-2 border-primary"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
                   } focus:outline-none focus:ring-2 focus:ring-primary`}
                 >
                   {item.label}
                 </button>
               ))}
               <button
-                onClick={() => navigate('/features')}
+                onClick={() => navigate("/features")}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-all min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 المزايا
               </button>
               <button
-                onClick={() => navigate('/contact')}
+                onClick={() => navigate("/contact")}
                 className="px-4 py-2 rounded-lg text-sm font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 transition-all min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 تواصل معنا
@@ -82,7 +87,9 @@ export default function Navigation() {
           <div className="hidden md:block">
             {isAuthenticated ? (
               <div className="flex items-center gap-4">
-                <span className="text-neutral-700 text-sm">مرحباً، {user?.name}</span>
+                <span className="text-neutral-700 text-sm">
+                  مرحباً، {user?.name}
+                </span>
                 <button
                   onClick={signOut}
                   className="flex items-center bg-neutral-100 text-neutral-700 px-4 py-2.5 rounded-xl hover:bg-neutral-200 transition-all font-medium min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -108,7 +115,11 @@ export default function Navigation() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-neutral-600 hover:text-neutral-900 p-2 rounded-lg hover:bg-neutral-100 transition-colors min-h-[44px] min-w-[44px] focus:outline-none focus:ring-2 focus:ring-primary"
             >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
             </button>
           </div>
         </div>
@@ -126,8 +137,8 @@ export default function Navigation() {
                   }}
                   className={`block w-full text-right px-4 py-3 rounded-lg text-base font-medium min-h-[44px] transition-all ${
                     isActive(item.path)
-                      ? 'text-primary font-bold bg-primary/10'
-                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100'
+                      ? "text-primary font-bold bg-primary/10"
+                      : "text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100"
                   } focus:outline-none focus:ring-2 focus:ring-primary`}
                 >
                   {item.label}
@@ -135,7 +146,7 @@ export default function Navigation() {
               ))}
               <button
                 onClick={() => {
-                  navigate('/features');
+                  navigate("/features");
                   setIsMenuOpen(false);
                 }}
                 className="block w-full text-right px-4 py-3 rounded-lg text-base font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 min-h-[44px] transition-all focus:outline-none focus:ring-2 focus:ring-primary"
@@ -144,7 +155,7 @@ export default function Navigation() {
               </button>
               <button
                 onClick={() => {
-                  navigate('/contact');
+                  navigate("/contact");
                   setIsMenuOpen(false);
                 }}
                 className="block w-full text-right px-4 py-3 rounded-lg text-base font-medium text-neutral-600 hover:text-neutral-900 hover:bg-neutral-100 min-h-[44px] transition-all focus:outline-none focus:ring-2 focus:ring-primary"
@@ -153,7 +164,9 @@ export default function Navigation() {
               </button>
               {isAuthenticated ? (
                 <div className="mt-4 pt-4 border-t border-neutral-200">
-                  <div className="text-neutral-700 text-sm mb-3 px-4">مرحباً، {user?.name}</div>
+                  <div className="text-neutral-700 text-sm mb-3 px-4">
+                    مرحباً، {user?.name}
+                  </div>
                   <button
                     onClick={() => {
                       signOut();

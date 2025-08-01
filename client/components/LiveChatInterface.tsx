@@ -1,17 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Send, Mic, Paperclip, MoreVertical, Sparkles } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
-import { ChatMessage, StreamingResponse } from '../lib/chat-types';
-import { chatService } from '../lib/chat-service';
+import React, { useState, useRef, useEffect } from "react";
+import { Send, Mic, Paperclip, MoreVertical, Sparkles } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { ChatMessage, StreamingResponse } from "../lib/chat-types";
+import { chatService } from "../lib/chat-service";
 
 interface LiveChatInterfaceProps {
   sessionId?: string;
   onNewSession?: (sessionId: string) => void;
 }
 
-export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatInterfaceProps) {
+export default function LiveChatInterface({
+  sessionId,
+  onNewSession,
+}: LiveChatInterfaceProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,7 +36,7 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleSendMessage = async (content: string) => {
@@ -42,25 +45,25 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       content: content.trim(),
-      role: 'user',
+      role: "user",
       timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
-    setInputValue('');
+    setMessages((prev) => [...prev, userMessage]);
+    setInputValue("");
     setIsLoading(true);
 
     try {
       // Create streaming assistant message
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
-        content: '',
-        role: 'assistant',
+        content: "",
+        role: "assistant",
         timestamp: new Date(),
         isStreaming: true,
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, assistantMessage]);
 
       // Start streaming response
       const stream = await chatService.sendMessage(content, sessionId);
@@ -71,13 +74,17 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
         if (done) break;
 
         const response: StreamingResponse = value;
-        
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === assistantMessage.id 
-              ? { ...msg, content: response.content, isStreaming: !response.isComplete }
-              : msg
-          )
+
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === assistantMessage.id
+              ? {
+                  ...msg,
+                  content: response.content,
+                  isStreaming: !response.isComplete,
+                }
+              : msg,
+          ),
         );
 
         if (response.isComplete) {
@@ -86,18 +93,18 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
         }
       }
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error("Error sending message:", error);
       setIsLoading(false);
-      
+
       // Add error message
       const errorMessage: ChatMessage = {
         id: (Date.now() + 2).toString(),
-        content: 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.',
-        role: 'assistant',
+        content: "عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.",
+        role: "assistant",
         timestamp: new Date(),
       };
-      
-      setMessages(prev => [...prev, errorMessage]);
+
+      setMessages((prev) => [...prev, errorMessage]);
     }
   };
 
@@ -107,14 +114,17 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(inputValue);
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-3xl shadow-xl overflow-hidden" dir="rtl">
+    <div
+      className="flex flex-col h-full bg-white rounded-3xl shadow-xl overflow-hidden"
+      dir="rtl"
+    >
       {/* Chat Header */}
       <div className="bg-primary/5 px-6 py-4 border-b border-neutral-200">
         <div className="flex items-center justify-between">
@@ -123,7 +133,9 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-bold text-neutral-900">دراسة - معلمك الذكي</h3>
+              <h3 className="font-bold text-neutral-900">
+                دراسة - معلمك الذكي
+              </h3>
               <p className="text-sm text-neutral-500">متصل ومستعد للمساعدة</p>
             </div>
           </div>
@@ -140,9 +152,13 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-xl font-bold text-neutral-900 mb-2">مرحباً بك!</h3>
-            <p className="text-neutral-500 mb-6">أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.</p>
-            
+            <h3 className="text-xl font-bold text-neutral-900 mb-2">
+              مرحباً بك!
+            </h3>
+            <p className="text-neutral-500 mb-6">
+              أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
+            </p>
+
             {/* Suggestions */}
             <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
               {suggestions.map((suggestion, index) => (
@@ -161,16 +177,18 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === 'user' ? 'justify-start' : 'justify-end'}`}
+            className={`flex ${message.role === "user" ? "justify-start" : "justify-end"}`}
           >
             <div
               className={`max-w-[80%] p-4 rounded-2xl ${
-                message.role === 'user'
-                  ? 'bg-primary text-white'
-                  : 'bg-neutral-100 text-neutral-900'
+                message.role === "user"
+                  ? "bg-primary text-white"
+                  : "bg-neutral-100 text-neutral-900"
               }`}
             >
-              <p className="text-sm md:text-base leading-relaxed">{message.content}</p>
+              <p className="text-sm md:text-base leading-relaxed">
+                {message.content}
+              </p>
               {message.isStreaming && (
                 <div className="flex items-center mt-2">
                   <div className="flex space-x-1">
@@ -183,7 +201,7 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
             </div>
           </div>
         ))}
-        
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -196,7 +214,7 @@ export default function LiveChatInterface({ sessionId, onNewSession }: LiveChatI
           >
             <Mic className="w-5 h-5" />
           </button>
-          
+
           <button
             className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="إرفاق ملف"

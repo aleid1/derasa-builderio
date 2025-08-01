@@ -1,4 +1,4 @@
-import { ChatMessage, AIResponse, StreamingResponse } from './chat-types';
+import { ChatMessage, AIResponse, StreamingResponse } from "./chat-types";
 
 // Configuration for AI tutoring behavior
 const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". تخصصك هو التوجيه التدريجي للطلاب العرب والسعوديين.
@@ -18,14 +18,17 @@ class ChatService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = '/.netlify/functions/chat';
+    this.baseUrl = "/.netlify/functions/chat";
   }
 
-  async sendMessage(message: string, sessionId?: string): Promise<ReadableStream<StreamingResponse>> {
+  async sendMessage(
+    message: string,
+    sessionId?: string,
+  ): Promise<ReadableStream<StreamingResponse>> {
     const response = await fetch(this.baseUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         message,
@@ -35,7 +38,7 @@ class ChatService {
     });
 
     if (!response.ok) {
-      throw new Error('Failed to send message');
+      throw new Error("Failed to send message");
     }
 
     // For now, handle as JSON response (will be upgraded to streaming later)
@@ -52,20 +55,22 @@ class ChatService {
   async getSuggestedQuestions(): Promise<string[]> {
     // These will be dynamic based on curriculum and user progress
     return [
-      'أطلب تلميحاً',
-      'اشرح خطوة بخطوة',
-      'مثال إضافي',
-      'كيف أتذكر هذا؟',
-      'اختبر فهمي',
-      'تطبيق عملي'
+      "أطلب تلميحاً",
+      "اشرح خطوة بخطوة",
+      "مثال إضافي",
+      "كيف أتذكر هذا؟",
+      "اختبر فهمي",
+      "تطبيق عملي",
     ];
   }
 
   async getChatHistory(userId: string, limit = 50): Promise<ChatMessage[]> {
-    const response = await fetch(`${this.baseUrl}/history?userId=${userId}&limit=${limit}`);
-    
+    const response = await fetch(
+      `${this.baseUrl}/history?userId=${userId}&limit=${limit}`,
+    );
+
     if (!response.ok) {
-      throw new Error('Failed to fetch chat history');
+      throw new Error("Failed to fetch chat history");
     }
 
     return response.json();
@@ -73,18 +78,18 @@ class ChatService {
 
   async createSession(userId: string, title?: string): Promise<string> {
     const response = await fetch(`${this.baseUrl}/sessions`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         userId,
-        title: title || 'محادثة جديدة',
+        title: title || "محادثة جديدة",
       }),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to create session');
+      throw new Error("Failed to create session");
     }
 
     const data = await response.json();

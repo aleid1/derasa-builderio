@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function HeroChatCard() {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const navigate = useNavigate();
   return (
     <div className="w-full max-w-4xl mx-auto mb-12">
@@ -13,7 +13,8 @@ export default function HeroChatCard() {
           مرحباً بك في دراسة - معلمك الذكي الخاص
         </h1>
         <p className="text-xl md:text-2xl text-neutral-500 leading-relaxed max-w-2xl mx-auto">
-          نأخذ بيدك خطوة بخطوة كما يفعل المعلم الحقيقي، دون تقديم إجابات فورية. تجربة تعليمية آمنة، تراعي ثقافتنا وقيمنا الإسلامية.
+          نأخذ بيدك خطوة بخطوة كما يفعل المعلم الحقيقي، دون تقديم إجابات فورية.
+          تجربة تعليمية آمنة، تراعي ثقافتنا وقيمنا الإسلامية.
         </p>
       </div>
 
@@ -44,8 +45,10 @@ export default function HeroChatCard() {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' && inputValue.trim()) {
-                navigate('/chat', { state: { initialMessage: inputValue.trim() } });
+              if (e.key === "Enter" && inputValue.trim()) {
+                navigate("/chat", {
+                  state: { initialMessage: inputValue.trim() },
+                });
               }
             }}
             className="flex-1 text-lg bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3 outline-none placeholder-neutral-400 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
@@ -56,7 +59,9 @@ export default function HeroChatCard() {
             aria-label="إرسال"
             onClick={() => {
               if (inputValue.trim()) {
-                navigate('/chat', { state: { initialMessage: inputValue.trim() } });
+                navigate("/chat", {
+                  state: { initialMessage: inputValue.trim() },
+                });
               }
             }}
             disabled={!inputValue.trim()}

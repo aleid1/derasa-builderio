@@ -36,7 +36,8 @@ export default function MainContent() {
                 توجيه وإرشاد فعّال
               </h3>
               <p className="text-neutral-500 leading-relaxed text-lg">
-                ندعمك خطوة بخطوة لتصل إلى الإجابة بنفسك كما لو أنك في فصل مع معلمك.
+                ندعمك خطوة بخطوة لتصل إلى الإجابة بنفسك كما لو أنك في فصل مع
+                معلمك.
               </p>
             </div>
 

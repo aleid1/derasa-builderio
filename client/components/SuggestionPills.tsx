@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 export default function SuggestionPills() {
   const [isVisible, setIsVisible] = useState(false);
   const navigate = useNavigate();
-  
+
   const suggestions = [
     "اطلب تلميحًا",
     "اشرح خطوة بخطوة",
@@ -13,7 +13,7 @@ export default function SuggestionPills() {
     "حل مسألة رياضية",
     "شرح مفهوم علمي",
     "تحليل نص أدبي",
-    "مراجعة قواعد اللغة"
+    "مراجعة قواعد اللغة",
   ];
 
   useEffect(() => {
@@ -26,24 +26,26 @@ export default function SuggestionPills() {
     <div className="w-full max-w-4xl mx-auto" dir="rtl">
       <div className="relative">
         {/* Horizontal scroll container */}
-        <div 
+        <div
           className="overflow-x-auto scrollbar-hide pb-4"
           style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
           <div className="flex gap-3 px-6 min-w-max">
             {suggestions.map((suggestion, index) => (
               <button
                 key={index}
-                onClick={() => navigate('/chat', { state: { initialMessage: suggestion } })}
+                onClick={() =>
+                  navigate("/chat", { state: { initialMessage: suggestion } })
+                }
                 className={`
                   px-6 py-3 bg-white border border-neutral-200 rounded-full text-neutral-700
                   hover:bg-neutral-50 hover:border-neutral-300 hover:shadow-md
                   active:scale-95 transition-all duration-300 font-medium whitespace-nowrap
                   min-h-[44px] focus:outline-none focus:ring-2 focus:ring-primary
-                  transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'}
+                  transform ${isVisible ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"}
                   cursor-pointer
                 `}
                 style={{
@@ -55,13 +57,11 @@ export default function SuggestionPills() {
             ))}
           </div>
         </div>
-        
+
         {/* Fade out edges */}
         <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-neutral-50 to-transparent pointer-events-none"></div>
         <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none"></div>
       </div>
-      
-
     </div>
   );
 }

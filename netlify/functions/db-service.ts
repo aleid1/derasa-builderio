@@ -1,4 +1,4 @@
-import { neon } from '@netlify/neon';
+import { neon } from "@netlify/neon";
 
 const sql = neon();
 
@@ -27,7 +27,7 @@ export interface ChatMessage {
   id: string;
   session_id: string;
   content: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   message_type: string;
   metadata?: any;
   created_at: Date;
@@ -69,8 +69,11 @@ export class DatabaseService {
   }
 
   // Chat session management
-  async createChatSession(userId: string, title?: string): Promise<ChatSession> {
-    const sessionTitle = title || 'محادثة جديدة';
+  async createChatSession(
+    userId: string,
+    title?: string,
+  ): Promise<ChatSession> {
+    const sessionTitle = title || "محادثة جديدة";
     const result = await sql`
       INSERT INTO chat_sessions (user_id, title) 
       VALUES (${userId}, ${sessionTitle})
@@ -86,7 +89,10 @@ export class DatabaseService {
     return result[0] || null;
   }
 
-  async getUserChatSessions(userId: string, limit = 20): Promise<ChatSession[]> {
+  async getUserChatSessions(
+    userId: string,
+    limit = 20,
+  ): Promise<ChatSession[]> {
     const result = await sql`
       SELECT * FROM chat_sessions 
       WHERE user_id = ${userId} AND is_active = true
@@ -96,29 +102,32 @@ export class DatabaseService {
     return result;
   }
 
-  async updateChatSession(sessionId: string, updates: Partial<ChatSession>): Promise<ChatSession> {
+  async updateChatSession(
+    sessionId: string,
+    updates: Partial<ChatSession>,
+  ): Promise<ChatSession> {
     const setClause = Object.keys(updates)
-      .map(key => `${key} = $${Object.keys(updates).indexOf(key) + 2}`)
-      .join(', ');
-    
+      .map((key) => `${key} = $${Object.keys(updates).indexOf(key) + 2}`)
+      .join(", ");
+
     const values = [sessionId, ...Object.values(updates)];
-    
+
     const result = await sql`
       UPDATE chat_sessions 
       SET ${sql.unsafe(setClause)}, updated_at = NOW()
       WHERE id = $1
       RETURNING *
     `.apply(null, values);
-    
+
     return result[0];
   }
 
   // Chat message management
   async addChatMessage(
-    sessionId: string, 
-    content: string, 
-    role: 'user' | 'assistant',
-    metadata?: any
+    sessionId: string,
+    content: string,
+    role: "user" | "assistant",
+    metadata?: any,
   ): Promise<ChatMessage> {
     const result = await sql`
       INSERT INTO chat_messages (session_id, content, role, metadata) 
@@ -146,7 +155,10 @@ export class DatabaseService {
     return result;
   }
 
-  async getRecentChatHistory(userId: string, limit = 10): Promise<ChatMessage[]> {
+  async getRecentChatHistory(
+    userId: string,
+    limit = 10,
+  ): Promise<ChatMessage[]> {
     const result = await sql`
       SELECT cm.* FROM chat_messages cm
       JOIN chat_sessions cs ON cm.session_id = cs.id
@@ -162,7 +174,7 @@ export class DatabaseService {
     userId: string,
     subjectArea: string,
     topic: string,
-    skillLevel?: number
+    skillLevel?: number,
   ): Promise<void> {
     await sql`
       INSERT INTO user_progress (user_id, subject_area, topic, skill_level, sessions_count, last_session_at)
@@ -186,7 +198,9 @@ export class DatabaseService {
   }
 
   // Utility methods
-  async getSessionStats(sessionId: string): Promise<{ messageCount: number; duration: number }> {
+  async getSessionStats(
+    sessionId: string,
+  ): Promise<{ messageCount: number; duration: number }> {
     const result = await sql`
       SELECT 
         COUNT(*) as message_count,
@@ -194,10 +208,10 @@ export class DatabaseService {
       FROM chat_messages 
       WHERE session_id = ${sessionId}
     `;
-    
+
     return {
       messageCount: parseInt(result[0].message_count) || 0,
-      duration: parseInt(result[0].duration_seconds) || 0
+      duration: parseInt(result[0].duration_seconds) || 0,
     };
   }
 }

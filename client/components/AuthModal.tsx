@@ -1,70 +1,81 @@
-import React, { useState } from 'react';
-import { X, Eye, EyeOff, User, Mail, Lock } from 'lucide-react';
-import { useAuth } from '../lib/auth-context';
+import React, { useState } from "react";
+import { X, Eye, EyeOff, User, Mail, Lock } from "lucide-react";
+import { useAuth } from "../lib/auth-context";
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  initialMode?: 'login' | 'signup';
+  initialMode?: "login" | "signup";
 }
 
-export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: AuthModalProps) {
+export default function AuthModal({
+  isOpen,
+  onClose,
+  initialMode = "login",
+}: AuthModalProps) {
   const [mode, setMode] = useState(initialMode);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const { signIn, signUp } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
-      if (mode === 'login') {
+      if (mode === "login") {
         await signIn(email, password);
       } else {
         if (!name.trim()) {
-          setError('الاسم مطلوب');
+          setError("الاسم مطلوب");
           return;
         }
         await signUp(email, password, name);
       }
       onClose();
     } catch (err) {
-      setError(mode === 'login' ? 'فشل تسجيل الدخول. تأكد من بياناتك.' : 'فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.');
+      setError(
+        mode === "login"
+          ? "فشل تسجيل الدخول. تأكد من بياناتك."
+          : "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
   const resetForm = () => {
-    setEmail('');
-    setPassword('');
-    setName('');
-    setError('');
+    setEmail("");
+    setPassword("");
+    setName("");
+    setError("");
     setShowPassword(false);
   };
 
   const switchMode = () => {
-    setMode(mode === 'login' ? 'signup' : 'login');
+    setMode(mode === "login" ? "signup" : "login");
     resetForm();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" dir="rtl">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+      dir="rtl"
+    >
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md">
         {/* Header */}
         <div className="p-6 border-b border-neutral-200">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-neutral-900">
-              {mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد'}
+              {mode === "login" ? "تسجيل الدخول" : "إنشاء حساب جديد"}
             </h2>
             <button
               onClick={onClose}
@@ -74,16 +85,15 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
             </button>
           </div>
           <p className="text-neutral-500 mt-2">
-            {mode === 'login' 
-              ? 'أدخل بياناتك للوصول إلى حسابك' 
-              : 'أنشئ حساباً جديداً للبدء مع دراسة'
-            }
+            {mode === "login"
+              ? "أدخل بياناتك للوصول إلى حسابك"
+              : "أنشئ حساباً جديداً للبدء مع دراسة"}
           </p>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {mode === 'signup' && (
+          {mode === "signup" && (
             <div>
               <label className="block text-sm font-medium text-neutral-700 mb-2">
                 الاسم الكامل
@@ -96,7 +106,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                   onChange={(e) => setName(e.target.value)}
                   className="w-full pr-10 pl-4 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                   placeholder="أدخل اسمك الكامل"
-                  required={mode === 'signup'}
+                  required={mode === "signup"}
                   dir="rtl"
                 />
               </div>
@@ -128,7 +138,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
             <div className="relative">
               <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-neutral-400" />
               <input
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full pr-10 pl-12 py-3 border border-neutral-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
@@ -142,7 +152,11 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
               >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
           </div>
@@ -158,19 +172,23 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }: Au
             disabled={isLoading}
             className="w-full py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {isLoading ? 'جاري المعالجة...' : (mode === 'login' ? 'تسجيل الدخول' : 'إنشاء الحساب')}
+            {isLoading
+              ? "جاري المعالجة..."
+              : mode === "login"
+                ? "تسجيل الدخول"
+                : "إنشاء الحساب"}
           </button>
         </form>
 
         {/* Footer */}
         <div className="p-6 border-t border-neutral-200 text-center">
           <p className="text-neutral-600">
-            {mode === 'login' ? 'ليس لديك حساب؟' : 'لديك حساب بالفعل؟'}
+            {mode === "login" ? "ليس لديك حساب؟" : "لديك حساب بالفعل؟"}
             <button
               onClick={switchMode}
               className="text-primary hover:text-primary/80 font-medium mr-2"
             >
-              {mode === 'login' ? 'إنشاء حساب جديد' : 'تسجيل الدخول'}
+              {mode === "login" ? "إنشاء حساب جديد" : "تسجيل الدخول"}
             </button>
           </p>
         </div>

@@ -1,9 +1,9 @@
-import { neon } from '@netlify/neon';
+import { neon } from "@netlify/neon";
 
 const sql = neon();
 
 async function setupDatabase() {
-  console.log('🔧 Setting up دراسة database schema...');
+  console.log("🔧 Setting up دراسة database schema...");
 
   try {
     // Create users table
@@ -18,7 +18,7 @@ async function setupDatabase() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
-    console.log('✅ Users table created');
+    console.log("✅ Users table created");
 
     // Create chat_sessions table
     await sql`
@@ -33,7 +33,7 @@ async function setupDatabase() {
         updated_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
-    console.log('✅ Chat sessions table created');
+    console.log("✅ Chat sessions table created");
 
     // Create chat_messages table
     await sql`
@@ -47,7 +47,7 @@ async function setupDatabase() {
         created_at TIMESTAMPTZ DEFAULT NOW()
       )
     `;
-    console.log('✅ Chat messages table created');
+    console.log("✅ Chat messages table created");
 
     // Create user_progress table for learning analytics
     await sql`
@@ -66,14 +66,14 @@ async function setupDatabase() {
         UNIQUE(user_id, subject_area, topic)
       )
     `;
-    console.log('✅ User progress table created');
+    console.log("✅ User progress table created");
 
     // Create indexes for better performance
     await sql`CREATE INDEX IF NOT EXISTS idx_chat_sessions_user_id ON chat_sessions(user_id)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_chat_messages_session_id ON chat_messages(session_id)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_user_progress_user_id ON user_progress(user_id)`;
     await sql`CREATE INDEX IF NOT EXISTS idx_chat_messages_created_at ON chat_messages(created_at)`;
-    console.log('✅ Database indexes created');
+    console.log("✅ Database indexes created");
 
     // Insert some sample data for testing
     const sampleUser = await sql`
@@ -85,7 +85,7 @@ async function setupDatabase() {
 
     if (sampleUser.length > 0) {
       const userId = sampleUser[0].id;
-      
+
       const sampleSession = await sql`
         INSERT INTO chat_sessions (user_id, title, subject_area, grade_level)
         VALUES (${userId}, 'مساعدة في الرياضيات', 'رياضيات', 'متوسط')
@@ -94,7 +94,7 @@ async function setupDatabase() {
 
       if (sampleSession.length > 0) {
         const sessionId = sampleSession[0].id;
-        
+
         await sql`
           INSERT INTO chat_messages (session_id, content, role)
           VALUES 
@@ -108,19 +108,18 @@ async function setupDatabase() {
         VALUES (${userId}, 'رياضيات', 'الجبر', 3, 1)
         ON CONFLICT (user_id, subject_area, topic) DO NOTHING
       `;
-      
-      console.log('✅ Sample data inserted');
+
+      console.log("✅ Sample data inserted");
     }
 
-    console.log('🎉 Database setup completed successfully!');
-    console.log('📊 Tables created:');
-    console.log('   - users (المستخدمين)');
-    console.log('   - chat_sessions (جلسات المحادثة)');
-    console.log('   - chat_messages (رسائل المحادثة)');
-    console.log('   - user_progress (تقدم المستخدم)');
-
+    console.log("🎉 Database setup completed successfully!");
+    console.log("📊 Tables created:");
+    console.log("   - users (المستخدمين)");
+    console.log("   - chat_sessions (جلسات المحادثة)");
+    console.log("   - chat_messages (رسائل المحادثة)");
+    console.log("   - user_progress (تقدم المستخدم)");
   } catch (error) {
-    console.error('❌ Database setup failed:', error);
+    console.error("❌ Database setup failed:", error);
     process.exit(1);
   }
 }
