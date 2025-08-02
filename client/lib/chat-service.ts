@@ -1,7 +1,7 @@
 import { ChatMessage, AIResponse, StreamingResponse } from "./chat-types";
 
 // Configuration for AI tutoring behavior
-const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". تخصصك هو التوجيه التدريج�� للطلاب ال��رب والسعوديين.
+const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". تخصصك هو التوجيه التدريجي للطلاب ال��رب والسعوديين.
 
 المبادئ الأساسية:
 - لا تعطي الإجابة مباشرة، بل ادل الطالب خطوة بخطوة
@@ -67,14 +67,14 @@ class ChatService {
   }
 
   async getSuggestedQuestions(): Promise<string[]> {
-    // These will be dynamic based on curriculum and user progress
+    // Contextual suggestions based on common learning needs
     return [
-      "أطلب تلميحاً",
-      "اشرح خطوة بخطوة",
-      "مثال إضافي",
-      "كيف أتذكر هذا؟",
-      "اختبر فهمي",
-      "تطبيق عملي",
+      "أريد تعلم الرياضيات",
+      "ساعدني في العلوم",
+      "أشرح لي قواعد اللغة العربية",
+      "كيف أحل المسائل خطوة بخطوة؟",
+      "ما هي أفضل طريقة للمذاكرة؟",
+      "أريد فهم الفيزياء بطريقة سهلة",
     ];
   }
 
