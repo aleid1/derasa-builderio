@@ -18,7 +18,7 @@ class ChatService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = "/.netlify/functions/chat";
+    this.baseUrl = "/.netlify/functions/simple-chat";
   }
 
   async sendMessage(

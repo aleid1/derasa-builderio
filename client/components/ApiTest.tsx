@@ -9,7 +9,7 @@ export default function ApiTest() {
     setResult('Testing...');
 
     try {
-      const response = await fetch('/.netlify/functions/chat', {
+      const response = await fetch('/.netlify/functions/simple-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
