@@ -17,6 +17,7 @@ export default function Navigation() {
     { path: "/", label: "الرئيسية" },
     { path: "/chat", label: "المحادثة" },
     { path: "/history", label: "المحادثات" },
+    { path: "/dashboard", label: "لوحتي" },
   ];
 
   return (
