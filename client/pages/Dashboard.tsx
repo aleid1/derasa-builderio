@@ -28,16 +28,19 @@ export default function Dashboard() {
 
     try {
       // Mock stats for MVP - will be replaced with real data
-      const mockStats: UserStats = {
-        totalSessions: 5,
-        totalMessages: 23,
-        subjectsLearned: ['رياضيات', 'علوم', 'لغة عربية'],
-        streakDays: 3,
-        lastActiveDate: new Date().toISOString(),
-        favoriteSubject: 'رياضيات'
+      // Load real statistics from ChatHistoryService
+      const realStats = ChatHistoryService.getUserStats();
+
+      const stats: UserStats = {
+        totalSessions: realStats.totalSessions,
+        totalMessages: realStats.totalMessages,
+        subjectsLearned: realStats.subjectsLearned,
+        sessionsToday: realStats.sessionsToday,
+        subjects: realStats.subjects,
+        favoriteSubject: realStats.subjects[0] || 'عام'
       };
 
-      setStats(mockStats);
+      setStats(stats);
     } catch (error) {
       console.error('Error loading user stats:', error);
     } finally {
