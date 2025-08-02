@@ -65,6 +65,8 @@ export default function LiveChatInterface({
     };
 
     setMessages((prev) => [...prev, userMessage]);
+    // Save user message to localStorage
+    ChatHistoryService.saveMessage(userMessage, currentSessionId);
     setInputValue("");
     setIsLoading(true);
 
@@ -81,7 +83,7 @@ export default function LiveChatInterface({
       setMessages((prev) => [...prev, assistantMessage]);
 
       // Start streaming response
-      const stream = await chatService.sendMessage(content, sessionId);
+      const stream = await chatService.sendMessage(content, currentSessionId);
       const reader = stream.getReader();
 
       while (true) {
@@ -103,6 +105,13 @@ export default function LiveChatInterface({
         );
 
         if (response.isComplete) {
+          // Save completed assistant message to localStorage
+          const completedMessage: ChatMessage = {
+            ...assistantMessage,
+            content: response.content,
+            isStreaming: false,
+          };
+          ChatHistoryService.saveMessage(completedMessage, currentSessionId);
           setIsLoading(false);
           break;
         }
@@ -120,6 +129,8 @@ export default function LiveChatInterface({
       };
 
       setMessages((prev) => [...prev, errorMessage]);
+      // Save error message to localStorage
+      ChatHistoryService.saveMessage(errorMessage, currentSessionId);
     }
   };
 
