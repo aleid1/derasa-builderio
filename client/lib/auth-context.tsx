@@ -155,7 +155,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isAuthenticated: user !== null && user.email !== undefined,
   };
 
-  console.log('AuthProvider providing value:', value);
-
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
