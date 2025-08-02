@@ -3,6 +3,8 @@ import { Send, Mic, Paperclip, MoreVertical, Sparkles } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { ChatMessage, StreamingResponse } from "../lib/chat-types";
 import { chatService } from "../lib/chat-service";
+import { ChatHistoryService } from "../lib/chat-history";
+import { useAuth } from "../lib/auth-context";
 
 interface LiveChatInterfaceProps {
   sessionId?: string;
@@ -17,13 +19,26 @@ export default function LiveChatInterface({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [currentSessionId, setCurrentSessionId] = useState<string>(sessionId || '');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
+  const { user } = useAuth();
 
   useEffect(() => {
     // Load initial suggestions
     chatService.getSuggestedQuestions().then(setSuggestions);
+
+    // Create or load session
+    if (!currentSessionId) {
+      const newSessionId = `session-${user?.id || 'guest'}-${Date.now()}`;
+      setCurrentSessionId(newSessionId);
+      if (onNewSession) onNewSession(newSessionId);
+    } else {
+      // Load existing messages for this session
+      const existingMessages = ChatHistoryService.getSessionMessages(currentSessionId);
+      setMessages(existingMessages);
+    }
 
     // Handle initial message from navigation
     const state = location.state as { initialMessage?: string };
@@ -32,7 +47,7 @@ export default function LiveChatInterface({
       // Clear the state to prevent resending on re-renders
       window.history.replaceState({}, document.title);
     }
-  }, []);
+  }, [currentSessionId, user]);
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages arrive
