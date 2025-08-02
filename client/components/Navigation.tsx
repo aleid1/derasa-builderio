@@ -9,7 +9,12 @@ export default function Navigation() {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const { user, signOut, isAuthenticated } = useAuth();
+  const { user, signOut, isAuthenticated, isLoading } = useAuth();
+
+  // Don't render until auth is loaded
+  if (isLoading) {
+    return null;
+  }
 
   const isActive = (path: string) => location.pathname === path;
 
