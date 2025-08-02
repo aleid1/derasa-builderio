@@ -70,6 +70,4 @@ export default async (req: Request, context: Context) => {
   }
 };
 
-export const config: Config = {
-  path: "/simple-chat"
-};
+export const config: Config = {};
