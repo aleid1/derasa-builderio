@@ -7,7 +7,7 @@ export default function ApiTest() {
   const testApi = async () => {
     setLoading(true);
     setResult('Testing...');
-    
+
     try {
       const response = await fetch('/.netlify/functions/chat', {
         method: 'POST',
@@ -21,11 +21,17 @@ export default function ApiTest() {
         }),
       });
 
-      const text = await response.text();
-      
-      setResult(`Status: ${response.status}\nResponse: ${text}`);
+      // Read response body only once
+      let responseText = '';
+      try {
+        responseText = await response.text();
+      } catch (e) {
+        responseText = 'Could not read response body';
+      }
+
+      setResult(`Status: ${response.status} ${response.statusText}\nURL: ${response.url}\nResponse: ${responseText}`);
     } catch (error) {
-      setResult(`Error: ${error}`);
+      setResult(`Fetch Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
