@@ -16,6 +16,7 @@ export default function Navigation() {
   const navItems = [
     { path: "/", label: "الرئيسية" },
     { path: "/chat", label: "المحادثة" },
+    { path: "/history", label: "المحادثات" },
   ];
 
   return (

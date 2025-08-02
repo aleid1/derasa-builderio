@@ -36,16 +36,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const checkExistingSession = async () => {
     try {
-      // For now, create a guest user
-      // In production, this would check for valid session/token
-      const guestUser: User = {
-        id: "guest-" + Date.now(),
-        name: "ضيف",
-        email: undefined,
-        createdAt: new Date(),
-      };
+      // Check if user exists in localStorage
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        setUser(parsedUser);
+      } else {
+        // Create persistent guest user
+        const guestUser: User = {
+          id: "guest-" + Date.now(),
+          name: "طالب ضيف",
+          email: undefined,
+          createdAt: new Date(),
+        };
 
-      setUser(guestUser);
+        setUser(guestUser);
+        localStorage.setItem("user", JSON.stringify(guestUser));
+      }
     } catch (error) {
       console.error("Session check failed:", error);
     } finally {
