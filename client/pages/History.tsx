@@ -22,10 +22,16 @@ const subjectIcons = {
   'عام': BookOpen,
 };
 
-const subjectColors = {
+const subjectColors: Record<string, string> = {
   'رياضيات': 'bg-blue-100 text-blue-700',
-  'علوم': 'bg-green-100 text-green-700', 
+  'علوم': 'bg-green-100 text-green-700',
+  'فيزياء': 'bg-green-100 text-green-700',
+  'كيمياء': 'bg-green-100 text-green-700',
+  'أحياء': 'bg-green-100 text-green-700',
   'لغة عربية': 'bg-purple-100 text-purple-700',
+  'اجتماعيات': 'bg-orange-100 text-orange-700',
+  'لغة إنجليزية': 'bg-indigo-100 text-indigo-700',
+  'دراسات إسلامية': 'bg-teal-100 text-teal-700',
   'عام': 'bg-gray-100 text-gray-700',
 };
 
@@ -43,35 +49,9 @@ export default function History() {
     if (!user) return;
 
     try {
-      // Mock data for now - will be replaced with real API call
-      const mockSessions: ChatSession[] = [
-        {
-          id: '1',
-          title: 'مساعدة في الرياضيات',
-          subject_area: 'رياضيات',
-          created_at: new Date().toISOString(),
-          message_count: 8,
-          last_message_preview: 'رائع! لقد فهمت كيفية حل المعادلات البسيطة...'
-        },
-        {
-          id: '2', 
-          title: 'شرح التمثيل الضوئي',
-          subject_area: 'علوم',
-          created_at: new Date(Date.now() - 86400000).toISOString(),
-          message_count: 12,
-          last_message_preview: 'النباتات تستخدم ضوء الشمس لصنع طعامها...'
-        },
-        {
-          id: '3',
-          title: 'قواعد اللغة العربية', 
-          subject_area: 'لغة عربية',
-          created_at: new Date(Date.now() - 172800000).toISOString(),
-          message_count: 6,
-          last_message_preview: 'الفاعل هو من قام بالفعل في الجملة...'
-        }
-      ];
-
-      setSessions(mockSessions);
+      // Load real chat history from localStorage
+      const realSessions = ChatHistoryService.getSessions();
+      setSessions(realSessions);
     } catch (error) {
       console.error('Error loading chat history:', error);
     } finally {
