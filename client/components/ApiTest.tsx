@@ -1,35 +1,37 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 export default function ApiTest() {
-  const [result, setResult] = useState<string>('');
+  const [result, setResult] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const testApi = async () => {
     setLoading(true);
-    setResult('Testing...');
+    setResult("Testing...");
 
     try {
-      const response = await fetch('/.netlify/functions/simple-chat', {
-        method: 'POST',
+      const response = await fetch("/.netlify/functions/simple-chat", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          message: 'test message',
+          message: "test message",
           sessionId: null,
           userId: null,
         }),
       });
 
       // Read response body only once
-      let responseText = '';
+      let responseText = "";
       try {
         responseText = await response.text();
       } catch (e) {
-        responseText = 'Could not read response body';
+        responseText = "Could not read response body";
       }
 
-      setResult(`Status: ${response.status} ${response.statusText}\nURL: ${response.url}\nResponse: ${responseText}`);
+      setResult(
+        `Status: ${response.status} ${response.statusText}\nURL: ${response.url}\nResponse: ${responseText}`,
+      );
     } catch (error) {
       setResult(`Fetch Error: ${error.message}`);
     } finally {
@@ -45,10 +47,10 @@ export default function ApiTest() {
         disabled={loading}
         className="bg-blue-500 text-white px-4 py-2 rounded mb-2"
       >
-        {loading ? 'Testing...' : 'Test Chat API'}
+        {loading ? "Testing..." : "Test Chat API"}
       </button>
       <pre className="bg-gray-100 p-2 rounded text-xs overflow-auto max-h-40">
-        {result || 'Click to test API'}
+        {result || "Click to test API"}
       </pre>
     </div>
   );

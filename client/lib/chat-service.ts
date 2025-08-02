@@ -38,29 +38,31 @@ class ChatService {
     });
 
     if (!response.ok) {
-      console.error('Chat API error:', {
+      console.error("Chat API error:", {
         status: response.status,
         statusText: response.statusText,
-        url: response.url
+        url: response.url,
       });
 
-      let errorText = '';
-      let errorMessage = 'عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.';
+      let errorText = "";
+      let errorMessage = "عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.";
 
       try {
         errorText = await response.text();
-        console.error('Error details:', errorText);
+        console.error("Error details:", errorText);
 
         // Provide more specific error messages
         if (response.status === 429) {
-          errorMessage = 'لقد تجاوزت الحد المسموح من الرسائل. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.';
+          errorMessage =
+            "لقد تجاوزت الحد المسموح من الرسائل. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.";
         } else if (response.status === 500) {
-          errorMessage = 'عذراً، حدث خطأ في الخادم. نحن نعمل على إصلاحه.';
+          errorMessage = "عذراً، حدث خطأ في الخادم. نحن نعمل على إصلاحه.";
         } else if (response.status === 404) {
-          errorMessage = 'عذراً، الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.';
+          errorMessage =
+            "عذراً، الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.";
         }
       } catch (e) {
-        console.error('Could not read error response');
+        console.error("Could not read error response");
       }
 
       throw new Error(errorMessage);

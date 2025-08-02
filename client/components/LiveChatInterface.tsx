@@ -20,7 +20,9 @@ export default function LiveChatInterface({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  const [currentSessionId, setCurrentSessionId] = useState<string>(sessionId || '');
+  const [currentSessionId, setCurrentSessionId] = useState<string>(
+    sessionId || "",
+  );
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
@@ -32,12 +34,13 @@ export default function LiveChatInterface({
 
     // Create or load session
     if (!currentSessionId) {
-      const newSessionId = `session-${user?.id || 'guest'}-${Date.now()}`;
+      const newSessionId = `session-${user?.id || "guest"}-${Date.now()}`;
       setCurrentSessionId(newSessionId);
       if (onNewSession) onNewSession(newSessionId);
     } else {
       // Load existing messages for this session
-      const existingMessages = ChatHistoryService.getSessionMessages(currentSessionId);
+      const existingMessages =
+        ChatHistoryService.getSessionMessages(currentSessionId);
       setMessages(existingMessages);
     }
 
@@ -209,9 +212,11 @@ export default function LiveChatInterface({
             key={message.id}
             className={`flex ${message.role === "user" ? "justify-start" : "justify-end"} mb-4`}
           >
-            <div className={`flex items-start gap-3 max-w-[80%] ${
-              message.role === "user" ? "flex-row-reverse" : "flex-row"
-            }`}>
+            <div
+              className={`flex items-start gap-3 max-w-[80%] ${
+                message.role === "user" ? "flex-row-reverse" : "flex-row"
+              }`}
+            >
               {/* Avatar */}
               {message.role === "assistant" && (
                 <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center flex-shrink-0">
@@ -238,16 +243,28 @@ export default function LiveChatInterface({
                 {message.isStreaming && (
                   <div className="flex items-center mt-2">
                     <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      <div
+                        className="w-2 h-2 bg-current rounded-full animate-bounce"
+                        style={{ animationDelay: "0ms" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-current rounded-full animate-bounce"
+                        style={{ animationDelay: "150ms" }}
+                      ></div>
+                      <div
+                        className="w-2 h-2 bg-current rounded-full animate-bounce"
+                        style={{ animationDelay: "300ms" }}
+                      ></div>
                     </div>
                   </div>
                 )}
 
                 {/* Timestamp */}
                 <div className="text-xs opacity-60 mt-2">
-                  {message.timestamp.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
+                  {message.timestamp.toLocaleTimeString("ar-SA", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </div>
               </div>
             </div>

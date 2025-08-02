@@ -6,7 +6,11 @@ interface AuthContextType {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
-  signInWithGoogle: (email: string, name: string, avatar?: string) => Promise<void>;
+  signInWithGoogle: (
+    email: string,
+    name: string,
+    avatar?: string,
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   isAuthenticated: boolean;
 }
@@ -102,7 +106,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signInWithGoogle = async (email: string, name: string, avatar?: string) => {
+  const signInWithGoogle = async (
+    email: string,
+    name: string,
+    avatar?: string,
+  ) => {
     setIsLoading(true);
     try {
       // Create user with Google credentials

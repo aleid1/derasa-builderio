@@ -13,15 +13,28 @@ export default function HeroChatCard() {
           مرحباً بك في دِراسة - معلمك الذكي الخاص
         </h1>
         <p className="text-xl md:text-2xl text-neutral-500 leading-relaxed max-w-2xl mx-auto mb-6">
-          دِراسة يرشدك كالمعلم خطوة بخطوة دون إجابات جاهزة، في بيئة آمنة تحترم قيمنا الإسلامية.
+          دِراسة يرشدك كالمعلم خطوة بخطوة دون إجابات جاهزة، في بيئة آمنة تحترم
+          قيمنا الإسلامية.
         </p>
 
         {/* Subject Areas */}
         <div className="mb-2">
           <p className="text-sm text-neutral-400 mb-3">المواد المتاحة:</p>
           <div className="flex flex-wrap gap-2 justify-center max-w-3xl mx-auto">
-            {['رياضيات', 'علوم', 'لغة عربية', 'فيزياء', 'كيمياء', 'أحياء', 'دراسات إسلامية', 'لغة إنجليزية'].map((subject) => (
-              <span key={subject} className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full">
+            {[
+              "رياضيات",
+              "علوم",
+              "لغة عربية",
+              "فيزياء",
+              "كيمياء",
+              "أحياء",
+              "دراسات إسلامية",
+              "لغة إنجليزية",
+            ].map((subject) => (
+              <span
+                key={subject}
+                className="px-3 py-1 bg-primary/10 text-primary text-xs rounded-full"
+              >
                 {subject}
               </span>
             ))}

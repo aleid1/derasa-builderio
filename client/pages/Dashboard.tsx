@@ -1,9 +1,16 @@
-import { useState, useEffect } from 'react';
-import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
-import { useAuth } from '../lib/auth-context';
-import { ChatHistoryService } from '../lib/chat-history';
-import { BarChart3, MessageCircle, BookOpen, Trophy, Target, Calendar } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
+import { useAuth } from "../lib/auth-context";
+import { ChatHistoryService } from "../lib/chat-history";
+import {
+  BarChart3,
+  MessageCircle,
+  BookOpen,
+  Trophy,
+  Target,
+  Calendar,
+} from "lucide-react";
 
 interface UserStats {
   totalSessions: number;
@@ -37,12 +44,12 @@ export default function Dashboard() {
         subjectsLearned: realStats.subjectsLearned,
         sessionsToday: realStats.sessionsToday,
         subjects: realStats.subjects,
-        favoriteSubject: realStats.subjects[0] || 'عام'
+        favoriteSubject: realStats.subjects[0] || "عام",
       };
 
       setStats(stats);
     } catch (error) {
-      console.error('Error loading user stats:', error);
+      console.error("Error loading user stats:", error);
     } finally {
       setIsLoading(false);
     }
@@ -66,7 +73,7 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col" dir="rtl">
       <Navigation />
-      
+
       <main className="flex-1 bg-neutral-50" dir="rtl">
         <div className="max-w-6xl mx-auto px-6 py-8">
           {/* Header */}
@@ -88,7 +95,9 @@ export default function Dashboard() {
                   <MessageCircle className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-neutral-900">{stats?.totalSessions}</p>
+                  <p className="text-2xl font-bold text-neutral-900">
+                    {stats?.totalSessions}
+                  </p>
                   <p className="text-neutral-600 text-sm">جلسة تعلم</p>
                 </div>
               </div>
@@ -101,7 +110,9 @@ export default function Dashboard() {
                   <BarChart3 className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-neutral-900">{stats?.totalMessages}</p>
+                  <p className="text-2xl font-bold text-neutral-900">
+                    {stats?.totalMessages}
+                  </p>
                   <p className="text-neutral-600 text-sm">رسالة</p>
                 </div>
               </div>
@@ -114,7 +125,9 @@ export default function Dashboard() {
                   <BookOpen className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-neutral-900">{stats?.subjectsLearned.length}</p>
+                  <p className="text-2xl font-bold text-neutral-900">
+                    {stats?.subjectsLearned.length}
+                  </p>
                   <p className="text-neutral-600 text-sm">مادة دراسية</p>
                 </div>
               </div>
@@ -127,7 +140,9 @@ export default function Dashboard() {
                   <Trophy className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-neutral-900">{stats?.streakDays}</p>
+                  <p className="text-2xl font-bold text-neutral-900">
+                    {stats?.streakDays}
+                  </p>
                   <p className="text-neutral-600 text-sm">يوم متتالي</p>
                 </div>
               </div>
@@ -144,8 +159,13 @@ export default function Dashboard() {
               </h3>
               <div className="space-y-3">
                 {stats?.subjectsLearned.map((subject, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl">
-                    <span className="font-medium text-neutral-700">{subject}</span>
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
+                  >
+                    <span className="font-medium text-neutral-700">
+                      {subject}
+                    </span>
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-primary rounded-full"></div>
                       <span className="text-sm text-neutral-500">نشط</span>
@@ -191,13 +211,13 @@ export default function Dashboard() {
           <div className="text-center">
             <div className="inline-flex gap-4">
               <button
-                onClick={() => window.location.href = '/chat'}
+                onClick={() => (window.location.href = "/chat")}
                 className="bg-primary text-white px-8 py-3 rounded-xl hover:bg-primary/90 transition-colors font-medium text-lg"
               >
                 ابدأ جلسة جديدة
               </button>
               <button
-                onClick={() => window.location.href = '/history'}
+                onClick={() => (window.location.href = "/history")}
                 className="bg-white text-primary border-2 border-primary px-8 py-3 rounded-xl hover:bg-primary/5 transition-colors font-medium text-lg"
               >
                 عرض المحادثات

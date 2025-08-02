@@ -1,38 +1,44 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Navigation from '../components/Navigation';
-import Footer from '../components/Footer';
-import { useAuth } from '../lib/auth-context';
-import { ChatHistoryService, ChatSession } from '../lib/chat-history';
-import { Clock, MessageCircle, BookOpen, Calculator, Atom, PenTool, Trash2 } from 'lucide-react';
-
-
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
+import { useAuth } from "../lib/auth-context";
+import { ChatHistoryService, ChatSession } from "../lib/chat-history";
+import {
+  Clock,
+  MessageCircle,
+  BookOpen,
+  Calculator,
+  Atom,
+  PenTool,
+  Trash2,
+} from "lucide-react";
 
 const subjectIcons = {
-  'رياضيات': Calculator,
-  'علوم': Atom,
-  'فيزياء': Atom,
-  'كيمياء': Atom,
-  'أحياء': Atom,
-  'لغة عربية': PenTool,
-  'اجتماعيات': BookOpen,
-  'لغة إنجليزية': PenTool,
-  'دراسات إسلامية': BookOpen,
-  'عام': MessageCircle,
-  'عام': BookOpen,
+  رياضيات: Calculator,
+  علوم: Atom,
+  فيزياء: Atom,
+  كيمياء: Atom,
+  أحياء: Atom,
+  "لغة عربية": PenTool,
+  اجتماعيات: BookOpen,
+  "لغة إنجليزية": PenTool,
+  "دراسات إسلامية": BookOpen,
+  عام: MessageCircle,
+  عام: BookOpen,
 };
 
 const subjectColors: Record<string, string> = {
-  'رياضيات': 'bg-blue-100 text-blue-700',
-  'علوم': 'bg-green-100 text-green-700',
-  'فيزياء': 'bg-green-100 text-green-700',
-  'كيمياء': 'bg-green-100 text-green-700',
-  'أحياء': 'bg-green-100 text-green-700',
-  'لغة عربية': 'bg-purple-100 text-purple-700',
-  'اجتماعيات': 'bg-orange-100 text-orange-700',
-  'لغة إنجليزية': 'bg-indigo-100 text-indigo-700',
-  'دراسات إسلامية': 'bg-teal-100 text-teal-700',
-  'عام': 'bg-gray-100 text-gray-700',
+  رياضيات: "bg-blue-100 text-blue-700",
+  علوم: "bg-green-100 text-green-700",
+  فيزياء: "bg-green-100 text-green-700",
+  كيمياء: "bg-green-100 text-green-700",
+  أحياء: "bg-green-100 text-green-700",
+  "لغة عربية": "bg-purple-100 text-purple-700",
+  اجتماعيات: "bg-orange-100 text-orange-700",
+  "لغة إنجليزية": "bg-indigo-100 text-indigo-700",
+  "دراسات إسلامية": "bg-teal-100 text-teal-700",
+  عام: "bg-gray-100 text-gray-700",
 };
 
 export default function History() {
@@ -53,7 +59,7 @@ export default function History() {
       const realSessions = ChatHistoryService.getSessions();
       setSessions(realSessions);
     } catch (error) {
-      console.error('Error loading chat history:', error);
+      console.error("Error loading chat history:", error);
     } finally {
       setIsLoading(false);
     }
@@ -75,13 +81,11 @@ export default function History() {
     const diffTime = Math.abs(now.getTime() - date.getTime());
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) return 'اليوم';
-    if (diffDays === 2) return 'أمس';
+    if (diffDays === 1) return "اليوم";
+    if (diffDays === 2) return "أمس";
     if (diffDays <= 7) return `منذ ${diffDays} أيام`;
-    return date.toLocaleDateString('ar-SA');
+    return date.toLocaleDateString("ar-SA");
   };
-
-
 
   if (isLoading) {
     return (
@@ -101,7 +105,7 @@ export default function History() {
   return (
     <div className="min-h-screen flex flex-col" dir="rtl">
       <Navigation />
-      
+
       <main className="flex-1 bg-neutral-50" dir="rtl">
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Header */}
@@ -125,7 +129,7 @@ export default function History() {
                 ابدأ محادثة جديدة مع دراسة لتعلم شيء جديد!
               </p>
               <button
-                onClick={() => navigate('/chat')}
+                onClick={() => navigate("/chat")}
                 className="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors font-medium"
               >
                 ابدأ محادثة جديدة
@@ -134,8 +138,14 @@ export default function History() {
           ) : (
             <div className="space-y-4">
               {sessions.map((session) => {
-                const SubjectIcon = subjectIcons[session.subject_area as keyof typeof subjectIcons] || BookOpen;
-                const subjectColor = subjectColors[session.subject_area as keyof typeof subjectColors] || subjectColors['عام'];
+                const SubjectIcon =
+                  subjectIcons[
+                    session.subject_area as keyof typeof subjectIcons
+                  ] || BookOpen;
+                const subjectColor =
+                  subjectColors[
+                    session.subject_area as keyof typeof subjectColors
+                  ] || subjectColors["عام"];
 
                 return (
                   <div
@@ -155,7 +165,7 @@ export default function History() {
                           <h3 className="font-semibold text-neutral-900 mb-1 truncate">
                             {session.title}
                           </h3>
-                          
+
                           <p className="text-neutral-600 text-sm mb-3 line-clamp-2">
                             {session.last_message_preview}
                           </p>
@@ -175,8 +185,16 @@ export default function History() {
 
                       {/* Continue indicator */}
                       <div className="text-primary mr-4">
-                        <svg className="w-5 h-5 transform rotate-180" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                        <svg
+                          className="w-5 h-5 transform rotate-180"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </div>
                     </div>
@@ -189,7 +207,7 @@ export default function History() {
           {/* New Chat Button */}
           <div className="mt-8 text-center">
             <button
-              onClick={() => navigate('/chat')}
+              onClick={() => navigate("/chat")}
               className="bg-primary text-white px-8 py-3 rounded-xl hover:bg-primary/90 transition-colors font-medium text-lg"
             >
               + محادثة جديدة

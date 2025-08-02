@@ -188,9 +188,9 @@ async function initializeDatabase() {
       )
     `;
 
-    console.log('✅ Database tables initialized');
+    console.log("✅ Database tables initialized");
   } catch (error) {
-    console.log('Database initialization:', error.message);
+    console.log("Database initialization:", error.message);
   }
 }
 
@@ -241,8 +241,8 @@ export const handler: Handler = async (event, context) => {
       content: aiResponse,
       isComplete: true,
       messageId: Date.now().toString(),
-      sessionId: sessionId || 'temp-session',
-      userId: userId || 'temp-user',
+      sessionId: sessionId || "temp-session",
+      userId: userId || "temp-user",
     };
 
     return {

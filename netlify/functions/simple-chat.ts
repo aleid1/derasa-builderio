@@ -1,5 +1,5 @@
-import { Handler } from '@netlify/functions';
-import OpenAI from 'openai';
+import { Handler } from "@netlify/functions";
+import OpenAI from "openai";
 
 const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التعلم.
 
@@ -36,37 +36,37 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبو
 export const handler: Handler = async (event, context) => {
   // CORS headers
   const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json',
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
-  if (event.httpMethod === 'OPTIONS') {
+  if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
       headers,
-      body: '',
+      body: "",
     };
   }
 
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
       headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' }),
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
-    const { message, sessionId, userId } = JSON.parse(event.body || '{}');
+    const { message, sessionId, userId } = JSON.parse(event.body || "{}");
 
     if (!message) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: 'Message is required' }),
+        body: JSON.stringify({ error: "Message is required" }),
       };
     }
 
@@ -76,52 +76,60 @@ export const handler: Handler = async (event, context) => {
     });
 
     // Check if OpenAI API key is available
-    if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('placeholder')) {
+    if (
+      !process.env.OPENAI_API_KEY ||
+      process.env.OPENAI_API_KEY.includes("placeholder")
+    ) {
       // Fallback to mock responses if no API key
       const fallbackResponses = [
-        'ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟',
-        'سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟',
-        'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟'
+        "ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟",
+        "سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟",
+        "أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟",
       ];
 
-      const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+      const randomResponse =
+        fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
       return {
         statusCode: 200,
         headers,
         body: JSON.stringify({
-          content: randomResponse + '\n\n*ملاحظة: يتم استخدام ردود تجريبية حالياً. لتفعيل الذكاء الاصطناعي الكامل، يرجى إضافة مفتاح OpenAI API.*',
+          content:
+            randomResponse +
+            "\n\n*ملاحظة: يتم استخدام ردود تجريبية حالياً. لتفعيل الذكاء الاصطناعي الكامل، يرجى إضافة مفتاح OpenAI API.*",
           isComplete: true,
           messageId: Date.now().toString(),
-          sessionId: sessionId || 'demo-session',
-          userId: userId || 'demo-user',
+          sessionId: sessionId || "demo-session",
+          userId: userId || "demo-user",
         }),
       };
     }
 
     // Make API call to OpenAI
     const completion = await openai.chat.completions.create({
-      model: process.env.AI_MODEL || 'gpt-4o-mini',
+      model: process.env.AI_MODEL || "gpt-4o-mini",
       messages: [
         {
-          role: 'system',
-          content: ARABIC_TUTOR_SYSTEM_PROMPT
+          role: "system",
+          content: ARABIC_TUTOR_SYSTEM_PROMPT,
         },
         {
-          role: 'user',
-          content: message
-        }
+          role: "user",
+          content: message,
+        },
       ],
       max_tokens: 500,
       temperature: 0.7,
     });
 
     const responseData = {
-      content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
+      content:
+        completion.choices[0]?.message?.content ||
+        "عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟",
       isComplete: true,
       messageId: Date.now().toString(),
-      sessionId: sessionId || 'session-' + Date.now(),
-      userId: userId || 'user-' + Date.now(),
+      sessionId: sessionId || "session-" + Date.now(),
+      userId: userId || "user-" + Date.now(),
     };
 
     return {
@@ -129,16 +137,15 @@ export const handler: Handler = async (event, context) => {
       headers,
       body: JSON.stringify(responseData),
     };
-
   } catch (error) {
-    console.error('Chat API error:', error);
-    
+    console.error("Chat API error:", error);
+
     return {
       statusCode: 500,
       headers,
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        message: 'عذراً، حدث خطأ في النظام. يرجى المحاولة لاحقاً.'
+      body: JSON.stringify({
+        error: "Internal server error",
+        message: "عذراً، حدث خطأ في النظام. يرجى المحاولة لاحقاً.",
       }),
     };
   }
