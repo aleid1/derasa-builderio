@@ -38,9 +38,21 @@ class ChatService {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Chat API error:', response.status, errorText);
-      throw new Error(`Failed to send message: ${response.status} ${errorText}`);
+      console.error('Chat API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
+      });
+
+      let errorText = '';
+      try {
+        errorText = await response.text();
+        console.error('Error details:', errorText);
+      } catch (e) {
+        console.error('Could not read error response');
+      }
+
+      throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
 
     // For now, handle as JSON response (will be upgraded to streaming later)
