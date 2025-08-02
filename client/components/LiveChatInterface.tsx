@@ -5,6 +5,7 @@ import { ChatMessage, StreamingResponse } from "../lib/chat-types";
 import { chatService } from "../lib/chat-service";
 import { ChatHistoryService } from "../lib/chat-history";
 import { useAuth } from "../lib/auth-context";
+import TypingIndicator from "./TypingIndicator";
 
 interface LiveChatInterfaceProps {
   sessionId?: string;
@@ -200,30 +201,55 @@ export default function LiveChatInterface({
           </div>
         )}
 
+        {/* Show typing indicator when loading */}
+        {isLoading && <TypingIndicator />}
+
         {messages.map((message) => (
           <div
             key={message.id}
-            className={`flex ${message.role === "user" ? "justify-start" : "justify-end"}`}
+            className={`flex ${message.role === "user" ? "justify-start" : "justify-end"} mb-4`}
           >
-            <div
-              className={`max-w-[80%] p-4 rounded-2xl ${
-                message.role === "user"
-                  ? "bg-primary text-white"
-                  : "bg-neutral-100 text-neutral-900"
-              }`}
-            >
-              <p className="text-sm md:text-base leading-relaxed">
-                {message.content}
-              </p>
-              {message.isStreaming && (
-                <div className="flex items-center mt-2">
-                  <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-current rounded-full animate-pulse"></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-pulse delay-75"></div>
-                    <div className="w-2 h-2 bg-current rounded-full animate-pulse delay-150"></div>
-                  </div>
+            <div className={`flex items-start gap-3 max-w-[80%] ${
+              message.role === "user" ? "flex-row-reverse" : "flex-row"
+            }`}>
+              {/* Avatar */}
+              {message.role === "assistant" && (
+                <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-sm font-bold">د</span>
                 </div>
               )}
+              {message.role === "user" && (
+                <div className="w-8 h-8 bg-gradient-to-br from-neutral-400 to-neutral-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-sm font-bold">أ</span>
+                </div>
+              )}
+
+              {/* Message bubble */}
+              <div
+                className={`p-4 rounded-2xl shadow-sm ${
+                  message.role === "user"
+                    ? "bg-primary text-white rounded-br-md"
+                    : "bg-white border border-neutral-200 text-neutral-900 rounded-bl-md"
+                }`}
+              >
+                <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
+                  {message.content}
+                </p>
+                {message.isStreaming && (
+                  <div className="flex items-center mt-2">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Timestamp */}
+                <div className="text-xs opacity-60 mt-2">
+                  {message.timestamp.toLocaleTimeString('ar-SA', { hour: '2-digit', minute: '2-digit' })}
+                </div>
+              </div>
             </div>
           </div>
         ))}
