@@ -18,10 +18,7 @@
   to = "/.netlify/functions/chat"
   status = 200
 
-[[redirects]]
-  from = "/.netlify/functions/simple-chat"
-  to = "/.netlify/functions/simple-chat"
-  status = 200
+
 
 [[redirects]]
   from = "/*"
