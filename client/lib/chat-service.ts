@@ -11,7 +11,7 @@ const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". ت�
 - تأكد من فهم الطالب قبل الانتقال للخطوة التالية
 
 مثال على أسلوبك:
-الطالب: "كيف أحل هذه المسألة الرياضية؟"
+الطالب: "كيف أحل هذ�� المسألة الرياضية؟"
 أنت: "ممتاز! لنبدأ معاً. أولاً، ما نوع هذه المسألة؟ هل هي جمع، طرح، أم شيء آخر؟"`;
 
 class ChatService {
@@ -33,12 +33,14 @@ class ChatService {
       body: JSON.stringify({
         message,
         sessionId,
-        systemPrompt: TUTOR_SYSTEM_PROMPT,
+        userId: null, // Will be handled by the API
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Failed to send message");
+      const errorText = await response.text();
+      console.error('Chat API error:', response.status, errorText);
+      throw new Error(`Failed to send message: ${response.status} ${errorText}`);
     }
 
     // For now, handle as JSON response (will be upgraded to streaming later)
