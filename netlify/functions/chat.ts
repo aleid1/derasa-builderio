@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { dbService } from "./db-service.js";
+import { dbService } from "./db-service";
 import { neon } from "@netlify/neon";
 
 const sql = neon();
@@ -98,7 +98,7 @@ function detectSubjectArea(message: string): string | null {
     messageWords.includes("رياض") ||
     messageWords.includes("حساب") ||
     messageWords.includes("جبر") ||
-    messageWords.includes("هندسة")
+    messageWords.includes("هن��سة")
   ) {
     return "رياضيات";
   } else if (
@@ -200,7 +200,7 @@ export const handler: Handler = async (event, context) => {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Content-Type": "text/plain; charset=utf-8",
+    "Content-Type": "application/json",
   };
 
   // Handle preflight requests
@@ -216,13 +216,13 @@ export const handler: Handler = async (event, context) => {
     return {
       statusCode: 405,
       headers,
-      body: "Method Not Allowed",
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
-    // Initialize database tables on first run
-    await initializeDatabase();
+    // For now, skip database initialization to get basic functionality working
+    // await initializeDatabase();
 
     const { message, sessionId, userId } = JSON.parse(event.body || "{}");
 
@@ -234,57 +234,15 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
-    // Get or create user (for now, create guest if no userId provided)
-    let user;
-    if (userId) {
-      user = await dbService.getUserById(userId);
-      if (!user) {
-        user = await dbService.createGuestUser();
-      }
-    } else {
-      user = await dbService.createGuestUser();
-    }
-
-    // Get or create chat session
-    let session;
-    if (sessionId) {
-      session = await dbService.getChatSession(sessionId);
-      if (!session) {
-        session = await dbService.createChatSession(user.id);
-      }
-    } else {
-      session = await dbService.createChatSession(user.id);
-    }
-
-    // Save user message to database
-    const userMessage = await dbService.addChatMessage(
-      session.id,
-      message,
-      "user",
-    );
-
-    // Generate AI response
+    // For basic MVP functionality, just generate AI response without database
     const aiResponse = await generateAIResponse(message);
-
-    // Save AI response to database
-    const assistantMessage = await dbService.addChatMessage(
-      session.id,
-      aiResponse,
-      "assistant",
-    );
-
-    // Analyze subject area from message for progress tracking
-    const subjectArea = detectSubjectArea(message);
-    if (subjectArea) {
-      await dbService.updateUserProgress(user.id, subjectArea, "general");
-    }
 
     const streamingData = {
       content: aiResponse,
       isComplete: true,
-      messageId: assistantMessage.id,
-      sessionId: session.id,
-      userId: user.id,
+      messageId: Date.now().toString(),
+      sessionId: sessionId || 'temp-session',
+      userId: userId || 'temp-user',
     };
 
     return {
