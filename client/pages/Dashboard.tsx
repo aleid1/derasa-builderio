@@ -158,20 +158,28 @@ export default function Dashboard() {
                 المواد التي تدرسها
               </h3>
               <div className="space-y-3">
-                {stats?.subjectsLearned.map((subject, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
-                  >
-                    <span className="font-medium text-neutral-700">
-                      {subject}
-                    </span>
-                    <div className="flex items-center gap-2">
-                      <div className="w-2 h-2 bg-primary rounded-full"></div>
-                      <span className="text-sm text-neutral-500">نشط</span>
+                {stats?.subjects && stats.subjects.length > 0 ? (
+                  stats.subjects.map((subject, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-neutral-50 rounded-xl"
+                    >
+                      <span className="font-medium text-neutral-700">
+                        {subject}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-primary rounded-full"></div>
+                        <span className="text-sm text-neutral-500">نشط</span>
+                      </div>
                     </div>
+                  ))
+                ) : (
+                  <div className="text-center py-8">
+                    <BookOpen className="w-12 h-12 text-neutral-300 mx-auto mb-2" />
+                    <p className="text-neutral-500">لم تبدأ في دراسة أي موضوع بعد</p>
+                    <p className="text-sm text-neutral-400">ابدأ محادثة جديدة لتعلم شيء جديد!</p>
                   </div>
-                ))}
+                )}
               </div>
             </div>
 
