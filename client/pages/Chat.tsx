@@ -9,8 +9,7 @@ export default function Chat() {
 
       <main className="flex-1 bg-neutral-50" dir="rtl">
         <div className="max-w-6xl mx-auto px-6 py-8">
-          <ApiTest />
-          <div className="h-[calc(100vh-12rem)] mt-4">
+          <div className="h-[calc(100vh-12rem)]">
             <LiveChatInterface />
           </div>
         </div>
