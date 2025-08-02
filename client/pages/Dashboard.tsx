@@ -2,14 +2,15 @@ import { useState, useEffect } from 'react';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useAuth } from '../lib/auth-context';
+import { ChatHistoryService } from '../lib/chat-history';
 import { BarChart3, MessageCircle, BookOpen, Trophy, Target, Calendar } from 'lucide-react';
 
 interface UserStats {
   totalSessions: number;
   totalMessages: number;
-  subjectsLearned: string[];
-  streakDays: number;
-  lastActiveDate: string;
+  subjectsLearned: number;
+  sessionsToday: number;
+  subjects: string[];
   favoriteSubject: string;
 }
 
