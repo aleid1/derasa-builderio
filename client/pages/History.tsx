@@ -81,9 +81,7 @@ export default function History() {
     return date.toLocaleDateString('ar-SA');
   };
 
-  const handleSessionClick = (sessionId: string) => {
-    navigate('/chat', { state: { sessionId } });
-  };
+
 
   if (isLoading) {
     return (
