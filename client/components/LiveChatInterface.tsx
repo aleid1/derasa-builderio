@@ -136,8 +136,8 @@ export default function LiveChatInterface({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);
-    inputRef.current?.focus();
+    // Directly send the suggestion as a message
+    handleSendMessage(suggestion);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -183,7 +183,7 @@ export default function LiveChatInterface({
               مرحباً بك!
             </h3>
             <p className="text-neutral-500 mb-6">
-              أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
+              أنا دراسة، معلمك الذكي. سأساعدك في التعل�� خطوة بخطوة.
             </p>
 
             {/* Suggestions */}
