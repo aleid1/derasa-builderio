@@ -187,12 +187,12 @@ export default function LiveChatInterface({
             </p>
 
             {/* Suggestions */}
-            <div className="flex flex-wrap gap-2 justify-center max-w-md mx-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto px-4">
               {suggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   onClick={() => handleSuggestionClick(suggestion)}
-                  className="px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 text-neutral-700 rounded-xl text-sm transition-all duration-300 hover:scale-105 hover:shadow-md border-2 border-transparent hover:border-primary/20 transform-gpu"
+                  className="px-3 py-2 md:px-4 md:py-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 text-neutral-700 rounded-xl text-xs md:text-sm transition-all duration-300 hover:scale-105 hover:shadow-md border-2 border-transparent hover:border-primary/20 transform-gpu text-center"
                 >
                   {suggestion}
                 </button>
