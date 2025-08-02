@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import OpenAI from "openai";
 
 export function createServer() {
   const app = express();
@@ -33,7 +34,7 @@ export function createServer() {
         "ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟",
         "سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟",
         "أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟",
-        "لنحلل هذا السؤال معاً. ما هو أول شيء تلاحظه في هذه المسألة؟",
+        "لنحلل هذا السؤال معاً. ما هو أول شيء ت��احظه في هذه المسألة؟",
         "فكرة ممتازة! الآن، ما رأيك لو جربنا طريقة أخرى؟",
       ];
 
