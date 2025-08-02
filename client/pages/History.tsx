@@ -3,21 +3,22 @@ import { useNavigate } from 'react-router-dom';
 import Navigation from '../components/Navigation';
 import Footer from '../components/Footer';
 import { useAuth } from '../lib/auth-context';
-import { Clock, MessageCircle, BookOpen, Calculator, Atom, PenTool } from 'lucide-react';
+import { ChatHistoryService, ChatSession } from '../lib/chat-history';
+import { Clock, MessageCircle, BookOpen, Calculator, Atom, PenTool, Trash2 } from 'lucide-react';
 
-interface ChatSession {
-  id: string;
-  title: string;
-  subject_area?: string;
-  created_at: string;
-  message_count: number;
-  last_message_preview: string;
-}
+
 
 const subjectIcons = {
   'رياضيات': Calculator,
   'علوم': Atom,
+  'فيزياء': Atom,
+  'كيمياء': Atom,
+  'أحياء': Atom,
   'لغة عربية': PenTool,
+  'اجتماعيات': BookOpen,
+  'لغة إنجليزية': PenTool,
+  'دراسات إسلامية': BookOpen,
+  'عام': MessageCircle,
   'عام': BookOpen,
 };
 
@@ -121,7 +122,7 @@ export default function History() {
               📚 محادثاتي
             </h1>
             <p className="text-neutral-600 text-lg">
-              مراجعة جلسات التعلم والمحادثات السابقة مع دراسة
+              مر��جعة جلسات التعلم والمحادثات السابقة مع دراسة
             </p>
           </div>
 
