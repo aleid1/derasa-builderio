@@ -1,7 +1,7 @@
 import { ChatMessage, AIResponse, StreamingResponse } from "./chat-types";
 
 // Configuration for AI tutoring behavior
-const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". تخصصك هو التوجيه التدريجي للطلاب العرب والسعوديين.
+const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". تخصصك هو التوجيه التدريجي للطلاب ال��رب والسعوديين.
 
 المبادئ الأساسية:
 - لا تعطي الإجابة مباشرة، بل ادل الطالب خطوة بخطوة
@@ -18,7 +18,7 @@ class ChatService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = "/.netlify/functions/simple-chat";
+    this.baseUrl = "/simple-chat";
   }
 
   async sendMessage(
