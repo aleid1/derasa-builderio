@@ -59,6 +59,16 @@ export default function History() {
     }
   };
 
+  const handleSessionClick = (sessionId: string) => {
+    navigate(`/chat?sessionId=${sessionId}`);
+  };
+
+  const handleDeleteSession = (sessionId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when deleting
+    ChatHistoryService.deleteSession(sessionId);
+    loadChatHistory(); // Reload the list
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
