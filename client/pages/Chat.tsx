@@ -1,7 +1,6 @@
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import LiveChatInterface from "../components/LiveChatInterface";
-import ApiTest from "../components/ApiTest";
 
 export default function Chat() {
   return (
