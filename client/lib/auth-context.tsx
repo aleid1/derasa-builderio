@@ -33,8 +33,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  console.log('AuthProvider rendering, user:', user);
-
   useEffect(() => {
     // Check for existing session on app load
     checkExistingSession();
