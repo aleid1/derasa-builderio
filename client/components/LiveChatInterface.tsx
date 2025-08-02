@@ -58,6 +58,15 @@ export default function LiveChatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Don't render until auth is loaded
+  if (authLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   const handleSendMessage = async (content: string) => {
     if (!content.trim() || isLoading) return;
 
