@@ -37,7 +37,7 @@ export function createServer() {
           'سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟',
           'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟',
           'لنحلل هذا السؤال معاً. ما هو أول شيء تلاحظه؟',
-          'فكرة مم��ازة! الآن، ما رأيك لو جربنا طريقة أخرى؟'
+          'فكرة ممتازة! الآن، ما رأيك لو جربنا طريقة أخرى؟'
         ];
 
         const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
@@ -89,32 +89,53 @@ export function createServer() {
 
 تذكر: هدفك ليس إعطاء الإجابات، بل تنمية قدرة الطالب على التفكير والوصول للإجابات بنفسه.`;
 
-      // Make API call to OpenAI
-      const completion = await openai.chat.completions.create({
-        model: process.env.AI_MODEL || 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: ARABIC_TUTOR_SYSTEM_PROMPT
-          },
-          {
-            role: 'user',
-            content: message
-          }
-        ],
-        max_tokens: 500,
-        temperature: 0.7,
-      });
+      // Make API call to OpenAI with error handling
+      try {
+        const completion = await openai.chat.completions.create({
+          model: process.env.AI_MODEL || 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: ARABIC_TUTOR_SYSTEM_PROMPT
+            },
+            {
+              role: 'user',
+              content: message
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        });
 
-      const responseData = {
-        content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
-        isComplete: true,
-        messageId: Date.now().toString(),
-        sessionId: sessionId || 'session-' + Date.now(),
-        userId: userId || 'user-' + Date.now(),
-      };
+        const responseData = {
+          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
+          isComplete: true,
+          messageId: Date.now().toString(),
+          sessionId: sessionId || 'session-' + Date.now(),
+          userId: userId || 'user-' + Date.now(),
+        };
 
-      res.json(responseData);
+        res.json(responseData);
+      } catch (openaiError) {
+        console.error("OpenAI API error:", openaiError);
+
+        // Fallback to mock response if OpenAI fails
+        const fallbackResponses = [
+          'ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟',
+          'سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟',
+          'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟'
+        ];
+
+        const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+
+        res.json({
+          content: randomResponse + '\n\n*ملاحظة: حدث خطأ في الاتصال بخدمة الذكاء الاصطناعي. يتم استخدام ردود تجريبية.*',
+          isComplete: true,
+          messageId: Date.now().toString(),
+          sessionId: sessionId || 'session-' + Date.now(),
+          userId: userId || 'user-' + Date.now(),
+        });
+      }
     } catch (error) {
       console.error("Local chat error:", error);
       res.status(500).json({
