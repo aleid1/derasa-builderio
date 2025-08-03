@@ -18,12 +18,17 @@ export default function Navigation() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const navItems = [
+  const allNavItems = [
     { path: "/", label: "الرئيسية" },
     { path: "/chat", label: "المحادثة" },
-    { path: "/history", label: "المحادثات" },
-    { path: "/dashboard", label: "لوحتي" },
+    { path: "/history", label: "المحادثات", authRequired: true },
+    { path: "/dashboard", label: "لوحتي", authRequired: true },
   ];
+
+  // Filter nav items based on authentication status
+  const navItems = allNavItems.filter(item =>
+    !item.authRequired || isAuthenticated
+  );
 
   return (
     <nav
