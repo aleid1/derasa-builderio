@@ -26,7 +26,8 @@ interface UserStats {
 export default function Dashboard() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadUserStats();
@@ -81,7 +82,7 @@ export default function Dashboard() {
           {/* Header */}
           <div className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold text-neutral-900 mb-2">
-              مرحباً، {user?.name}! 👋
+              مرحب��ً، {user?.name}! 👋
             </h1>
             <p className="text-neutral-600 text-lg">
               تابع تقدمك في التعلم مع دراسة
