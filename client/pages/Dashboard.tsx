@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { useAuth } from "../lib/auth-context";
@@ -10,6 +11,7 @@ import {
   Trophy,
   Target,
   Calendar,
+  Lock,
 } from "lucide-react";
 
 interface UserStats {
