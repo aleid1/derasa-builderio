@@ -1,18 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { useAuth } from "../lib/auth-context";
-import { ChatHistoryService, ChatSession } from "../lib/chat-history";
-import {
-  Clock,
-  MessageCircle,
-  BookOpen,
-  Calculator,
-  Atom,
-  PenTool,
-  Trash2,
-} from "lucide-react";
+import { MessageCircle } from "lucide-react";
 
 const subjectIcons = {
   رياضيات: Calculator,
@@ -35,7 +26,7 @@ const subjectColors: Record<string, string> = {
   كيمياء: "bg-green-100 text-green-700",
   أحياء: "bg-green-100 text-green-700",
   "لغة عربية": "bg-purple-100 text-purple-700",
-  اجتماعيات: "bg-orange-100 text-orange-700",
+  اجت��اعيات: "bg-orange-100 text-orange-700",
   "لغة إنجليزية": "bg-indigo-100 text-indigo-700",
   "دراسات إسلامية": "bg-teal-100 text-teal-700",
   عام: "bg-gray-100 text-gray-700",
