@@ -51,7 +51,17 @@ class ChatService {
         errorText = await response.text();
         console.error("Error details:", errorText);
 
-        // Provide more specific error messages
+        // Try to parse error details from server
+        try {
+          const errorData = JSON.parse(errorText);
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+        } catch (parseError) {
+          console.log('Could not parse error response as JSON');
+        }
+
+        // Provide more specific error messages based on status
         if (response.status === 429) {
           errorMessage =
             "لقد تجاوزت الحد المسموح من الرسائل. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.";
@@ -62,7 +72,7 @@ class ChatService {
             "عذراً، الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.";
         }
       } catch (e) {
-        console.error("Could not read error response");
+        console.error("Could not read error response:", e);
       }
 
       throw new Error(errorMessage);
@@ -85,7 +95,7 @@ class ChatService {
       "أريد تعلم الرياضيات",
       "ساعدني في العلوم",
       "أشرح لي قواعد اللغة العربية",
-      "كيف أحل المسائل خطوة بخطوة؟",
+      "كيف أحل المسائل خ��وة بخطوة؟",
       "ما هي أفضل طريقة للمذاكرة؟",
       "أريد فهم الفيزياء بطريقة سهلة",
     ];
