@@ -30,12 +30,14 @@ export function createServer() {
       }
 
       // Check if OpenAI API key is available
-      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('placeholder')) {
+      if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('placeholder') || process.env.OPENAI_API_KEY.includes('your-actual-openai-api-key-here')) {
         // Fallback to mock responses if no API key
         const fallbackResponses = [
           'ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟',
           'سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟',
-          'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟'
+          'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟',
+          'لنحلل هذا السؤال معاً. ما هو أول شيء تلاحظه؟',
+          'فكرة مم��ازة! الآن، ما رأيك لو جربنا طريقة أخرى؟'
         ];
 
         const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
