@@ -58,7 +58,49 @@ export default function Dashboard() {
     }
   };
 
-  if (isLoading) {
+  // Show guest access restriction
+  if (!authLoading && !isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col" dir="rtl">
+        <Navigation />
+
+        <main className="flex-1 bg-neutral-50" dir="rtl">
+          <div className="max-w-4xl mx-auto px-6 py-16">
+            <div className="text-center">
+              <Lock className="w-16 h-16 text-neutral-300 mx-auto mb-4" />
+              <h1 className="text-2xl font-bold text-neutral-900 mb-4">
+                تسجيل الدخول مطلوب
+              </h1>
+              <p className="text-neutral-600 mb-8 max-w-md mx-auto">
+                يجب تسجيل الدخول لمشاهدة لوحة التحكم والإحصائيات الخاصة بك.
+              </p>
+
+              <div className="space-y-4">
+                <button
+                  onClick={() => navigate('/chat')}
+                  className="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors font-medium"
+                >
+                  ابدأ محادثة جديدة
+                </button>
+                <div>
+                  <button
+                    onClick={() => navigate('/')}
+                    className="text-neutral-500 hover:text-neutral-700 transition-colors"
+                  >
+                    العودة للرئيسية
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        <Footer />
+      </div>
+    );
+  }
+
+  if (isLoading || authLoading) {
     return (
       <div className="min-h-screen flex flex-col" dir="rtl">
         <Navigation />
