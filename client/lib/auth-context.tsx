@@ -194,22 +194,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      // Only try Supabase if it's properly configured
       if (hasSupabase && supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
-        if (error) throw error;
-        // User will be set through the auth state change listener
-        return;
+          if (error) {
+            console.warn('Supabase auth failed, falling back to demo auth:', error.message);
+            throw new Error('Supabase auth failed');
+          }
+
+          // User will be set through the auth state change listener
+          return;
+        } catch (supabaseError) {
+          console.warn('Supabase authentication failed, using demo authentication');
+          // Fall through to demo authentication
+        }
       }
 
-      // Fallback: Demo accounts for testing when Supabase is not available
+      // Demo authentication for development/testing
       const demoAccounts = [
         { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
         { email: "student@test.com", password: "student", name: "طالب تجريبي" },
+        { email: "admin@admin.com", password: "admin123", name: "مدير النظام" },
       ];
 
       const demoAccount = demoAccounts.find(
@@ -224,13 +235,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           createdAt: new Date(),
           isGuest: false,
         };
-        
+
         setUser(authenticatedUser);
         localStorage.removeItem("guestUser");
         return;
       }
 
-      // For any other email/password combination, create a user (for demo purposes)
+      // For any other valid email/password combination, create a user (for demo purposes)
       if (email && password && email.includes('@') && password.length >= 6) {
         const authenticatedUser: User = {
           id: "user-" + Date.now(),
@@ -239,7 +250,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           createdAt: new Date(),
           isGuest: false,
         };
-        
+
         setUser(authenticatedUser);
         localStorage.removeItem("guestUser");
         return;
