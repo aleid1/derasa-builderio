@@ -7,7 +7,7 @@ const TUTOR_SYSTEM_PROMPT = `أنت مُعلم ذكي اسمك "دراسة". ت�
 - لا تعطي الإجابة مباشرة، بل ادل الطالب خطوة بخطوة
 - استخدم أسلوباً محترماً يتماشى مع القيم الإسلامية والثقافة العربية
 - اطرح أسئلة توجيهية تساعد الطالب على التفكير
-- قدم تلميحات وليس حلول مباشرة
+- قدم تلميحات ول��س حلول مباشرة
 - تأكد من فهم الطالب قبل الانتقال للخطوة التالية
 
 مثال على أسلوبك:
@@ -26,6 +26,20 @@ class ChatService {
     sessionId?: string,
     imageBlob?: Blob,
   ): Promise<ReadableStream<StreamingResponse>> {
+    // If we have an image, convert it to base64 and send with the message
+    let imageData = null;
+    if (imageBlob) {
+      const base64 = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = (reader.result as string).split(',')[1];
+          resolve(base64String);
+        };
+        reader.readAsDataURL(imageBlob);
+      });
+      imageData = base64;
+    }
+
     const response = await fetch(this.baseUrl, {
       method: "POST",
       headers: {
@@ -35,6 +49,7 @@ class ChatService {
         message,
         sessionId,
         userId: null, // Will be handled by the API
+        image: imageData,
       }),
     });
 
