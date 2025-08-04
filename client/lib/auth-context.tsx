@@ -178,11 +178,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setHasParentalConsent(true);
       }
 
-      // Update last seen
-      await supabase
-        .from('users')
-        .update({ last_seen_at: new Date().toISOString() })
-        .eq('id', userProfile.id);
+      // Update last seen if Supabase is available
+      if (hasSupabase && supabase) {
+        await supabase
+          .from('users')
+          .update({ last_seen_at: new Date().toISOString() })
+          .eq('id', userProfile.id);
+      }
 
     } catch (error) {
       console.error('Failed to load user profile:', error);
