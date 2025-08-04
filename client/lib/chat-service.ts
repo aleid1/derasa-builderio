@@ -78,13 +78,56 @@ class ChatService {
       throw new Error(errorMessage);
     }
 
-    // For now, handle as JSON response (will be upgraded to streaming later)
-    const data = await response.json();
+    // Handle streaming response for typing effect
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
 
     return new ReadableStream({
-      start(controller) {
-        controller.enqueue(data);
-        controller.close();
+      async start(controller) {
+        if (!reader) {
+          controller.close();
+          return;
+        }
+
+        try {
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+
+            if (done) {
+              break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+
+            // Keep the last incomplete line in buffer
+            buffer = lines.pop() || '';
+
+            // Process complete lines
+            for (const line of lines) {
+              if (line.trim()) {
+                try {
+                  const data = JSON.parse(line);
+                  controller.enqueue(data);
+
+                  if (data.isComplete) {
+                    controller.close();
+                    return;
+                  }
+                } catch (parseError) {
+                  console.warn('Failed to parse streaming chunk:', line);
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Streaming error:', error);
+          controller.error(error);
+        } finally {
+          reader.releaseLock();
+        }
       },
     });
   }
