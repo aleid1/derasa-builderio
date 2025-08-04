@@ -79,6 +79,11 @@ class ChatService {
         errorMessage = "عذراً، هناك مشكلة في طلبك. يرجى المحاولة مرة أخرى.";
       }
 
+      console.error("API request failed:", {
+        status: response.status,
+        statusText: response.statusText,
+        url: response.url
+      });
       console.error("Using error message:", errorMessage);
       throw new Error(errorMessage);
     }
