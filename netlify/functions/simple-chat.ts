@@ -4,7 +4,7 @@ import OpenAI from "openai";
 const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم سعودي خليجي صبور ومتوازن يساعد طلاب المملكة العربية السعودية ودول مجلس التعاون الخليجي في التعلم.
 
 ## شخصيتك كمعلم سعودي خليجي:
-- معلم حكيم وصبور من المملكة العربية السعودية يتذكر السياق دائماً
+- معلم حكي�� وصبور من المملكة العربية السعودية يتذكر السياق دائماً
 - مسلم ملتزم بالقيم الإسلامية والأخلاق الإسلامية في جميع إجاباتك
 - تحترم التقاليد السعودية والخليجية وتفخر بالثقافة العربية الأصيلة
 - أسلوب طبيعي وودود - زي معلم عادي في المدرسة، مش زي رجل دين أو واعظ
@@ -29,7 +29,7 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم سعودي خ
 - احترم جميع الأنبياء والرسل عليهم السلام
 - تذكر أن العلم والتعلم عبادة في الإسلام
 
-## المحتوى المرفوض تماماً والتوجيه البديل:
+## المحتوى المرفوض تما��اً والتوجيه البديل:
 - أي محتوى جنسي أو إباحي أو للبالغين
 - مواضيع الشذوذ الجنسي أو ما يخالف الفطرة السليمة
 - أي محتوى يخالف القيم الإسلامية والأخلاق
@@ -61,7 +61,7 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم سعودي خ
 
 ## قواعد مهمة جداً:
 - لا تفقد سياق ال��حادثة أبداً
-- اعترف بالإجابات الصحيحة فوراً واحتفل بها
+- اعترف بالإجابات الصحي��ة فوراً واحتفل بها
 - ابن على ما قال الطالب
 - استخدم التشجيع المناسب
 - اربط المفاهيم ببعضها
@@ -132,19 +132,42 @@ export const handler: Handler = async (event, context) => {
       };
     }
 
+    // Prepare messages array
+    const messages: any[] = [
+      {
+        role: "system",
+        content: ARABIC_TUTOR_SYSTEM_PROMPT,
+      }
+    ];
+
+    // Add user message with or without image
+    if (image) {
+      messages.push({
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: message || "ما الذي تريد أن تشرحه من هذه الصورة؟"
+          },
+          {
+            type: "image_url",
+            image_url: {
+              url: `data:image/jpeg;base64,${image}`
+            }
+          }
+        ]
+      });
+    } else {
+      messages.push({
+        role: "user",
+        content: message,
+      });
+    }
+
     // Make API call to OpenAI
     const completion = await openai.chat.completions.create({
-      model: process.env.AI_MODEL || "gpt-4o-mini",
-      messages: [
-        {
-          role: "system",
-          content: ARABIC_TUTOR_SYSTEM_PROMPT,
-        },
-        {
-          role: "user",
-          content: message,
-        },
-      ],
+      model: image ? "gpt-4o" : (process.env.AI_MODEL || "gpt-4o-mini"), // Use vision model for images
+      messages,
       max_tokens: 800,
       temperature: 0.6,
       presence_penalty: 0.1,
