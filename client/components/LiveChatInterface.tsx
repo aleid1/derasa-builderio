@@ -24,8 +24,13 @@ export default function LiveChatInterface({
   const [currentSessionId, setCurrentSessionId] = useState<string>(
     sessionId || "",
   );
+  const [showImageCropper, setShowImageCropper] = useState(false);
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [showAttachmentMenu, setShowAttachmentMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const cameraInputRef = useRef<HTMLInputElement>(null);
   const location = useLocation();
   const { user, isLoading: authLoading } = useAuth();
 
