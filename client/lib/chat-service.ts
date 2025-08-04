@@ -24,6 +24,7 @@ class ChatService {
   async sendMessage(
     message: string,
     sessionId?: string,
+    imageBlob?: Blob,
   ): Promise<ReadableStream<StreamingResponse>> {
     const response = await fetch(this.baseUrl, {
       method: "POST",
