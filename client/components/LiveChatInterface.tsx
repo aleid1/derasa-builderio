@@ -242,7 +242,7 @@ export default function LiveChatInterface({
       dir="rtl"
     >
       {/* Chat Header */}
-      <div className="bg-primary/5 px-6 py-4 border-b border-neutral-200">
+      <div className="bg-primary/5 px-4 md:px-6 py-4 border-b border-neutral-200">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3 space-x-reverse">
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
