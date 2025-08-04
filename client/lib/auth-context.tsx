@@ -1,9 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { hasSupabase } from './env'
 import { User } from "./chat-types";
-import { FullScreenLoading } from "../components/LoadingFallback";
 
 interface AuthContextType {
   user: User | null;
@@ -37,214 +36,100 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [isMinor, setIsMinor] = useState(false);
   const [hasParentalConsent, setHasParentalConsent] = useState(false);
-  
-  // Use ref to track if component is mounted to prevent state updates after unmount
-  const isMountedRef = useRef(true);
 
+  // Simple initialization without complex subscription management
   useEffect(() => {
-    let subscription: any = null;
-    let isInitialized = false;
+    let isMounted = true;
 
-    const initializeAuth = async () => {
+    const initAuth = async () => {
       try {
-        if (!isMountedRef.current) return;
-
-        if (hasSupabase && supabase) {
-          const { data: { session } } = await supabase.auth.getSession();
-          
-          if (!isMountedRef.current) return;
-
-          if (session?.user) {
-            await loadUserProfile(session.user);
-          } else {
-            await createGuestSession();
-          }
-        } else {
-          // No Supabase configuration, use guest session
-          await createGuestSession();
-        }
-      } catch (error) {
-        console.error('Auth initialization failed:', error);
-        if (isMountedRef.current) {
-          await createGuestSession();
-        }
-      } finally {
-        if (isMountedRef.current) {
-          setIsLoading(false);
-          isInitialized = true;
-        }
-      }
-    };
-
-    // Initialize auth state
-    initializeAuth();
-
-    // Listen for auth changes only if Supabase is available
-    if (hasSupabase && supabase) {
-      const { data } = supabase.auth.onAuthStateChange(
-        async (event, session) => {
-          // Only process auth changes after initial setup
-          if (!isInitialized || !isMountedRef.current) return;
-
+        // Check for existing guest user first
+        const savedGuestUser = localStorage.getItem("guestUser");
+        if (savedGuestUser) {
           try {
-            if (event === 'SIGNED_IN' && session?.user) {
-              await loadUserProfile(session.user);
-            } else if (event === 'SIGNED_OUT') {
-              if (isMountedRef.current) {
-                setUser(null);
-                setIsMinor(false);
-                setHasParentalConsent(false);
-              }
+            const parsedUser = JSON.parse(savedGuestUser);
+            if (isMounted) {
+              setUser(parsedUser);
+              setIsMinor(false);
+              setHasParentalConsent(true);
+              setIsLoading(false);
+            }
+            return;
+          } catch (error) {
+            console.error('Failed to parse saved guest user:', error);
+            localStorage.removeItem("guestUser");
+          }
+        }
+
+        // Try Supabase if available
+        if (hasSupabase && supabase) {
+          try {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session?.user && isMounted) {
+              // Simple user profile creation without complex database operations
+              const user: User = {
+                id: session.user.id,
+                email: session.user.email,
+                name: session.user.user_metadata?.name || session.user.email?.split('@')[0] || 'مستخدم',
+                avatar: session.user.user_metadata?.avatar_url,
+                createdAt: new Date(),
+                isGuest: false,
+              };
+              
+              setUser(user);
+              setIsMinor(false);
+              setHasParentalConsent(true);
+            } else {
+              // Create guest user
+              await createGuestUser();
             }
           } catch (error) {
-            console.error('Auth state change error:', error);
+            console.error('Supabase session error:', error);
+            await createGuestUser();
           }
+        } else {
+          // No Supabase, create guest user
+          await createGuestUser();
         }
-      );
-      subscription = data.subscription;
-    }
-
-    return () => {
-      isMountedRef.current = false;
-      
-      if (subscription) {
-        try {
-          subscription.unsubscribe();
-        } catch (error) {
-          console.error('Error unsubscribing from auth changes:', error);
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        await createGuestUser();
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
         }
       }
     };
-  }, []);
 
-  const createGuestSession = async () => {
-    if (!isMountedRef.current) return;
+    const createGuestUser = async () => {
+      if (!isMounted) return;
 
-    const guestUser: User = {
-      id: "guest-" + Date.now(),
-      name: "طالب ضيف",
-      email: undefined,
-      createdAt: new Date(),
-      isGuest: true,
-    };
-
-    if (isMountedRef.current) {
-      setUser(guestUser);
-      setIsMinor(false);
-      setHasParentalConsent(true); // Guests don't need parental consent
-    }
-    
-    // Store guest session locally
-    try {
-      localStorage.setItem("guestUser", JSON.stringify(guestUser));
-    } catch (error) {
-      console.error('Failed to save guest user to localStorage:', error);
-    }
-  };
-
-  const loadUserProfile = async (supabaseUser: SupabaseUser) => {
-    if (!isMountedRef.current) return;
-
-    try {
-      if (!hasSupabase || !supabase) {
-        throw new Error('Supabase not available');
-      }
-
-      const { data: profile, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', supabaseUser.id)
-        .single();
-
-      if (!isMountedRef.current) return;
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      let userProfile = profile;
-
-      // Create profile if it doesn't exist
-      if (!profile) {
-        const newProfile = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata?.name || supabaseUser.email!.split('@')[0],
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-          consent_given: false,
-          subscription_tier: 'free' as const,
-          preferences: {},
-          privacy_settings: {
-            shareProgress: false,
-            allowAnalytics: true,
-            parentNotifications: true
-          }
-        };
-
-        const { data: createdProfile, error: createError } = await supabase
-          .from('users')
-          .insert(newProfile)
-          .select()
-          .single();
-
-        if (!isMountedRef.current) return;
-
-        if (createError) throw createError;
-        userProfile = createdProfile;
-      }
-
-      if (!isMountedRef.current) return;
-
-      const user: User = {
-        id: userProfile.id,
-        email: userProfile.email,
-        name: userProfile.name,
-        avatar: userProfile.avatar_url,
-        createdAt: new Date(userProfile.created_at),
-        isGuest: false,
-        subscriptionTier: userProfile.subscription_tier,
-        preferences: userProfile.preferences,
-        privacySettings: userProfile.privacy_settings
+      const guestUser: User = {
+        id: "guest-" + Date.now(),
+        name: "طالب ضيف",
+        email: undefined,
+        createdAt: new Date(),
+        isGuest: true,
       };
 
-      setUser(user);
-
-      // Check if user is minor and has parental consent
-      const birthDate = userProfile.birth_date;
-      if (birthDate) {
-        const age = calculateAge(new Date(birthDate));
-        const isUserMinor = age < 18;
-        if (isMountedRef.current) {
-          setIsMinor(isUserMinor);
-          setHasParentalConsent(!isUserMinor || userProfile.consent_given);
-        }
-      } else {
-        // If no birth date, assume adult
-        if (isMountedRef.current) {
-          setIsMinor(false);
-          setHasParentalConsent(true);
-        }
+      setUser(guestUser);
+      setIsMinor(false);
+      setHasParentalConsent(true);
+      
+      try {
+        localStorage.setItem("guestUser", JSON.stringify(guestUser));
+      } catch (error) {
+        console.error('Failed to save guest user:', error);
       }
+    };
 
-      // Update last seen if Supabase is available
-      if (hasSupabase && supabase) {
-        try {
-          await supabase
-            .from('users')
-            .update({ last_seen_at: new Date().toISOString() })
-            .eq('id', userProfile.id);
-        } catch (error) {
-          console.error('Failed to update last seen:', error);
-        }
-      }
+    initAuth();
 
-    } catch (error) {
-      console.error('Failed to load user profile:', error);
-      if (isMountedRef.current) {
-        throw error;
-      }
-    }
-  };
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const calculateAge = (birthDate: Date): number => {
     const today = new Date();
@@ -259,8 +144,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signIn = async (email: string, password: string) => {
-    if (!isMountedRef.current) return;
-    
     setIsLoading(true);
     try {
       if (!hasSupabase || !supabase) {
@@ -274,22 +157,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) throw error;
 
-      if (data.user && isMountedRef.current) {
-        await loadUserProfile(data.user);
+      if (data.user) {
+        const user: User = {
+          id: data.user.id,
+          email: data.user.email,
+          name: data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'مستخدم',
+          avatar: data.user.user_metadata?.avatar_url,
+          createdAt: new Date(),
+          isGuest: false,
+        };
+        
+        setUser(user);
+        setIsMinor(false);
+        setHasParentalConsent(true);
+        
+        // Clear guest user
+        localStorage.removeItem("guestUser");
       }
     } catch (error) {
       console.error('Sign in failed:', error);
       throw error;
     } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
   const signUp = async (email: string, password: string, name: string, birthDate?: string, parentEmail?: string) => {
-    if (!isMountedRef.current) return;
-    
     setIsLoading(true);
     try {
       if (!hasSupabase || !supabase) {
@@ -310,22 +203,40 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) throw error;
 
-      if (data.user && isMountedRef.current) {
-        await loadUserProfile(data.user);
+      if (data.user) {
+        const user: User = {
+          id: data.user.id,
+          email: data.user.email,
+          name: name,
+          avatar: data.user.user_metadata?.avatar_url,
+          createdAt: new Date(),
+          isGuest: false,
+        };
+        
+        setUser(user);
+        
+        // Check age if birth date provided
+        if (birthDate) {
+          const age = calculateAge(new Date(birthDate));
+          setIsMinor(age < 18);
+          setHasParentalConsent(age >= 18);
+        } else {
+          setIsMinor(false);
+          setHasParentalConsent(true);
+        }
+        
+        // Clear guest user
+        localStorage.removeItem("guestUser");
       }
     } catch (error) {
       console.error('Sign up failed:', error);
       throw error;
     } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
   const signInWithGoogle = async () => {
-    if (!isMountedRef.current) return;
-    
     setIsLoading(true);
     try {
       if (!hasSupabase || !supabase) {
@@ -344,30 +255,33 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.error('Google sign in failed:', error);
       throw error;
     } finally {
-      if (isMountedRef.current) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
   const signOut = async () => {
     try {
       if (hasSupabase && supabase) {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        await supabase.auth.signOut();
       }
 
-      // Clear local storage
-      try {
-        localStorage.removeItem("guestUser");
-      } catch (error) {
-        console.error('Failed to clear localStorage:', error);
-      }
+      // Clear any stored data
+      localStorage.removeItem("guestUser");
       
-      // Create new guest session
-      if (isMountedRef.current) {
-        await createGuestSession();
-      }
+      // Create new guest user
+      const guestUser: User = {
+        id: "guest-" + Date.now(),
+        name: "طالب ضيف",
+        email: undefined,
+        createdAt: new Date(),
+        isGuest: true,
+      };
+
+      setUser(guestUser);
+      setIsMinor(false);
+      setHasParentalConsent(true);
+      
+      localStorage.setItem("guestUser", JSON.stringify(guestUser));
     } catch (error) {
       console.error('Sign out failed:', error);
       throw error;
@@ -380,31 +294,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
-      if (hasSupabase && supabase) {
-        // Update user profile with parent email
-        const { error } = await supabase
-          .from('users')
-          .update({ parent_email: parentEmail })
-          .eq('id', user.id);
-
-        if (error) throw error;
-      }
-
-      // TODO: Send email to parent with consent link
+      // TODO: Implement parental consent email functionality
       console.log('Parental consent requested for:', parentEmail);
-      
     } catch (error) {
       console.error('Failed to request parental consent:', error);
       throw error;
     }
   };
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
 
   const value: AuthContextType = {
     user,
@@ -419,10 +315,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     requestParentalConsent,
   };
 
-  // Show loading screen during initial authentication setup
-  if (isLoading && !user) {
-    return <FullScreenLoading message="جاري تهيئة النظام..." />;
-  }
-
+  // Always render children - no conditional rendering that could cause DOM issues
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
