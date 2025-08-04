@@ -8,7 +8,7 @@ if (!hasSupabase) {
   console.info('Supabase not configured. Using fallback localStorage authentication.')
 }
 
-export const supabase = hasSupabase ? createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = hasSupabase && supabaseUrl && supabaseAnonKey ? createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
