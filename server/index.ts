@@ -43,7 +43,7 @@ export function createServer() {
         const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
         return res.json({
-          content: randomResponse + '\n\n*ملاحظة: يتم استخدام ردود تجريبية حالياً. لتفعيل الذكاء الاصطناعي الكامل، يرجى إضافة مفتاح OpenAI API.*',
+          content: randomResponse,
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'demo-session',
@@ -108,7 +108,7 @@ export function createServer() {
         });
 
         const responseData = {
-          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
+          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة ��ياغته؟',
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'session-' + Date.now(),
