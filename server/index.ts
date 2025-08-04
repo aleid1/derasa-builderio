@@ -42,7 +42,7 @@ export function createServer() {
         const messageText = message.toLowerCase();
 
         if (messageText.includes('مذاكرة') || messageText.includes('دراسة') || messageText.includes('تعلم')) {
-          contextualResponse = 'سؤال ممتاز ��ول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
+          contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
         } else if (messageText.includes('رياضيات') || messageText.includes('حساب') || messageText.includes('جبر')) {
           contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
         } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
@@ -155,18 +155,45 @@ export function createServer() {
           stream: true, // Enable streaming for typing effect
         });
 
-        const aiResponse = completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟';
-        console.log('✅ OpenAI API success! Response:', aiResponse.substring(0, 100) + '...');
+        // Set headers for streaming response
+        res.writeHead(200, {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Transfer-Encoding': 'chunked',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Headers': 'Content-Type',
+        });
 
-        const responseData = {
-          content: aiResponse,
+        let fullResponse = '';
+
+        for await (const chunk of completion) {
+          const content = chunk.choices[0]?.delta?.content || '';
+          if (content) {
+            fullResponse += content;
+            // Send each chunk to create typing effect
+            res.write(JSON.stringify({
+              content: fullResponse,
+              isComplete: false,
+              messageId: Date.now().toString(),
+              sessionId: sessionId || 'session-' + Date.now(),
+              userId: userId || 'user-' + Date.now(),
+            }) + '\n');
+
+            // Add slight delay for typing effect
+            await new Promise(resolve => setTimeout(resolve, 50));
+          }
+        }
+
+        // Send final complete message
+        res.write(JSON.stringify({
+          content: fullResponse || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'session-' + Date.now(),
           userId: userId || 'user-' + Date.now(),
-        };
+        }) + '\n');
 
-        res.json(responseData);
+        res.end();
+        console.log('✅ OpenAI streaming complete! Response:', fullResponse.substring(0, 100) + '...');
       } catch (openaiError: any) {
         console.error("❌ OpenAI API error:", openaiError.message);
         console.log("🤖 Using advanced mock AI tutor for demonstration");
