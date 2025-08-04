@@ -27,7 +27,7 @@ export default function SuggestionPills() {
       <div className="relative">
         {/* Horizontal scroll container */}
         <div
-          className="overflow-x-auto scrollbar-hide pb-4"
+          className="overflow-x-auto scrollbar-hide pb-4 scroll-smooth"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
