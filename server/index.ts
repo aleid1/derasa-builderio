@@ -31,19 +31,26 @@ export function createServer() {
 
       // Check if OpenAI API key is available
       if (!process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY.includes('placeholder') || process.env.OPENAI_API_KEY.includes('your-actual-openai-api-key-here')) {
-        // Fallback to mock responses if no API key
-        const fallbackResponses = [
-          'ممتاز! دعني أساعدك خطوة بخطوة. ما هو السؤال تحديداً؟',
-          'سؤال رائع! لنفكر في هذا معاً. ما رأيك نبدأ بالأساسيات؟',
-          'أحسنت! هذا موضوع مهم. كيف يمكنني أن أوجهك للوصول للإجابة بنفسك؟',
-          'لنحلل هذا السؤال معاً. ما هو أول شيء تلاحظه؟',
-          'فكرة ممتازة! الآن، ما رأيك لو جربنا طريقة أخرى؟'
-        ];
+        console.log('⚠️  No valid OpenAI API key detected, using contextual fallback responses');
 
-        const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+        // Create contextual responses based on the user's message
+        let contextualResponse = '';
+        const messageText = message.toLowerCase();
+
+        if (messageText.includes('مذاكرة') || messageText.includes('دراسة') || messageText.includes('تعلم')) {
+          contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
+        } else if (messageText.includes('رياضيات') || messageText.includes('حساب') || messageText.includes('جبر')) {
+          contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
+        } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
+          contextualResponse = 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي تحتاج مساعدة فيه؟';
+        } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
+          contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
+        } else {
+          contextualResponse = 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع ��لذي تريد أن نتناوله اليوم؟';
+        }
 
         return res.json({
-          content: randomResponse,
+          content: contextualResponse,
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'demo-session',
