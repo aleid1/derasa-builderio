@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./lib/auth-context";
 import ErrorBoundary from "./components/ErrorBoundary";
+import AppInitializer from "./components/AppInitializer";
 import Index from "./pages/Index";
 import Chat from "./pages/Chat";
 import Features from "./pages/Features";
