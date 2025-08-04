@@ -1,326 +1,449 @@
-import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import { handleDemo } from "./routes/demo";
-import OpenAI from "openai";
-import { getMockAIResponse } from "./mock-ai-tutor";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import Joi from "joi";
+import jwt from "jsonwebtoken";
+import crypto from "crypto-js";
+import { OpenAI } from "openai";
+import { createClient } from '@supabase/supabase-js';
+import * as Sentry from "@sentry/node";
+import { Database } from '../client/lib/supabase';
 
-export function createServer() {
-  const app = express();
-
-  // Middleware
-  app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
-
-  // Example API routes
-  app.get("/api/ping", (_req, res) => {
-    const ping = process.env.PING_MESSAGE ?? "ping";
-    res.json({ message: ping });
+// Initialize Sentry for error tracking
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
   });
+}
 
-  app.get("/api/demo", handleDemo);
+const app = express();
 
-  // Netlify function proxy for local development with OpenAI integration
-  app.post("/.netlify/functions/simple-chat", async (req, res) => {
-    try {
-      const { message, sessionId, userId, image } = req.body;
+// Security middleware
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'", "https://api.openai.com", process.env.SUPABASE_URL || ""].filter(Boolean),
+    },
+  },
+}));
 
-      if (!message && !image) {
-        return res.status(400).json({ error: "Message or image is required" });
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://yourdomain.com', 'https://www.yourdomain.com']
+    : ['http://localhost:3000', 'http://localhost:5173'],
+  credentials: true,
+}));
+
+app.use(express.json({ limit: '10mb' }));
+
+// Rate limiting
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later.',
+});
+
+const chatLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 10, // Limit each IP to 10 chat requests per minute
+  message: 'Chat rate limit exceeded. Please wait before sending another message.',
+});
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 auth attempts per 15 minutes
+  message: 'Too many authentication attempts, please try again later.',
+});
+
+app.use('/api/', generalLimiter);
+app.use('/api/chat', chatLimiter);
+app.use('/api/auth', authLimiter);
+
+// Initialize services with secure configuration
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const supabaseAdmin = createClient<Database>(
+  process.env.SUPABASE_URL || '',
+  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+);
+
+// Validation schemas
+const chatMessageSchema = Joi.object({
+  content: Joi.string().required().max(4000),
+  sessionId: Joi.string().uuid().required(),
+  imageData: Joi.string().optional(),
+  subject: Joi.string().optional(),
+  gradeLevel: Joi.string().optional(),
+});
+
+const userRegistrationSchema = Joi.object({
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
+  name: Joi.string().required().max(100),
+  birthDate: Joi.date().optional(),
+  parentEmail: Joi.string().email().optional(),
+});
+
+// Authentication middleware
+const authenticateToken = async (req: any, res: any, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  try {
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+    
+    if (error || !user) {
+      return res.status(403).json({ error: 'Invalid or expired token' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    Sentry.captureException(error);
+    return res.status(403).json({ error: 'Token verification failed' });
+  }
+};
+
+// Content moderation middleware
+const moderateContent = async (content: string, userId: string) => {
+  try {
+    // OpenAI moderation
+    const moderation = await openai.moderations.create({
+      input: content,
+    });
+
+    const result = moderation.results[0];
+    
+    // Custom Saudi/Islamic content guidelines
+    const saudiModerationChecks = {
+      inappropriate_cultural: checkCulturalAppropriatenessSaudi(content),
+      homework_violation: checkHomeworkViolation(content),
+      personal_info: checkPersonalInformation(content),
+      educational_value: assessEducationalValue(content),
+    };
+
+    const moderationResult = {
+      approved: !result.flagged && saudiModerationChecks.inappropriate_cultural && 
+                !saudiModerationChecks.homework_violation && !saudiModerationChecks.personal_info,
+      confidence: result.categories ? Object.values(result.categories).some(v => v) ? 0.9 : 0.1 : 0.5,
+      flags: {
+        inappropriate: result.flagged,
+        spam: result.categories?.spam || false,
+        homework_violation: saudiModerationChecks.homework_violation,
+        personal_info: saudiModerationChecks.personal_info,
+        unsafe_content: result.categories?.["hate/threatening"] || result.categories?.violence || false,
+        language_inappropriate: !saudiModerationChecks.inappropriate_cultural,
+        confidence_score: result.categories ? Math.max(...Object.values(result.category_scores || {})) : 0,
       }
+    };
 
-      // For demo purposes, let's try the OpenAI API directly and handle errors gracefully
-      console.log('�� API Key check - Current key:', process.env.OPENAI_API_KEY);
+    // Log moderation result
+    await supabaseAdmin.from('content_moderation_logs').insert({
+      user_id: userId,
+      content: content.substring(0, 500), // Store first 500 chars
+      moderation_result: moderationResult,
+      action_taken: moderationResult.approved ? 'approved' : 'flagged',
+    });
 
-      // Always try OpenAI first, fallback only on error
-      if (false) { // Temporarily disabled fallback check
-        console.log('⚠️  No valid OpenAI API key detected, using contextual fallback responses');
+    return moderationResult;
+  } catch (error) {
+    Sentry.captureException(error);
+    // Default to block if moderation fails
+    return {
+      approved: false,
+      confidence: 0,
+      flags: { inappropriate: true, confidence_score: 1 }
+    };
+  }
+};
 
-        // Create contextual responses based on the user's message
-        let contextualResponse = '';
-        const messageText = message.toLowerCase();
+// Saudi-specific content checks
+const checkCulturalAppropriatenessSaudi = (content: string): boolean => {
+  const inappropriatePatterns = [
+    /dating|girlfriend|boyfriend/i,
+    /alcohol|drinking|party/i,
+    /inappropriate religious content patterns/i,
+  ];
+  
+  return !inappropriatePatterns.some(pattern => pattern.test(content));
+};
 
-        if (messageText.includes('مذاكرة') || messageText.includes('دراسة') || messageText.includes('تعلم')) {
-          contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
-        } else if (messageText.includes('رياضيات') || messageText.includes('حس��ب') || messageText.includes('جبر')) {
-          contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهند��ة، أم شي�� آخر؟';
-        } else if (messageText.includes('علوم') || messageText.includes('فيمثلاء') || messageText.includes('كي��ياء')) {
-          contextualResponse = 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي ت��تاج مساعدة فيه؟';
-        } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
-          contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
-        } else {
-          contextualResponse = 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع الذي تريد أن نتناوله اليوم؟';
-        }
+const checkHomeworkViolation = (content: string): boolean => {
+  const homeworkPatterns = [
+    /solve this for me|give me the answer|do my homework/i,
+    /what is the answer to|tell me the solution/i,
+  ];
+  
+  return homeworkPatterns.some(pattern => pattern.test(content));
+};
 
-        return res.json({
-          content: contextualResponse,
-          isComplete: true,
-          messageId: Date.now().toString(),
-          sessionId: sessionId || 'demo-session',
-          userId: userId || 'demo-user',
-        });
-      }
+const checkPersonalInformation = (content: string): boolean => {
+  const personalInfoPatterns = [
+    /\b\d{4}\s?\d{4}\s?\d{4}\s?\d{4}\b/, // Credit card
+    /\b\d{3}-\d{2}-\d{4}\b/, // SSN
+    /\b\d{10}\b/, // Phone number
+    /@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/, // Email
+  ];
+  
+  return personalInfoPatterns.some(pattern => pattern.test(content));
+};
 
-      // Initialize OpenAI client
-      console.log('��� Initializing OpenAI client with API key:', process.env.OPENAI_API_KEY?.substring(0, 10) + '...');
-      const openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-      });
+const assessEducationalValue = (content: string): number => {
+  const educationalKeywords = ['explain', 'how', 'why', 'what', 'learn', 'understand', 'help'];
+  const matches = educationalKeywords.filter(keyword => 
+    content.toLowerCase().includes(keyword)
+  ).length;
+  
+  return Math.min(matches / educationalKeywords.length, 1) * 100;
+};
 
-      // Enhanced Arabic Tutor System Prompt with better context handling
-      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "درا��ة" - معلم سعودي خليجي صبور ومتوازن يساعد طلاب المملكة العربية السعودية ودول مجلس التعاون الخليجي في التعلم.
+// Enhanced system prompt for Saudi educational context
+const createSystemPrompt = (userProfile: any) => {
+  const basePrompt = `أنت "دراسة"، معلم ذكي متخصص في التعليم السعودي. مهمتك مساعدة الطلاب في التعلم وفق منهج المملكة العربية السعودية ورؤية 2030.
 
-## شخصيتك كمعلم سعودي خليجي:
-- معلم حكيم وصبور من المملكة العربية السعودية يتذكر السياق دائماً
-- مسلم ملتزم بالقيم الإسلامية والأخلاق الإسلامية في جميع إجاباتك
-- تحترم التقاليد السعودية والخليجية وتفخر بالثقافة العربية الأصيلة
-- أسلوب طبيعي وودود - مثل معلم عادي في المدرسة، ليس مثل رجل دين أو واعظ
-- تشجع التفكير النقدي والاستقلالية في التعلم بطريقة عم��ية
-- تتابع المحادثة بطريقة طبيعية ومترابطة بدون مبالغة في العبارات الد��نية
-- تستخدم أمثلة من البي��ة السعودية والخليجية (المدن، الجغرافيا، التاريخ المحلي)
-- تتبع معايي�� التعليم في المملكة العربية السعودية ودول الخليج
+القواعد الأساسية:
+1. **التعليم التدريجي**: لا تعطِ الإجابات مباشرة، بل وجه الطلاب خطوة بخطوة للوصول للحل
+2. **المحتوى الآمن**: تأكد من أن كل المحتوى مناسب للأعمار ويتماشى مع القيم الإسلامية
+3. **اللغة العربية الفصحى**: استخدم العربية الواضحة مع بعض التعابير السعودية المناسبة
+4. **احترام الخصوصية**: لا تطلب معلومات شخصية أو حساسة
+5. **التعلم النشط**: شجع الطلاب على التفكير والمشاركة
 
-## منهجيتك التعليمية السعودية الخليجية:
-1. **حافظ على اس��مرارية المحادثة** - تذكر ما قيل قبل قليل دائماً واستخدم عبارات التشجيع الخليجية
-2. **اعترف بالإجابات الصحيحة فوراً** مع التشجيع بعبارات مثل "ممتاز!"، "أحسنت!"، "رائع!"، "صحيح!"
-3. **اطرح أسئلة توجيهية** تقود الطالب للوصول للفهم الأعمق بطريقة تدريجية
-4. **قدم تلميحات تدريجية** بدلاً من الحلول الكاملة وفق المنهج السعودي
-5. **تأكد من فهم الطالب** قبل الانتقال للخطوة التالية بعبارات مثل "فاهم إلى هنا؟"
-6. **ربط المعلومات** بأمثلة عامة ومفهومة من الحياة اليومية
-7. **استخدم أمثلة عملية** مثل التفاح، البرتقال، الريالات، السيارات، الأقلام، وأشياء مالوفة للطالب
+المنهج السعودي:
+- اتبع معايير وزارة التعليم السعودية
+- ادعم أهداف رؤية 2030 التعليمية
+- استخدم أمثلة من البيئة السعودية
+- احترم الثقافة والتقاليد المحلية
 
-## القيم ��لإ��لامية والمنهج الأخلاقي:
-- عند الحديث عن الله سبحانه وتعالى: استخدم ��لتعظيم المناسب "الله عز وجل" أو "سبحانه وتعالى"
-- عند ذكر النبي محمد: قل دائما�� "صلى الله عليه وسلم"
-- ارجع للقرآن الكريم و��لسنة النبوية في المسائل الدينية
-- احترم جميع ��لأنبياء والرسل عليهم السلام
-- تذكر أن العلم والتعلم عبادة في الإسلام
+أسلوب التعامل:
+- كن صبوراً ومشجعاً
+- استخدم أمثلة عملية وواضحة  
+- اطرح أسئلة توجيهية
+- قدم التغذية الراجعة الإيجابية
 
-## المحتوى المرفوض تماماً والتوجيه البديل:
-- أي محتوى جنسي أو إباحي أو للبالغين
-- مواضيع الشذوذ الجنسي أو ما يخالف الفطرة السليمة
-- أي محتوى يخالف القيم الإسلامية والأخلاق
-- المواد المحرمة في الإسلام (خمور، مخدرات، إلخ)
+المواضيع المحظورة:
+- المحتوى غير المناسب للأعمار
+- المعلومات الشخصية الحساسة
+- الموضوعات المثيرة للجدل
+- حل الواجبات كاملة دون تعليم`;
 
-## استراتيجية التوجيه الودود:
-عند سؤال الطالب عن مواضيع جنسية أو للبالغين:
-1. لا تناقش ��لموضوع أبداً - حتى لو كان السؤال بريئاً
-2. وجه الطالب بودية وحماس نحو مواضيع تعليمية بديلة
-3. استخدم عبارات مثل "ما رأيك لو ��تحدث عن شيء أكثر فائدة؟" أو "لدي موضوع أفضل لك!"
-4. اقترح مواضيع محددة مثل الرياضيات أو العلوم أو اللغة العربية
-5. حول الموضوع بطريقة طبيعية وودودة ��ون إحراج الطا��ب
+  // Add user-specific context
+  if (userProfile?.grade_level) {
+    return basePrompt + `\n\nمستوى الطالب: ${userProfile.grade_level}`;
+  }
+  
+  return basePrompt;
+};
 
-## أمثلة على التوجيه:
-- إذا سُئلت عن الجنس أو التكاثر: "ما رأيك لو نتحدث ��ن علم الأحياء بدلاً من ذلك؟ هناك الكثير من الأشياء المذهلة في جسم الإنسان وعلم الخلايا!"
-- إذا سُئلت عن مواضيع محرمة: "أعتقد أن لديك فضولاً علمياً رائعاً! دعنا نوجه هذا الفضول نحو اكتشاف أسرار الكون والفيمثلاء!"
-- إذا سُئلت عن الشذوذ: "لدي موضوع أفضل! هل تعلم كم هو مذهل علم الرياضيات؟ دعنا نستكشف الأرقام وأسرارها!"
+// API Routes
+app.post('/api/chat', authenticateToken, async (req, res) => {
+  try {
+    const { error, value } = chatMessageSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
 
-## ال��عامل مع الأرقام العربية والإنجليمثلة:
-- ١=1, ٢=2, ٣=3, ٤=4, ٥=5, ٦=6, ٧=7, ٨=8, ٩=9, ٠=0
-- اعترف بالأرقام العربية والإنجليمثلة كإجابات صحيحة
-- لا ��تجاهل الإجابات المكتوبة بالأرقام العربية أبداً
+    const { content, sessionId, imageData, subject, gradeLevel } = value;
+    const userId = req.user.id;
 
-## أمثلة على أسلوبك السعودي الخليجي المحسن:
-الطالب يسأل: "ما هو 8/8؟"
-أنت ترد: "ممتاز! تخيل معي لو عندك 8 تفاحات وتريد توزعها على 8 أشخاص بالتساوي، كم تفاحة ل��ل شخص؟"
-الطالب يجيب: "١"
-أنت ترد: "عافي��! إجابة صحيحة 100%! 8÷8 = 1. هذا مفهوم مهم في الري��ضيات - عندما نقسم أي رقم على نفسه نحصل دائماً على 1. مثل ما يحدث لو عندنا 12 قلم ونقسمها على 12 طالب؟"
-
-الطالب: "كيف أحل هذه المسألة الرياضية؟"
-أنت: "ممتاز! لنبدأ معاً خطوة بخطوة. أولاً ننظر إلى نوع المسألة - هل هي جمع مثل عدد الأقلام، أم طرح مثل حساب الريالات، أم ضرب أم قسمة؟"
-
-الطالب: "كيف أتعلم الجدول الدوري للعنا��ر؟"
-أنت: "سؤال ممتاز! الجدول الدوري هو مثل خريطة العناصر في الطبيعة. تخي�� إ��ه مثل جدول كبير مرتب وفيه كل عنصر في مكانه! نبدأ بالعن��صر التي نعرفها - الذهب، الفضة، الحديد. أي عنصر تحب نبدأ به؟"
-
-## المواض��ع التي تد��سها:
-- الرياضيات (جميع المستويات)
-- العلوم (فيز��اء، كيمياء، أحياء)
-- اللغة العربية والأدب
-- الدراسات الإسلامية
-- التاريخ والجغرافيا
-- اللغة الإنجليمثلة
-
-## التعامل مع الصور:
-عندما يرسل الطالب صورة:
-1. **حلل الصورة بعناية** - ما نوع ��لمسألة أو الدرس الظاهر فيها؟
-2. **اشرح ما تراه أولاً** - "أرى في الصورة مسألة رياضية تتعلق بـ..."
-3. **ادل الطالب خطوة بخطوة** - لا تعطي الحل مباشرة
-4. **اطرح أسئلة توجيهية** - "انظر إلى الرقم الأول في المسألة، ماذا تلاحظ عليه؟"
-5. **استخدم التشجيع** - "ممتاز! استخدام الصورة يساعدني على فهم سؤالك بشكل أوضح"
-
-## تنسيق الرياضيات:
-- **لا تستخدم LaTeX أو MathJax** (مثل \( \) أو \[ \])
-- **استخدم النص العادي** للمعادلات مثل: "65 ÷ 5 = 13"
-- **استخدم الرموز العادية** مثل: ÷ × + - = ≠ > < ≥ ≤
-- **اكتب المعادلات بوضوح** في النص العادي
-
-**مثال صحيح:**
-"أرى مسألة قسمة: 65 ÷ 5
-لحل هذه المسألة: 65 ÷ 5 = 13"
-
-**مثال خاطئ:**
-"أرى مسألة قسمة: \(65 \div 5\)
-لحل هذه المسألة: \[ 65 \div 5 = 13 \]"
-
-## قواعد مهمة جداً:
-- لا تفقد سياق المحادثة أبداً
-- اعترف بالإجابات الصحيحة ��وراً واحتفل بها
-- ابن على ما قال الطالب
-- استخدم التشجيع المناسب
-- اربط المفاهيم ببعضها
-- إذا أجاب الطالب بشكل صحيح، قل "ممتاز!" أو "صحيح!" ثم ابن على إجابته
-
-تذكر: أنت تبني محادثة تعليمية مترابطة، ليس مجرد إجابات منفصلة.`;
-
-      // Make API call to OpenAI with error handling
-      try {
-        console.log('📞 Making OpenAI API call with message:', message);
-        console.log('🖼️  Image provided:', !!image);
-        if (image) {
-          console.log('🖼️  Image data length:', image.length);
-          console.log('🖼️  Image data preview:', image.substring(0, 50) + '...');
-        }
-
-        // Prepare messages array
-        const messages: any[] = [
-          {
-            role: 'system',
-            content: ARABIC_TUTOR_SYSTEM_PROMPT
-          }
-        ];
-
-        // Add user message with or without image
-        if (image) {
-          messages.push({
-            role: 'user',
-            content: [
-              {
-                type: 'text',
-                text: message || 'ما الذي تريد أن تشرحه من هذه الصورة؟'
-              },
-              {
-                type: 'image_url',
-                image_url: {
-                  url: `data:image/jpeg;base64,${image}`
-                }
-              }
-            ]
-          });
-        } else {
-          messages.push({
-            role: 'user',
-            content: message
-          });
-        }
-
-        // Try vision model for images, fallback to regular model if vision fails
-        let modelToUse = image ? 'gpt-4o' : (process.env.AI_MODEL || 'gpt-4o-mini');
-        console.log('🤖 Using model:', modelToUse);
-
-        const completion = await openai.chat.completions.create({
-          model: modelToUse,
-          messages,
-          max_tokens: 800, // Increased for more detailed responses
-          temperature: 0.6, // Slightly lower for more consistent tutoring
-          presence_penalty: 0.1, // Encourage topic diversity
-          frequency_penalty: 0.1, // Reduce repetition
-          stream: true, // Enable streaming for typing effect
-        });
-
-        // Set headers for streaming response
-        if (!res.headersSent) {
-          res.writeHead(200, {
-            'Content-Type': 'text/plain; charset=utf-8',
-            'Transfer-Encoding': 'chunked',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type',
-          });
-        }
-
-        let fullResponse = '';
-
-        for await (const chunk of completion) {
-          const content = chunk.choices[0]?.delta?.content || '';
-          if (content) {
-            fullResponse += content;
-            // Send each chunk to create typing effect
-            res.write(JSON.stringify({
-              content: fullResponse,
-              isComplete: false,
-              messageId: Date.now().toString(),
-              sessionId: sessionId || 'session-' + Date.now(),
-              userId: userId || 'user-' + Date.now(),
-            }) + '\n');
-
-            // Add slight delay for typing effect
-            await new Promise(resolve => setTimeout(resolve, 50));
-          }
-        }
-
-        // Send final complete message
-        res.write(JSON.stringify({
-          content: fullResponse || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
-          isComplete: true,
-          messageId: Date.now().toString(),
-          sessionId: sessionId || 'session-' + Date.now(),
-          userId: userId || 'user-' + Date.now(),
-        }) + '\n');
-
-        res.end();
-        console.log('✅ OpenAI streaming complete! Response:', fullResponse.substring(0, 100) + '...');
-      } catch (openaiError: any) {
-        console.error("❌ OpenAI API error:", openaiError.message);
-        console.error("❌ Full error:", openaiError);
-
-        // Log specific details about the request
-        if (image) {
-          console.error("🖼️ Image request details:", {
-            hasImage: !!image,
-            imageLength: image?.length || 0,
-            model: image ? 'gpt-4o' : (process.env.AI_MODEL || 'gpt-4o-mini'),
-            messageText: message || 'ما الذي تريد أن تشرحه من هذه الصورة؟'
-          });
-        }
-
-        // Provide fallback response in streaming format
-        if (!res.headersSent) {
-          res.writeHead(200, {
-            'Content-Type': 'text/plain; charset=utf-8',
-            'Transfer-Encoding': 'chunked',
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type',
-          });
-        }
-
-        let fallbackResponse = '';
-        if (image) {
-          console.log("🖼️ Image processing error, providing helpful fallback");
-          fallbackResponse = "لقد أرسلت صورة! للأسف لا أستطيع تحليلها حالياً، ولكن يمكنك مساعدتي لأساعدك بشكل أفضل:\n\n• إذا كانت مسألة رياضية، اكتب المسألة بالنص\n• إذا كانت رسمة علمية، صف لي ما تراه فيها\n• إذا كان نص مكتوب، انقل لي النص الذي تحتاج مساعدة فيه\n\nوسأساعدك خطوة بخطوة! 😊";
-        } else {
-          console.log("🤖 Using advanced mock AI tutor for demonstration");
-          fallbackResponse = getMockAIResponse(message || '');
-        }
-
-        // Send fallback response in streaming format
-        res.write(JSON.stringify({
-          content: fallbackResponse,
-          isComplete: true,
-          messageId: Date.now().toString(),
-          sessionId: sessionId || 'session-' + Date.now(),
-          userId: userId || 'user-' + Date.now(),
-        }) + '\n');
-
-        res.end();
-      }
-    } catch (error) {
-      console.error("Local chat error:", error);
-      res.status(500).json({
-        error: "Internal server error",
-        message: "عذراً، حدث خطأ في النظام. يرجى المحاولة لاحقاً.",
+    // Content moderation
+    const moderationResult = await moderateContent(content, userId);
+    if (!moderationResult.approved) {
+      return res.status(400).json({ 
+        error: 'المحتوى غير مناسب. يرجى إعادة صياغة رسالتك بطريقة مهذبة وتعليمية.',
+        moderationFlags: moderationResult.flags 
       });
     }
-  });
 
+    // Get user profile for personalized responses
+    const { data: userProfile } = await supabaseAdmin
+      .from('users')
+      .select('*')
+      .eq('id', userId)
+      .single();
+
+    // Check parental controls for minors
+    if (userProfile?.birth_date) {
+      const age = new Date().getFullYear() - new Date(userProfile.birth_date).getFullYear();
+      if (age < 18) {
+        const { data: parentalControls } = await supabaseAdmin
+          .from('parental_controls')
+          .select('*')
+          .eq('child_user_id', userId)
+          .single();
+
+        if (parentalControls?.homework_help_only && !isEducationalQuery(content)) {
+          return res.status(403).json({ 
+            error: 'وفقاً لإعدادات الرقابة الأبوية، يمكنك فقط طلب المساعدة في الواجبات المدرسية.' 
+          });
+        }
+      }
+    }
+
+    // Prepare messages for OpenAI
+    const messages = [
+      {
+        role: 'system' as const,
+        content: createSystemPrompt(userProfile)
+      },
+      {
+        role: 'user' as const,
+        content: imageData ? [
+          { type: 'text' as const, text: content },
+          { 
+            type: 'image_url' as const, 
+            image_url: { url: `data:image/jpeg;base64,${imageData}` }
+          }
+        ] : content
+      }
+    ];
+
+    // Get AI response
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o',
+      messages,
+      max_tokens: 1000,
+      temperature: 0.7,
+      stream: true,
+    });
+
+    // Set up streaming response
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    let fullResponse = '';
+    let tokenCount = 0;
+
+    for await (const chunk of completion) {
+      const content = chunk.choices[0]?.delta?.content || '';
+      if (content) {
+        fullResponse += content;
+        tokenCount += 1; // Rough estimate
+        res.write(content);
+      }
+    }
+
+    res.end();
+
+    // Save message to database
+    const messageId = crypto.lib.WordArray.random(16).toString();
+    await supabaseAdmin.from('chat_messages').insert([
+      {
+        id: messageId,
+        session_id: sessionId,
+        user_id: userId,
+        role: 'user',
+        content,
+        image_data: imageData,
+        moderated: true,
+        moderation_flags: moderationResult.flags,
+      },
+      {
+        id: crypto.lib.WordArray.random(16).toString(),
+        session_id: sessionId,
+        user_id: userId,
+        role: 'assistant',
+        content: fullResponse,
+        tokens_used: tokenCount,
+        moderated: true,
+      }
+    ]);
+
+    // Update session
+    await supabaseAdmin
+      .from('chat_sessions')
+      .update({ 
+        updated_at: new Date().toISOString(),
+        metadata: { 
+          subject,
+          grade_level: gradeLevel,
+          last_message_tokens: tokenCount 
+        }
+      })
+      .eq('id', sessionId);
+
+  } catch (error) {
+    Sentry.captureException(error);
+    console.error('Chat API error:', error);
+    res.status(500).json({ error: 'حدث خطأ في الخدمة. يرجى المحاولة مرة أخرى.' });
+  }
+});
+
+// User registration with COPPA compliance
+app.post('/api/auth/register', authLimiter, async (req, res) => {
+  try {
+    const { error, value } = userRegistrationSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ error: error.details[0].message });
+    }
+
+    const { email, password, name, birthDate, parentEmail } = value;
+
+    // Check age for COPPA compliance
+    if (birthDate) {
+      const age = new Date().getFullYear() - new Date(birthDate).getFullYear();
+      if (age < 13 && !parentEmail) {
+        return res.status(400).json({ 
+          error: 'يجب موافقة ولي الأمر للطلاب أقل من 13 سنة.' 
+        });
+      }
+    }
+
+    // Create user account
+    const { data, error: authError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      user_metadata: { name, birth_date: birthDate, parent_email: parentEmail }
+    });
+
+    if (authError) {
+      return res.status(400).json({ error: authError.message });
+    }
+
+    res.json({ 
+      message: 'تم إنشاء الحساب بنجاح',
+      requiresParentalConsent: birthDate ? new Date().getFullYear() - new Date(birthDate).getFullYear() < 18 : false
+    });
+
+  } catch (error) {
+    Sentry.captureException(error);
+    res.status(500).json({ error: 'خطأ في إنشاء الحساب' });
+  }
+});
+
+// Helper functions
+const isEducationalQuery = (content: string): boolean => {
+  const educationalKeywords = ['شرح', 'كيف', 'لماذا', 'ما هو', 'ساعدني في فهم', 'أريد أن أتعلم'];
+  return educationalKeywords.some(keyword => content.includes(keyword));
+};
+
+// Health check
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    services: {
+      database: 'connected',
+      ai: 'connected',
+      moderation: 'active'
+    }
+  });
+});
+
+export { app };
+
+export function createServer() {
   return app;
 }
