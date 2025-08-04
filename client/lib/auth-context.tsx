@@ -3,6 +3,7 @@ import { User as SupabaseUser } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { hasSupabase } from './env'
 import { User } from "./chat-types";
+import { FullScreenLoading } from "../components/LoadingFallback";
 
 interface AuthContextType {
   user: User | null;
