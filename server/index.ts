@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import OpenAI from "openai";
+import { getMockAIResponse } from "./mock-ai-tutor";
 
 export function createServer() {
   const app = express();
