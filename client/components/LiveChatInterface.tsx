@@ -68,11 +68,21 @@ export default function LiveChatInterface({
     // Close attachment menu when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (showAttachmentMenu) {
-        setShowAttachmentMenu(false);
+        // Check if the click was outside the attachment menu area
+        const target = event.target as Element;
+        if (!target.closest('[data-attachment-menu]')) {
+          setShowAttachmentMenu(false);
+        }
       }
     };
 
-    document.addEventListener('click', handleClickOutside);
+    if (showAttachmentMenu) {
+      // Add a small delay to prevent immediate closure
+      setTimeout(() => {
+        document.addEventListener('click', handleClickOutside);
+      }, 100);
+    }
+
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
