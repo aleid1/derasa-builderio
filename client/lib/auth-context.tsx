@@ -419,5 +419,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     requestParentalConsent,
   };
 
+  // Show loading screen during initial authentication setup
+  if (isLoading && !user) {
+    return <FullScreenLoading message="جاري تهيئة النظام..." />;
+  }
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
