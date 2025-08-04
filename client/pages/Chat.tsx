@@ -55,7 +55,7 @@ export default function Chat() {
 
         {/* Main Chat Area */}
         <div className="flex-1 flex flex-col">
-          <div className={`flex-1 ${isAuthenticated ? 'px-4 md:px-6' : 'max-w-6xl mx-auto px-6'} py-8`}>
+          <div className={`flex-1 ${isAuthenticated ? 'px-4 md:px-8 max-w-7xl mx-auto w-full' : 'max-w-6xl mx-auto px-6'} py-8`}>
             <div className="h-[calc(100vh-12rem)]">
               <LiveChatInterface
                 sessionId={currentSessionId}
