@@ -42,7 +42,7 @@ export function createServer() {
         const messageText = message.toLowerCase();
 
         if (messageText.includes('مذاكرة') || messageText.includes('دراسة') || messageText.includes('تعلم')) {
-          contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
+          contextualResponse = 'سؤال ممتاز ��ول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
         } else if (messageText.includes('رياضيات') || messageText.includes('حساب') || messageText.includes('جبر')) {
           contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
         } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
@@ -69,7 +69,7 @@ export function createServer() {
       });
 
       // Enhanced Arabic Tutor System Prompt with better context handling
-      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين ف�� التعلم.
+      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التعلم.
 
 ## شخصيتك:
 - معلم حكيم وصبور يتذكر السياق دائماً
@@ -152,6 +152,7 @@ export function createServer() {
           temperature: 0.6, // Slightly lower for more consistent tutoring
           presence_penalty: 0.1, // Encourage topic diversity
           frequency_penalty: 0.1, // Reduce repetition
+          stream: true, // Enable streaming for typing effect
         });
 
         const aiResponse = completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟';
