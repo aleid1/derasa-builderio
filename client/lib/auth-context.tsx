@@ -41,21 +41,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Initialize auth state
     initializeAuth();
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          await loadUserProfile(session.user);
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-          setIsMinor(false);
-          setHasParentalConsent(false);
-        }
-        setIsLoading(false);
-      }
-    );
+    // Listen for auth changes only if Supabase is available
+    let subscription: any = null;
 
-    return () => subscription.unsubscribe();
+    if (hasSupabase && supabase) {
+      const { data } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (event === 'SIGNED_IN' && session?.user) {
+            await loadUserProfile(session.user);
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            setIsMinor(false);
+            setHasParentalConsent(false);
+          }
+          setIsLoading(false);
+        }
+      );
+      subscription = data.subscription;
+    }
+
+    return () => {
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, []);
 
   const initializeAuth = async () => {
