@@ -73,15 +73,25 @@ export default function LiveChatInterface({
     );
   }
 
-  const handleSendMessage = async (content: string) => {
-    if (!content.trim() || isLoading) return;
+  const handleSendMessage = async (content: string, imageBlob?: Blob) => {
+    if ((!content.trim() && !imageBlob) || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      content: content.trim(),
+      content: content.trim() || (imageBlob ? "📷 صورة" : ""),
       role: "user",
       timestamp: new Date(),
     };
+
+    // If we have an image, add it to the message
+    if (imageBlob) {
+      const imageUrl = URL.createObjectURL(imageBlob);
+      userMessage.image = {
+        url: imageUrl,
+        filename: `image-${Date.now()}.jpg`,
+        size: imageBlob.size,
+      };
+    }
 
     setMessages((prev) => [...prev, userMessage]);
     // Save user message to localStorage
