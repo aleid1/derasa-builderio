@@ -37,7 +37,7 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم سعودي خ
 
 ## استراتيجية التوجيه الودود:
 عند سؤال الطالب عن مواضيع جنسية أو للبالغين:
-1. لا تناقش الموضوع أبداً - حتى لو كان السؤال بريئا��
+1. لا تناقش الموضوع أبداً - حتى لو كان السؤال بريئاً
 2. وجه الطالب بودية وحماس نحو مواضيع تعليمية بديلة
 3. استخدم عبارات مثل "ما رأيك لو نتحدث عن شيء أكثر فائدة؟" أو "لدي موضوع أفضل لك!"
 4. اقترح مواضيع محددة مثل الرياضيات أو العلوم أو اللغة العربية
@@ -96,13 +96,13 @@ export const handler: Handler = async (event, context) => {
   }
 
   try {
-    const { message, sessionId, userId } = JSON.parse(event.body || "{}");
+    const { message, sessionId, userId, image } = JSON.parse(event.body || "{}");
 
-    if (!message) {
+    if (!message && !image) {
       return {
         statusCode: 400,
         headers,
-        body: JSON.stringify({ error: "Message is required" }),
+        body: JSON.stringify({ error: "Message or image is required" }),
       };
     }
 
@@ -188,7 +188,7 @@ function getMockResponse(message: string): string {
     return 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
   } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
     return 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي تحتاج مساعدة فيه؟';
-  } else if (messageText.includes('عربية') || messageText.includes('��غة') || messageText.includes('نحو')) {
+  } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
     return 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
   } else {
     return 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع الذي تريد أن نتناوله اليوم؟';
