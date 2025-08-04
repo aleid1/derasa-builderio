@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Send, Mic, Paperclip, MoreVertical, Sparkles } from "lucide-react";
+import { Send, Mic, Paperclip, MoreVertical, Sparkles, Camera, Image as ImageIcon } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import { ChatMessage, StreamingResponse } from "../lib/chat-types";
 import { chatService } from "../lib/chat-service";
 import { ChatHistoryService } from "../lib/chat-history";
 import { useAuth } from "../lib/auth-context";
 import TypingIndicator from "./TypingIndicator";
+import ImageCropper from "./ImageCropper";
 
 interface LiveChatInterfaceProps {
   sessionId?: string;
