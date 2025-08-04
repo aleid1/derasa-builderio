@@ -276,7 +276,7 @@ export default function LiveChatInterface({
             </p>
 
             {/* Suggestions */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-w-2xl mx-auto px-4">
               {suggestions.map((suggestion, index) => (
                 <button
                   key={index}
