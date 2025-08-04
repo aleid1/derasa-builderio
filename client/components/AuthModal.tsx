@@ -58,7 +58,7 @@ export default function AuthModal({
     } catch (err) {
       setError(
         mode === "login"
-          ? "فشل تسجيل الدخول. تأكد من بيانات��."
+          ? "فشل تسجيل الدخول. تأكد من بياناتك."
           : "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
       );
     } finally {
@@ -132,11 +132,11 @@ export default function AuthModal({
           )}
         </div>
 
-        {/* Google Sign-In */}
+        {/* OAuth Sign-In */}
         <div className="p-6 pb-0">
           <div className="space-y-4">
             <div className="text-center">
-              <p className="text-sm text-neutral-600 mb-4">🌟 سجل دخولك بسهول�� مع Google</p>
+              <p className="text-sm text-neutral-600 mb-4">🚀 تسجيل دخول سريع</p>
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
