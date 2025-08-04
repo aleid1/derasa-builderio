@@ -97,7 +97,7 @@ export function createServer() {
 الطالب يجيب: "١"
 أنت ترد: "ممتاز! إجابة صحيحة تماماً! 8÷8 = 1. هذا مفهوم مهم - عندما نقسم أي رقم على نفسه نحصل دائماً على 1. هل تعرف لماذا؟"
 
-الطالب: "كيف أحل هذه المسألة الرياضية؟"
+الطالب: "كيف أحل ��ذه المسألة الرياضية؟"
 أنت: "ممتاز! لنبدأ معاً. أولاً، ما نوع هذه المسألة؟ هل هي جمع، طرح، ضرب، أم قسمة؟"
 
 ## المواضيع التي تدرسها:
@@ -108,7 +108,7 @@ export function createServer() {
 - التاريخ والجغرافيا
 - اللغة الإنجليزية
 
-## قواعد مهمة ��داً:
+## قواعد مهمة جداً:
 - لا تفقد سياق المحادثة أبداً
 - اعترف بالإجابات الصحيحة فوراً واحتفل بها
 - ابن على ما قال الطالب
@@ -133,8 +133,10 @@ export function createServer() {
               content: message
             }
           ],
-          max_tokens: 500,
-          temperature: 0.7,
+          max_tokens: 800, // Increased for more detailed responses
+          temperature: 0.6, // Slightly lower for more consistent tutoring
+          presence_penalty: 0.1, // Encourage topic diversity
+          frequency_penalty: 0.1, // Reduce repetition
         });
 
         const aiResponse = completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟';
