@@ -38,6 +38,7 @@ class ChatService {
         reader.readAsDataURL(imageBlob);
       });
       imageData = base64;
+      console.log('📷 Image converted to base64, length:', base64.length);
     }
 
     const response = await fetch(this.baseUrl, {
