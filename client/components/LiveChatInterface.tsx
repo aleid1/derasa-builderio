@@ -238,7 +238,7 @@ export default function LiveChatInterface({
 
   return (
     <div
-      className="flex flex-col h-full bg-white rounded-3xl shadow-xl overflow-hidden"
+      className="flex flex-col h-full bg-white rounded-3xl shadow-xl overflow-hidden max-w-4xl mx-auto md:mx-0"
       dir="rtl"
     >
       {/* Chat Header */}
