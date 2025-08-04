@@ -163,6 +163,43 @@ export default function LiveChatInterface({
     }
   };
 
+  const handleImageSelect = (file: File) => {
+    if (file && file.type.startsWith('image/')) {
+      setSelectedImageFile(file);
+      setShowImageCropper(true);
+      setShowAttachmentMenu(false);
+    }
+  };
+
+  const handleImageCrop = (croppedImageBlob: Blob) => {
+    setShowImageCropper(false);
+    setSelectedImageFile(null);
+    handleSendMessage(inputValue, croppedImageBlob);
+  };
+
+  const handleCropCancel = () => {
+    setShowImageCropper(false);
+    setSelectedImageFile(null);
+  };
+
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageSelect(file);
+    }
+    // Reset the input
+    e.target.value = '';
+  };
+
+  const handleCameraCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageSelect(file);
+    }
+    // Reset the input
+    e.target.value = '';
+  };
+
   const handleSuggestionClick = (suggestion: string) => {
     // Directly send the suggestion as a message
     handleSendMessage(suggestion);
