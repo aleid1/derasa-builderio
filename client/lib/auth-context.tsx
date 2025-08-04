@@ -339,6 +339,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Small delay to simulate OAuth flow
       await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Show success message for demo auth
+      console.log('✅ تم تسجيل الدخول بنجاح باستخدام الحساب التجريبي');
     } catch (error) {
       console.error('Google sign in failed:', error);
       throw error;
