@@ -381,7 +381,7 @@ export default function LiveChatInterface({
             <Mic className="w-5 h-5" />
           </button>
 
-          <div className="relative">
+          <div className="relative" data-attachment-menu>
             <button
               onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
               className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
@@ -392,7 +392,7 @@ export default function LiveChatInterface({
 
             {/* Attachment Menu */}
             {showAttachmentMenu && (
-              <div className="absolute bottom-full mb-2 left-0 bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px]">
+              <div className="absolute bottom-full mb-2 left-0 bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px] z-50">
                 <button
                   onClick={() => {
                     cameraInputRef.current?.click();
