@@ -111,9 +111,9 @@ export default function SuggestionPills() {
         <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none z-10"></div>
         <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none z-10"></div>
 
-        {/* Scroll indicators for desktop */}
-        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 hidden md:block pointer-events-none">
-          <div className="text-neutral-400 text-xs animate-pulse">← اسحب للمزيد</div>
+        {/* Visual indicators for desktop scrolling */}
+        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden md:block pointer-events-none">
+          <div className="w-6 h-1 bg-gradient-to-l from-primary/40 via-primary/20 to-transparent rounded-full animate-pulse"></div>
         </div>
       </div>
     </div>
