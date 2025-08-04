@@ -1,5 +1,9 @@
 // Mock AI Tutor that simulates real ChatGPT behavior for demonstration
 export function getMockAIResponse(userMessage: string): string {
+  if (!userMessage || userMessage.trim() === '') {
+    return 'أهلاً بك! كيف يمكنني مساعدتك في التعلم اليوم؟ يمكنك سؤالي عن أي موضوع دراسي وسأوجهك خطوة بخطوة.';
+  }
+
   const message = userMessage.toLowerCase();
   
   // Physics questions
@@ -64,7 +68,7 @@ export function getMockAIResponse(userMessage: string): string {
 لا تحفظ قواعد النحو، بل افهم الحكمة وراءها. كل حركة في العربية لها سبب ومعنى.
 
 **مثال بسيط:**
-- "كتبَ الطالبُ الدرسَ"
+- "كتبَ الطالبُ ال��رسَ"
 لماذا الطالب مرفوع والدرس منصوب؟
 
 أي موضوع نحوي تريد أن نركز عليه؟`;
