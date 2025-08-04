@@ -299,6 +299,17 @@ export default function LiveChatInterface({
                     : "bg-white border border-neutral-200 text-neutral-900 rounded-bl-md"
                 }`}
               >
+                {/* Display image if present */}
+                {message.image && (
+                  <div className="mb-3">
+                    <img
+                      src={message.image.url}
+                      alt={message.image.filename}
+                      className="max-w-full h-auto rounded-lg shadow-sm"
+                      style={{ maxHeight: '300px' }}
+                    />
+                  </div>
+                )}
                 <p className="text-sm md:text-base leading-relaxed whitespace-pre-wrap">
                   {message.content}
                 </p>
