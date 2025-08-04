@@ -112,7 +112,7 @@ export default function LiveChatInterface({
       setMessages((prev) => [...prev, assistantMessage]);
 
       // Start streaming response
-      const stream = await chatService.sendMessage(content, currentSessionId);
+      const stream = await chatService.sendMessage(content, currentSessionId, imageBlob);
       const reader = stream.getReader();
 
       while (true) {
@@ -189,7 +189,7 @@ export default function LiveChatInterface({
             </div>
             <div>
               <h3 className="font-bold text-neutral-900">
-                🤖 دراسة - صديقك المعلم
+                🤖 دراسة - صديقك المعل��
               </h3>
               <p className="text-sm text-neutral-500">متصل ومستعد للمساعدة</p>
             </div>
