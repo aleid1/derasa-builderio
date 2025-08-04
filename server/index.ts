@@ -44,7 +44,7 @@ export function createServer() {
         } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
           contextualResponse = 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي تحتاج مساعدة فيه؟';
         } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
-          contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب�� أم شيء آخر؟';
+          contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
         } else {
           contextualResponse = 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع الذي تريد أن نتناوله اليوم؟';
         }
@@ -71,7 +71,7 @@ export function createServer() {
 - معلم حكيم وصبور
 - تحترم القيم الإسلامية والثقافة العربية
 - متوازن في الأسلوب - لا مفرط في الحماس ولا جاف
-- تشجع التفكي�� النقدي والاستقلالية في التعلم
+- تشجع التفكير النقدي والاستقلالية في التعلم
 
 ## منهجيتك التعليمية:
 1. **لا تعطي الإجابة مباشرة أبداً**
@@ -116,8 +116,11 @@ export function createServer() {
           temperature: 0.7,
         });
 
+        const aiResponse = completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟';
+        console.log('✅ OpenAI API success! Response:', aiResponse.substring(0, 100) + '...');
+
         const responseData = {
-          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
+          content: aiResponse,
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'session-' + Date.now(),
