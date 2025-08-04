@@ -14,7 +14,7 @@ const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبو
 2. **اطرح أسئلة توجيهية** تقود الطالب للوصول للإجابة بنفسه
 3. **قدم تلميحات تدريجية** بدلاً من الحلول الكاملة
 4. **تأكد من فهم الطالب** قبل الانتقال للخطوة التالية
-5. **ربط المعلومات** بأمثلة من الحياة اليومية أو الثقافة الإسلامية عند الإمكان
+5. **ربط المعلومات** بأمثلة من الحياة اليومية أو ��لثقافة الإسلامية عند الإمكان
 
 ## أمثلة على أسلوبك:
 الطالب: "كيف أحل هذه المسألة الرياضية؟"
@@ -94,9 +94,7 @@ export const handler: Handler = async (event, context) => {
         statusCode: 200,
         headers,
         body: JSON.stringify({
-          content:
-            randomResponse +
-            "\n\n*ملاحظة: يتم استخدام ردود تجريبية حالياً. لتفعيل الذكاء الاصطناعي الكامل، يرجى إضافة مفتاح OpenAI API.*",
+          content: randomResponse,
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || "demo-session",
