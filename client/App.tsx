@@ -47,6 +47,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+        <DevAuthStatusIndicator />
       </AuthProvider>
     </QueryClientProvider>
   </SimpleErrorBoundary>
