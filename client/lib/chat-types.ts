@@ -4,6 +4,11 @@ export interface ChatMessage {
   role: "user" | "assistant";
   timestamp: Date;
   isStreaming?: boolean;
+  image?: {
+    url: string;
+    filename: string;
+    size: number;
+  };
 }
 
 export interface ChatSession {
