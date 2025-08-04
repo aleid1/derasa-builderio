@@ -65,17 +65,49 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Mock authentication for now
-      const authenticatedUser: User = {
-        id: "user-" + Date.now(),
-        email,
-        name: email.split("@")[0],
-        createdAt: new Date(),
-        isGuest: false,
-      };
-      
-      setUser(authenticatedUser);
-      localStorage.removeItem("guestUser");
+      // Demo accounts for testing
+      const demoAccounts = [
+        { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
+        { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
+        { email: "student@test.com", password: "student", name: "طالب تجريبي" },
+      ];
+
+      // Check demo accounts first
+      const demoAccount = demoAccounts.find(
+        account => account.email.toLowerCase() === email.toLowerCase() && account.password === password
+      );
+
+      if (demoAccount) {
+        const authenticatedUser: User = {
+          id: "demo-" + Date.now(),
+          email: demoAccount.email,
+          name: demoAccount.name,
+          createdAt: new Date(),
+          isGuest: false,
+        };
+
+        setUser(authenticatedUser);
+        localStorage.removeItem("guestUser");
+        return;
+      }
+
+      // For any other email/password combination, create a user (for demo purposes)
+      if (email && password && email.includes('@') && password.length >= 6) {
+        const authenticatedUser: User = {
+          id: "user-" + Date.now(),
+          email,
+          name: email.split("@")[0],
+          createdAt: new Date(),
+          isGuest: false,
+        };
+
+        setUser(authenticatedUser);
+        localStorage.removeItem("guestUser");
+        return;
+      }
+
+      // If validation fails, throw error
+      throw new Error('Invalid credentials');
     } catch (error) {
       console.error('Sign in failed:', error);
       throw error;
