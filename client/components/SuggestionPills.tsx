@@ -58,9 +58,14 @@ export default function SuggestionPills() {
           </div>
         </div>
 
-        {/* Fade out edges */}
-        <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-neutral-50 to-transparent pointer-events-none"></div>
-        <div className="absolute right-0 top-0 bottom-4 w-8 bg-gradient-to-l from-neutral-50 to-transparent pointer-events-none"></div>
+        {/* Fade out edges with stronger gradients for better visual cues */}
+        <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none z-10"></div>
+        <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-neutral-50 via-neutral-50/80 to-transparent pointer-events-none z-10"></div>
+
+        {/* Scroll indicators for desktop */}
+        <div className="absolute right-2 top-1/2 transform -translate-y-1/2 hidden md:block pointer-events-none">
+          <div className="text-neutral-400 text-xs animate-pulse">← اسحب للمزيد</div>
+        </div>
       </div>
     </div>
   );
