@@ -1,10 +1,11 @@
 import { createClient } from '@supabase/supabase-js'
+import { env, hasSupabase } from './env'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ''
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+const supabaseUrl = env.SUPABASE_URL
+const supabaseAnonKey = env.SUPABASE_ANON_KEY
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.warn('Supabase configuration missing. Using fallback localStorage authentication.')
+if (!hasSupabase) {
+  console.info('Supabase not configured. Using fallback localStorage authentication.')
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
