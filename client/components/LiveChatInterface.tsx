@@ -357,12 +357,56 @@ export default function LiveChatInterface({
             <Mic className="w-5 h-5" />
           </button>
 
-          <button
-            className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
-            aria-label="إرفاق ملف"
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
+              className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="إرفاق ملف"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
+
+            {/* Attachment Menu */}
+            {showAttachmentMenu && (
+              <div className="absolute bottom-full mb-2 left-0 bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px]">
+                <button
+                  onClick={() => {
+                    cameraInputRef.current?.click();
+                  }}
+                  className="flex items-center gap-2 w-full p-2 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors text-sm"
+                >
+                  <Camera className="w-4 h-4" />
+                  التقط صورة
+                </button>
+                <button
+                  onClick={() => {
+                    fileInputRef.current?.click();
+                  }}
+                  className="flex items-center gap-2 w-full p-2 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors text-sm"
+                >
+                  <ImageIcon className="w-4 h-4" />
+                  اختر صورة
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Hidden file inputs */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileInputChange}
+            className="hidden"
+          />
+          <input
+            ref={cameraInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleCameraCapture}
+            className="hidden"
+          />
 
           <input
             ref={inputRef}
