@@ -69,12 +69,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const initializeAuth = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        await loadUserProfile(session.user);
+      if (hasSupabase && supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session?.user) {
+          await loadUserProfile(session.user);
+        } else {
+          await createGuestSession();
+        }
       } else {
-        // Create guest user if no session exists
+        // No Supabase configuration, use guest session
         await createGuestSession();
       }
     } catch (error) {
