@@ -383,7 +383,10 @@ export default function LiveChatInterface({
 
           <div className="relative" data-attachment-menu>
             <button
-              onClick={() => setShowAttachmentMenu(!showAttachmentMenu)}
+              onClick={() => {
+                console.log('Attachment button clicked, current state:', showAttachmentMenu);
+                setShowAttachmentMenu(!showAttachmentMenu);
+              }}
               className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="إرفاق ملف"
             >
