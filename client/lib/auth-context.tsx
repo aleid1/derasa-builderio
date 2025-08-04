@@ -308,17 +308,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
-      // Update user profile with parent email
-      const { error } = await supabase
-        .from('users')
-        .update({ parent_email: parentEmail })
-        .eq('id', user.id);
+      if (hasSupabase && supabase) {
+        // Update user profile with parent email
+        const { error } = await supabase
+          .from('users')
+          .update({ parent_email: parentEmail })
+          .eq('id', user.id);
 
-      if (error) throw error;
+        if (error) throw error;
+      }
 
       // TODO: Send email to parent with consent link
       console.log('Parental consent requested for:', parentEmail);
-      
+
     } catch (error) {
       console.error('Failed to request parental consent:', error);
       throw error;
