@@ -59,7 +59,7 @@ export default function AuthModal({
       setError(
         mode === "login"
           ? "فشل تسجيل الدخول. تأكد من بياناتك."
-          : "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+          : "فشل إن��اء الحساب. يرجى المحاولة مرة أخرى.",
       );
     } finally {
       setIsLoading(false);
@@ -129,10 +129,12 @@ export default function AuthModal({
           </p>
           {mode === "login" && (
             <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-700 font-medium mb-1">🎯 حساب تجريبي للتجربة:</p>
-              <p className="text-xs text-blue-600">
-                البريد: test@test.com | كلمة المرور: 123456
-              </p>
+              <p className="text-sm text-blue-700 font-medium mb-2">🎯 حسابات تجريبية للتجربة:</p>
+              <div className="text-xs text-blue-600 space-y-1">
+                <p>• test@test.com | 123456</p>
+                <p>• demo@demo.com | demo123</p>
+                <p>• أو أي بريد صحيح + 6 أحرف</p>
+              </div>
             </div>
           )}
         </div>
@@ -143,7 +145,7 @@ export default function AuthModal({
             <div className="text-center">
               <p className="text-sm text-neutral-600 mb-2">🚀 تسجيل دخول سريع</p>
               <p className="text-xs text-amber-600 mb-4 bg-amber-50 p-2 rounded border">
-                💡 الإصدار التجريبي: سيقوم بإنشاء حساب ��جريبي
+                💡 الإصدار التجريبي: سيقوم بإنشاء حساب تجريبي
               </p>
               <button
                 onClick={handleGoogleSignIn}
