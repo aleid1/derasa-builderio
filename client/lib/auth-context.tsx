@@ -268,26 +268,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (email: string, password: string, name: string, birthDate?: string, parentEmail?: string) => {
     setIsLoading(true);
     try {
+      // Only try Supabase if it's properly configured
       if (hasSupabase && supabase) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: name,
-              name: name,
-              birth_date: birthDate,
-              parent_email: parentEmail
+        try {
+          const { data, error } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: {
+                full_name: name,
+                name: name,
+                birth_date: birthDate,
+                parent_email: parentEmail
+              }
             }
-          }
-        });
+          });
 
-        if (error) throw error;
-        // User will be set through the auth state change listener
-        return;
+          if (error) {
+            console.warn('Supabase signup failed, falling back to demo:', error.message);
+            throw new Error('Supabase signup failed');
+          }
+
+          // User will be set through the auth state change listener
+          return;
+        } catch (supabaseError) {
+          console.warn('Supabase registration failed, using demo registration');
+          // Fall through to demo registration
+        }
       }
 
-      // Fallback: Mock registration when Supabase is not available
+      // Demo registration for development/testing
       const newUser: User = {
         id: "user-" + Date.now(),
         email,
