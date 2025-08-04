@@ -68,8 +68,8 @@ export function createServer() {
         apiKey: process.env.OPENAI_API_KEY,
       });
 
-      // Arabic Tutor System Prompt (same as Netlify function)
-      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التع��م.
+      // Enhanced Arabic Tutor System Prompt with better context handling
+      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التعلم.
 
 ## شخصيتك:
 - معلم حكيم وصبور
@@ -151,7 +151,7 @@ export function createServer() {
       console.error("Local chat error:", error);
       res.status(500).json({
         error: "Internal server error",
-        message: "عذراً، حدث خطأ في النظام. يرجى المحاولة لاحقاً.",
+        message: "عذراً، حدث خطأ في النظام. يرجى المح��ولة لاحقاً.",
       });
     }
   });
