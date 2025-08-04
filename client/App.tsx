@@ -16,6 +16,7 @@ import History from "./pages/History";
 import Dashboard from "./pages/Dashboard";
 import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
+import { DevAuthStatusIndicator } from "./components/AuthStatusIndicator";
 
 const queryClient = new QueryClient({
   defaultOptions: {
