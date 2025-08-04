@@ -59,7 +59,7 @@ export default function AuthModal({
       setError(
         mode === "login"
           ? "فشل تسجيل الدخول. تأكد من بياناتك."
-          : "فشل إنشاء الحساب. ير��ى المحاولة مرة أخرى.",
+          : "فشل إنشاء الحساب. يرجى المحاولة مرة أخرى.",
       );
     } finally {
       setIsLoading(false);
@@ -72,11 +72,11 @@ export default function AuthModal({
 
     try {
       await signInWithGoogle();
-      // Don't close modal here as Google OAuth will redirect
+      onClose(); // Close modal after successful authentication
     } catch (err: any) {
       console.error('Google sign-in error:', err);
-      if (err.message?.includes('Supabase configuration')) {
-        setError("خدمة تسجيل الدخول غير متاحة حالياً. يرجى استخدام البريد الإلكتروني.");
+      if (err.message?.includes('configuration')) {
+        setError("تم استخدام حساب تجريبي. في الإنتاج، سيتم ربطك بحسابك الفعلي.");
       } else {
         setError("فشل تسجيل الدخول. يرجى المحاولة مرة أخرى.");
       }
