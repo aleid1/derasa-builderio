@@ -60,37 +60,26 @@ class ChatService {
         url: response.url,
       });
 
-      let errorText = "";
       let errorMessage = "عذراً، حدث خطأ في الاتصال. يرجى المحاولة مرة أخرى.";
 
-      try {
-        errorText = await response.text();
-        console.error("Error details:", errorText);
-
-        // Try to parse error details from server
-        try {
-          const errorData = JSON.parse(errorText);
-          if (errorData.message) {
-            errorMessage = errorData.message;
-          }
-        } catch (parseError) {
-          console.log('Could not parse error response as JSON');
-        }
-
-        // Provide more specific error messages based on status
-        if (response.status === 429) {
-          errorMessage =
-            "لقد تجاوزت الحد المسموح من الرسائل. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.";
-        } else if (response.status === 500) {
-          errorMessage = "عذراً، حدث خطأ في الخادم. نحن نعمل على إصلاحه.";
-        } else if (response.status === 404) {
-          errorMessage =
-            "عذراً، الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.";
-        }
-      } catch (e) {
-        console.error("Could not read error response:", e);
+      // Provide specific error messages based on status without trying to read body
+      if (response.status === 429) {
+        errorMessage =
+          "لقد تجاوزت الحد المسموح من الرسائل. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.";
+      } else if (response.status === 500) {
+        errorMessage = "عذراً، حدث خطأ في الخادم. نحن نعمل على إصلاحه.";
+      } else if (response.status === 404) {
+        errorMessage =
+          "عذراً، الخدمة غير متوفرة حالياً. يرجى المحاولة لاحقاً.";
+      } else if (response.status === 403) {
+        errorMessage = "عذراً، ليس لديك صلاحية للوصول لهذه الخدمة.";
+      } else if (response.status >= 500) {
+        errorMessage = "عذراً، مشكلة في الخادم. سنعمل على إصلاحها قريباً.";
+      } else if (response.status >= 400) {
+        errorMessage = "عذراً، هناك مشكلة في طلبك. يرجى المحاولة مرة أخرى.";
       }
 
+      console.error("Using error message:", errorMessage);
       throw new Error(errorMessage);
     }
 
