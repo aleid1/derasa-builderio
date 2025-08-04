@@ -66,8 +66,6 @@ export default function Chat() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   );
 }
