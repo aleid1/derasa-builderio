@@ -29,14 +29,11 @@ export function createServer() {
         return res.status(400).json({ error: "Message is required" });
       }
 
-      // Check if OpenAI API key is available
-      const hasValidApiKey = process.env.OPENAI_API_KEY &&
-                            process.env.OPENAI_API_KEY.startsWith('sk-') &&
-                            process.env.OPENAI_API_KEY.length > 20 &&
-                            !process.env.OPENAI_API_KEY.includes('placeholder') &&
-                            !process.env.OPENAI_API_KEY.includes('your-actual-openai-api-key-here');
+      // For demo purposes, let's try the OpenAI API directly and handle errors gracefully
+      console.log('🔧 API Key check - Current key:', process.env.OPENAI_API_KEY);
 
-      if (!hasValidApiKey) {
+      // Always try OpenAI first, fallback only on error
+      if (false) { // Temporarily disabled fallback check
         console.log('⚠️  No valid OpenAI API key detected, using contextual fallback responses');
 
         // Create contextual responses based on the user's message
@@ -46,7 +43,7 @@ export function createServer() {
         if (messageText.includes('مذاكرة') || messageText.includes('دراسة') || messageText.includes('تعلم')) {
           contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
         } else if (messageText.includes('رياضيات') || messageText.includes('حساب') || messageText.includes('جبر')) {
-          contextualResponse = 'الرياضيا�� موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
+          contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شيء آخر؟';
         } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
           contextualResponse = 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي تحتاج مساعدة فيه؟';
         } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
@@ -84,7 +81,7 @@ export function createServer() {
 2. **اطرح أسئلة توجيهية** تقود الطالب للوصول للإجابة بنفسه
 3. **قدم تلميحات تدريجية** بدلاً من الحلول الكاملة
 4. **تأكد من فهم الطالب** قبل الانتقال للخطوة التالية
-5. **ربط المعلومات** بأمثلة من الحياة اليومية أو الثقافة الإسلامية عند الإمكان
+5. **ربط المعلومات** بأمثلة من الحياة اليومية أو الثق��فة الإسلامية عند الإمكان
 
 ## أمثلة على أسلوبك:
 الطالب: "كيف أحل هذه المسألة الرياضية؟"
