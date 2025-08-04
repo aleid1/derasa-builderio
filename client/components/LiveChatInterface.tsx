@@ -269,10 +269,10 @@ export default function LiveChatInterface({
               <Sparkles className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-xl font-bold text-neutral-900 mb-2">
-              مرحبا�� بك!
+              مرحبا بك!
             </h3>
             <p className="text-neutral-500 mb-6">
-              أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
+              أنا دراسة، معلمك الذكي. سأساعدك في ال��علم خطوة بخطوة.
             </p>
 
             {/* Suggestions */}
