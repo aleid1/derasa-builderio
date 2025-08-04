@@ -46,6 +46,28 @@ export default function ParentalControlDashboard({
 
   const loadParentalControls = async () => {
     try {
+      if (!hasSupabase || !supabase) {
+        // Mock data for development without Supabase
+        const mockControls: ParentalControl = {
+          childUserId,
+          parentEmail,
+          dailyLimitMinutes: 60,
+          allowedSubjects: ['الرياضيات', 'العلوم', 'اللغة العربية', 'الإنجليزية'],
+          contentLevel: 'middle',
+          monitoringEnabled: true,
+          homeworkHelpOnly: false,
+          notifications: {
+            dailyDigest: true,
+            inappropriateContent: true,
+            learningMilestones: true,
+            timeLimit: true,
+            newSubjects: false,
+          }
+        };
+        setControls(mockControls);
+        return;
+      }
+
       const { data, error } = await supabase
         .from('parental_controls')
         .select('*')
