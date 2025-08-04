@@ -43,8 +43,8 @@ export default function HeroChatCard() {
       </div>
 
       {/* Chat Input Card */}
-      <div className="bg-white rounded-3xl shadow-xl border border-neutral-200 p-6 md:p-8 hover:shadow-2xl transition-all duration-300">
-        <div className="flex items-center gap-4" dir="rtl">
+      <div className="bg-white rounded-3xl shadow-xl border border-neutral-200 p-4 md:p-6 lg:p-8 hover:shadow-2xl transition-all duration-300">
+        <div className="flex items-center gap-2 md:gap-4" dir="rtl">
           {/* Microphone Button */}
           <button
             aria-label="تسجيل صوتي"
