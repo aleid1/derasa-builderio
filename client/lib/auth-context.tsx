@@ -232,6 +232,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signUp = async (email: string, password: string, name: string, birthDate?: string, parentEmail?: string) => {
     setIsLoading(true);
     try {
+      if (!hasSupabase || !supabase) {
+        throw new Error('Authentication service not available');
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
