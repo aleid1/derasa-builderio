@@ -70,11 +70,17 @@ export default function SuggestionPills() {
       <div className="relative">
         {/* Horizontal scroll container */}
         <div
-          className="overflow-x-auto scrollbar-hide pb-4 scroll-smooth"
+          ref={scrollContainerRef}
+          className="overflow-x-auto scrollbar-hide pb-4 scroll-smooth cursor-grab active:cursor-grabbing"
           style={{
             scrollbarWidth: "none",
             msOverflowStyle: "none",
           }}
+          onMouseDown={handleMouseDown}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseLeave}
+          onWheel={handleWheel}
         >
           <div className="flex gap-3 px-6 min-w-max">
             {suggestions.map((suggestion, index) => (
