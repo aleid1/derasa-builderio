@@ -108,6 +108,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const loadUserProfile = async (supabaseUser: SupabaseUser) => {
     try {
+      if (!hasSupabase || !supabase) {
+        throw new Error('Supabase not available');
+      }
+
       const { data: profile, error } = await supabase
         .from('users')
         .select('*')
