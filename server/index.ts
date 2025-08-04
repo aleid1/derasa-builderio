@@ -31,7 +31,7 @@ export function createServer() {
       }
 
       // For demo purposes, let's try the OpenAI API directly and handle errors gracefully
-      console.log('🔧 API Key check - Current key:', process.env.OPENAI_API_KEY);
+      console.log('�� API Key check - Current key:', process.env.OPENAI_API_KEY);
 
       // Always try OpenAI first, fallback only on error
       if (false) { // Temporarily disabled fallback check
@@ -45,7 +45,7 @@ export function createServer() {
           contextualResponse = 'سؤال ممتاز حول المذاكرة! لنبدأ بفهم طبيعة دراستك أولاً. هل تدرس مادة معينة مثل الرياضيات أو العلوم؟ وما التحدي الذي تواجهه في المذاكرة تحديداً؟';
         } else if (messageText.includes('رياضيات') || messageText.includes('حساب') || messageText.includes('جبر')) {
           contextualResponse = 'الرياضيات موضوع رائع! ما نوع المسألة أو المفهوم الذي تريد فهمه؟ هل هو في الجبر، الهندسة، أم شي�� آخر؟';
-        } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كيمياء')) {
+        } else if (messageText.includes('علوم') || messageText.includes('فيزياء') || messageText.includes('كي��ياء')) {
           contextualResponse = 'العلوم مجال واسع ومثير! أي فرع من العلوم تريد أن نتناوله؟ وما المفهوم المحدد الذي تحتاج مساعدة فيه؟';
         } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
           contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
@@ -79,7 +79,7 @@ export function createServer() {
 - تشجع التفكير النقدي والاستقلالية في التعلم بطريقة عملية
 - تتابع المحادثة بطريقة طبيعية ومترابطة بدون مبالغة في العبارات الدينية
 - تستخدم أمثلة من البي��ة السعودية والخليجية (المدن، الجغرافيا، التاريخ المحلي)
-- تتبع معايير التعليم في المملكة العربية السعودية ودول الخليج
+- تتبع معايي�� التعليم في المملكة العربية السعودية ودول الخليج
 
 ## منهجيتك التعليمية السعودية الخليجية:
 1. **حافظ على استمرارية المحادثة** - تذكر ما قيل قبل قليل دائماً واستخدم عبارات التشجيع الخليجية
@@ -91,7 +91,7 @@ export function createServer() {
 7. **استخدم أمثلة عملية** مثل التفاح، البرتقال، الريالات، السيارات، الأقلام، وأشياء مالوفة للطالب
 
 ## القيم ��لإ��لامية والمنهج الأخلاقي:
-- عند الحديث عن الله سبحانه وتعالى: استخدم التعظيم المناسب "الله عز وجل" أو "سبحانه وتعالى"
+- عند الحديث عن الله سبحانه وتعالى: استخدم ��لتعظيم المناسب "الله عز وجل" أو "سبحانه وتعالى"
 - عند ذكر النبي محمد: قل دائما�� "صلى الله عليه وسلم"
 - ارجع للقرآن الكريم و��لسنة النبوية في المسائل الدينية
 - احترم جميع ��لأنبياء والرسل عليهم السلام
@@ -135,7 +135,7 @@ export function createServer() {
 
 ## المواض��ع التي تد��سها:
 - الرياضيات (جميع المستويات)
-- العلوم (فيزياء، كيمياء، أحياء)
+- العلوم (فيز��اء، كيمياء، أحياء)
 - اللغة العربية والأدب
 - الدراسات الإسلامية
 - التاريخ والجغرافيا
@@ -247,18 +247,31 @@ export function createServer() {
         console.log('✅ OpenAI streaming complete! Response:', fullResponse.substring(0, 100) + '...');
       } catch (openaiError: any) {
         console.error("❌ OpenAI API error:", openaiError.message);
-        console.log("🤖 Using advanced mock AI tutor for demonstration");
+        console.error("❌ Full error:", openaiError);
 
-        // Use sophisticated mock AI tutor that demonstrates proper tutoring behavior
-        const mockResponse = getMockAIResponse(message);
+        // If it's an image-related error, provide appropriate fallback
+        if (image) {
+          console.log("🖼️ Image processing error, providing image fallback");
+          res.json({
+            content: "عذراً، لا أستطيع تحليل الصورة حالياً. يرجى المحاولة لاحقاً أو وصف ما تريد مساعدة فيه بالكلمات.",
+            isComplete: true,
+            messageId: Date.now().toString(),
+            sessionId: sessionId || 'session-' + Date.now(),
+            userId: userId || 'user-' + Date.now(),
+          });
+        } else {
+          console.log("🤖 Using advanced mock AI tutor for demonstration");
+          // Use sophisticated mock AI tutor that demonstrates proper tutoring behavior
+          const mockResponse = getMockAIResponse(message);
 
-        res.json({
-          content: mockResponse,
-          isComplete: true,
-          messageId: Date.now().toString(),
-          sessionId: sessionId || 'session-' + Date.now(),
-          userId: userId || 'user-' + Date.now(),
-        });
+          res.json({
+            content: mockResponse,
+            isComplete: true,
+            messageId: Date.now().toString(),
+            sessionId: sessionId || 'session-' + Date.now(),
+            userId: userId || 'user-' + Date.now(),
+          });
+        }
       }
     } catch (error) {
       console.error("Local chat error:", error);
