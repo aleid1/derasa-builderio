@@ -207,6 +207,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
+      if (!hasSupabase || !supabase) {
+        throw new Error('Authentication service not available');
+      }
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
