@@ -14,6 +14,7 @@ import Features from "./pages/Features";
 import Contact from "./pages/Contact";
 import History from "./pages/History";
 import Dashboard from "./pages/Dashboard";
+import AuthCallback from "./pages/AuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
