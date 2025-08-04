@@ -46,7 +46,7 @@ export function createServer() {
         } else if (messageText.includes('عربية') || messageText.includes('لغة') || messageText.includes('نحو')) {
           contextualResponse = 'اللغة العربية لغة جميلة وغنية! ما الموضوع الذي تريد التركيز عليه؟ النحو، الصرف، الأدب، أم شيء آخر؟';
         } else {
-          contextualResponse = 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع ��لذي تريد أن نتناوله اليوم؟';
+          contextualResponse = 'أهلاً بك! أنا هنا لمساعدتك في التعلم. يمكنك أن تسألني عن أي موضوع دراسي وسأوجهك خطوة بخطوة للوصول للفهم. ما الموضوع الذي تريد أن نتناوله اليوم؟';
         }
 
         return res.json({
@@ -59,6 +59,7 @@ export function createServer() {
       }
 
       // Initialize OpenAI client
+      console.log('🤖 Initializing OpenAI client with API key:', process.env.OPENAI_API_KEY?.substring(0, 10) + '...');
       const openai = new OpenAI({
         apiKey: process.env.OPENAI_API_KEY,
       });
