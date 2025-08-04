@@ -57,7 +57,7 @@ export function createServer() {
       });
 
       // Arabic Tutor System Prompt (same as Netlify function)
-      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التعلم.
+      const ARABIC_TUTOR_SYSTEM_PROMPT = `أنت "دراسة" - معلم ذكي صبور ومتوازن يساعد الطلاب العرب والسعوديين في التع��م.
 
 ## شخصيتك:
 - معلم حكيم وصبور
@@ -108,7 +108,7 @@ export function createServer() {
         });
 
         const responseData = {
-          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة ��ياغته؟',
+          content: completion.choices[0]?.message?.content || 'عذراً، لم أتمكن من فهم سؤالك. يمكنك إعادة صياغته؟',
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'session-' + Date.now(),
@@ -129,7 +129,7 @@ export function createServer() {
         const randomResponse = fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
 
         res.json({
-          content: randomResponse + '\n\n*ملاحظة: حدث خطأ في الاتصال بخدمة الذكاء الاصطناعي. يتم استخدام ردود تجريبية.*',
+          content: randomResponse,
           isComplete: true,
           messageId: Date.now().toString(),
           sessionId: sessionId || 'session-' + Date.now(),
