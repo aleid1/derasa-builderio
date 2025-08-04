@@ -396,6 +396,7 @@ export default function LiveChatInterface({
             {/* Attachment Menu */}
             {showAttachmentMenu && (
               <div className="absolute bottom-full mb-2 left-0 bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px] z-50">
+                {console.log('Rendering attachment menu')}
                 <button
                   onClick={() => {
                     setShowAttachmentMenu(false);
@@ -414,7 +415,7 @@ export default function LiveChatInterface({
                   className="flex items-center gap-2 w-full p-2 text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors text-sm"
                 >
                   <ImageIcon className="w-4 h-4" />
-                  اختر صورة
+                  اخ��ر صورة
                 </button>
               </div>
             )}
