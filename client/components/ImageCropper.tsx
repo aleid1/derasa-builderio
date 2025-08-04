@@ -77,56 +77,69 @@ export default function ImageCropper({ imageFile, onCrop, onCancel }: ImageCropp
     const ctx = canvas?.getContext('2d');
     if (!canvas || !ctx || !image) return;
 
-    const canvasRect = canvas.getBoundingClientRect();
-    canvas.width = canvasRect.width;
-    canvas.height = canvasRect.height;
+    // Set canvas size to match its display size
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = rect.height;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Calculate image dimensions to fit canvas while maintaining aspect ratio
+    const imageAspect = image.width / image.height;
+    const canvasAspect = canvas.width / canvas.height;
+
+    let drawWidth = canvas.width;
+    let drawHeight = canvas.height;
+
+    if (imageAspect > canvasAspect) {
+      drawHeight = canvas.width / imageAspect;
+    } else {
+      drawWidth = canvas.height * imageAspect;
+    }
+
+    // Apply scale
+    drawWidth *= scale;
+    drawHeight *= scale;
+
+    // Center the image
+    const x = (canvas.width - drawWidth) / 2 + imagePosition.x;
+    const y = (canvas.height - drawHeight) / 2 + imagePosition.y;
+
     // Save context for transformations
     ctx.save();
 
-    // Calculate display dimensions
-    const imageAspect = image.width / image.height;
-    const canvasAspect = canvas.width / canvas.height;
-    
-    let displayWidth = canvas.width * scale;
-    let displayHeight = canvas.height * scale;
-    
-    if (imageAspect > canvasAspect) {
-      displayHeight = displayWidth / imageAspect;
-    } else {
-      displayWidth = displayHeight * imageAspect;
-    }
-
-    // Apply transformations
-    ctx.translate(canvas.width / 2 + imagePosition.x, canvas.height / 2 + imagePosition.y);
+    // Apply rotation around the center
+    ctx.translate(x + drawWidth / 2, y + drawHeight / 2);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.scale(scale, scale);
+    ctx.translate(-drawWidth / 2, -drawHeight / 2);
 
     // Draw image
-    ctx.drawImage(image, -displayWidth / 2, -displayHeight / 2, displayWidth, displayHeight);
+    ctx.drawImage(image, 0, 0, drawWidth, drawHeight);
     ctx.restore();
 
-    // Draw crop overlay
+    // Draw crop overlay (dark area outside crop)
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Clear crop area
-    ctx.clearRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height);
-    
+
+    // Clear crop area (make it transparent)
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.fillRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height);
+
+    // Reset composite operation
+    ctx.globalCompositeOperation = 'source-over';
+
     // Draw crop border
     ctx.strokeStyle = '#3b82f6';
     ctx.lineWidth = 2;
     ctx.strokeRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height);
-    
+
     // Draw corner handles
     const handleSize = 8;
     ctx.fillStyle = '#3b82f6';
     // Top-left
     ctx.fillRect(cropArea.x - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize);
-    // Top-right  
+    // Top-right
     ctx.fillRect(cropArea.x + cropArea.width - handleSize/2, cropArea.y - handleSize/2, handleSize, handleSize);
     // Bottom-left
     ctx.fillRect(cropArea.x - handleSize/2, cropArea.y + cropArea.height - handleSize/2, handleSize, handleSize);
