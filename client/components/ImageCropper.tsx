@@ -186,19 +186,50 @@ export default function ImageCropper({ imageFile, onCrop, onCancel }: ImageCropp
     croppedCanvas.width = cropArea.width;
     croppedCanvas.height = cropArea.height;
 
-    // Calculate the source coordinates on the original image
-    const scaleFactorX = image.width / (canvas.width * scale);
-    const scaleFactorY = image.height / (canvas.height * scale);
-    
-    const sourceX = (cropArea.x - imagePosition.x) * scaleFactorX;
-    const sourceY = (cropArea.y - imagePosition.y) * scaleFactorY;
-    const sourceWidth = cropArea.width * scaleFactorX;
-    const sourceHeight = cropArea.height * scaleFactorY;
+    // Calculate image dimensions on canvas
+    const rect = canvas.getBoundingClientRect();
+    const imageAspect = image.width / image.height;
+    const canvasAspect = rect.width / rect.height;
+
+    let drawWidth = rect.width;
+    let drawHeight = rect.height;
+
+    if (imageAspect > canvasAspect) {
+      drawHeight = rect.width / imageAspect;
+    } else {
+      drawWidth = rect.height * imageAspect;
+    }
+
+    // Apply scale
+    drawWidth *= scale;
+    drawHeight *= scale;
+
+    // Calculate image position on canvas
+    const imageX = (rect.width - drawWidth) / 2 + imagePosition.x;
+    const imageY = (rect.height - drawHeight) / 2 + imagePosition.y;
+
+    // Calculate crop area relative to the image
+    const cropRelativeX = (cropArea.x - imageX) / drawWidth;
+    const cropRelativeY = (cropArea.y - imageY) / drawHeight;
+    const cropRelativeWidth = cropArea.width / drawWidth;
+    const cropRelativeHeight = cropArea.height / drawHeight;
+
+    // Calculate source coordinates on the original image
+    const sourceX = cropRelativeX * image.width;
+    const sourceY = cropRelativeY * image.height;
+    const sourceWidth = cropRelativeWidth * image.width;
+    const sourceHeight = cropRelativeHeight * image.height;
+
+    // Ensure we don't go outside image bounds
+    const clampedSourceX = Math.max(0, Math.min(sourceX, image.width));
+    const clampedSourceY = Math.max(0, Math.min(sourceY, image.height));
+    const clampedSourceWidth = Math.max(0, Math.min(sourceWidth, image.width - clampedSourceX));
+    const clampedSourceHeight = Math.max(0, Math.min(sourceHeight, image.height - clampedSourceY));
 
     // Draw the cropped portion
     croppedCtx.drawImage(
       image,
-      sourceX, sourceY, sourceWidth, sourceHeight,
+      clampedSourceX, clampedSourceY, clampedSourceWidth, clampedSourceHeight,
       0, 0, cropArea.width, cropArea.height
     );
 
