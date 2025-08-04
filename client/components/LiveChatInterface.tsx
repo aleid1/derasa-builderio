@@ -272,7 +272,7 @@ export default function LiveChatInterface({
               مرحباً بك!
             </h3>
             <p className="text-neutral-500 mb-6">
-              أنا در��سة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
+              أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
             </p>
 
             {/* Suggestions */}
@@ -372,8 +372,8 @@ export default function LiveChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="p-6 border-t border-neutral-200 bg-neutral-50">
-        <div className="flex items-center gap-3">
+      <div className="p-4 md:p-6 border-t border-neutral-200 bg-neutral-50">
+        <div className="flex items-center gap-2 md:gap-3 max-w-4xl mx-auto">
           <button
             className="p-3 text-neutral-400 hover:text-neutral-600 hover:bg-white rounded-xl transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
             aria-label="تسجيل صوتي"
