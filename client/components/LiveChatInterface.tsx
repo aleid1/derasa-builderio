@@ -272,7 +272,7 @@ export default function LiveChatInterface({
               مرحبا بك!
             </h3>
             <p className="text-neutral-500 mb-6">
-              أنا دراسة، معلمك الذكي. سأساعدك في ال��علم خطوة بخطوة.
+              أنا دراسة، معلمك الذكي. سأساعدك في التعلم خطوة بخطوة.
             </p>
 
             {/* Suggestions */}
