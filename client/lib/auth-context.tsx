@@ -264,6 +264,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
+      if (!hasSupabase || !supabase) {
+        throw new Error('Authentication service not available');
+      }
+
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -282,12 +286,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      if (hasSupabase && supabase) {
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
+      }
 
       // Clear local storage
       localStorage.removeItem("guestUser");
-      
+
       // Create new guest session
       await createGuestSession();
     } catch (error) {
