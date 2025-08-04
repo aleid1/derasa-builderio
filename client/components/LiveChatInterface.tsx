@@ -429,6 +429,15 @@ export default function LiveChatInterface({
           </button>
         </div>
       </div>
+
+      {/* Image Cropper Modal */}
+      {showImageCropper && selectedImageFile && (
+        <ImageCropper
+          imageFile={selectedImageFile}
+          onCrop={handleImageCrop}
+          onCancel={handleCropCancel}
+        />
+      )}
     </div>
   );
 }
