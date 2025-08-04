@@ -141,7 +141,10 @@ export default function AuthModal({
         <div className="p-6 pb-0">
           <div className="space-y-4">
             <div className="text-center">
-              <p className="text-sm text-neutral-600 mb-4">🚀 تسجيل دخول سريع</p>
+              <p className="text-sm text-neutral-600 mb-2">🚀 تسجيل دخول سريع</p>
+              <p className="text-xs text-amber-600 mb-4 bg-amber-50 p-2 rounded border">
+                💡 الإصدار التجريبي: سيقوم بإنشاء حساب ��جريبي
+              </p>
               <button
                 onClick={handleGoogleSignIn}
                 disabled={isLoading}
