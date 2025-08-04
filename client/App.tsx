@@ -22,8 +22,8 @@ const queryClient = new QueryClient();
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary>
-        <AuthProvider>
+      <AuthProvider>
+        <AppInitializer>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -40,8 +40,8 @@ const App = () => (
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
-        </AuthProvider>
-      </ErrorBoundary>
+        </AppInitializer>
+      </AuthProvider>
     </QueryClientProvider>
   </ErrorBoundary>
 );
