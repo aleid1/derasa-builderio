@@ -29,34 +29,25 @@ export default function ImageCropper({ imageFile, onCrop, onCancel }: ImageCropp
     const img = new Image();
     img.onload = () => {
       setImage(img);
-      // Center the image and set initial crop area
-      const canvas = canvasRef.current;
-      if (canvas) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const imageAspect = img.width / img.height;
-        const canvasAspect = canvasRect.width / canvasRect.height;
-        
-        let displayWidth = canvasRect.width;
-        let displayHeight = canvasRect.height;
-        
-        if (imageAspect > canvasAspect) {
-          displayHeight = displayWidth / imageAspect;
-        } else {
-          displayWidth = displayHeight * imageAspect;
+      // Set initial image position to center and crop area
+      setTimeout(() => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const rect = canvas.getBoundingClientRect();
+
+          // Start with image centered
+          setImagePosition({ x: 0, y: 0 });
+
+          // Set initial crop area in the center
+          const cropSize = Math.min(rect.width, rect.height) * 0.6;
+          setCropArea({
+            x: (rect.width - cropSize) / 2,
+            y: (rect.height - cropSize) / 2,
+            width: cropSize,
+            height: cropSize
+          });
         }
-        
-        setImagePosition({
-          x: (canvasRect.width - displayWidth) / 2,
-          y: (canvasRect.height - displayHeight) / 2
-        });
-        
-        setCropArea({
-          x: (canvasRect.width - 200) / 2,
-          y: (canvasRect.height - 200) / 2,
-          width: 200,
-          height: 200
-        });
-      }
+      }, 100);
     };
     
     const reader = new FileReader();
