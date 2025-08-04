@@ -64,6 +64,20 @@ export default function LiveChatInterface({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  useEffect(() => {
+    // Close attachment menu when clicking outside
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showAttachmentMenu) {
+        setShowAttachmentMenu(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [showAttachmentMenu]);
+
   // Don't render until auth is loaded
   if (authLoading) {
     return (
