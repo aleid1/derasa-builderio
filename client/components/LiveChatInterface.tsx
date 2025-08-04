@@ -392,7 +392,7 @@ export default function LiveChatInterface({
 
             {/* Attachment Menu */}
             {showAttachmentMenu && (
-              <div className="absolute bottom-full mb-2 left-0 bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px] z-50">
+              <div className="absolute bottom-full mb-2 left-0 md:right-0 md:left-auto bg-white border border-neutral-200 rounded-lg shadow-lg p-2 min-w-[150px] z-50">
                 <button
                   onClick={() => {
                     setShowAttachmentMenu(false);
