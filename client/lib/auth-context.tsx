@@ -31,7 +31,6 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-// Create default guest user immediately
 const createGuestUser = (): User => ({
   id: "guest-" + Date.now(),
   name: "طالب ضيف",
@@ -41,130 +40,79 @@ const createGuestUser = (): User => ({
 });
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  // Initialize with guest user immediately - no loading states
-  const [user, setUser] = useState<User>(() => {
-    try {
-      const savedUser = localStorage.getItem("guestUser");
-      if (savedUser) {
-        return JSON.parse(savedUser);
-      }
-    } catch (error) {
-      console.error('Failed to parse saved user:', error);
-    }
-    
-    const guestUser = createGuestUser();
-    try {
-      localStorage.setItem("guestUser", JSON.stringify(guestUser));
-    } catch (error) {
-      console.error('Failed to save guest user:', error);
-    }
-    return guestUser;
-  });
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isMinor] = useState(false);
   const [hasParentalConsent] = useState(true);
 
-  // Listen for auth state changes if Supabase is available
+  // Initialize auth state
   useEffect(() => {
-    if (!hasSupabase || !supabase) return;
+    let isMounted = true;
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === 'SIGNED_IN' && session?.user) {
-          await handleSupabaseUser(session.user);
-        } else if (event === 'SIGNED_OUT') {
-          handleSignOut();
+    const initializeAuth = async () => {
+      try {
+        // Check for existing Supabase session first
+        if (hasSupabase && supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && isMounted) {
+            await handleSupabaseUser(session.user);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Fall back to guest user
+        if (isMounted) {
+          const savedUser = localStorage.getItem("guestUser");
+          if (savedUser) {
+            try {
+              setUser(JSON.parse(savedUser));
+            } catch {
+              const guestUser = createGuestUser();
+              setUser(guestUser);
+              localStorage.setItem("guestUser", JSON.stringify(guestUser));
+            }
+          } else {
+            const guestUser = createGuestUser();
+            setUser(guestUser);
+            localStorage.setItem("guestUser", JSON.stringify(guestUser));
+          }
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (isMounted) {
+          const guestUser = createGuestUser();
+          setUser(guestUser);
+          localStorage.setItem("guestUser", JSON.stringify(guestUser));
+          setIsLoading(false);
         }
       }
-    );
+    };
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        handleSupabaseUser(session.user);
-      }
-    });
+    initializeAuth();
 
-    return () => subscription.unsubscribe();
+    // Set up Supabase auth listener
+    const subscription = hasSupabase && supabase 
+      ? supabase.auth.onAuthStateChange(async (event, session) => {
+          if (!isMounted) return;
+          
+          if (event === 'SIGNED_IN' && session?.user) {
+            await handleSupabaseUser(session.user);
+          } else if (event === 'SIGNED_OUT') {
+            handleSignOut();
+          }
+        })
+      : null;
+
+    return () => {
+      isMounted = false;
+      subscription?.data.subscription.unsubscribe();
+    };
   }, []);
 
   const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
     try {
-      // Get or create user profile
-      let { data: profile, error } = await supabase!
-        .from('users')
-        .select('*')
-        .eq('id', supabaseUser.id)
-        .single();
-
-      if (error && error.code === 'PGRST116') {
-        // User doesn't exist, create one
-        const newProfile = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata?.full_name || 
-                supabaseUser.user_metadata?.name || 
-                supabaseUser.email!.split('@')[0],
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-          consent_given: true,
-          subscription_tier: 'free',
-          preferences: {},
-          privacy_settings: {
-            shareProgress: false,
-            allowAnalytics: true,
-            parentNotifications: true
-          }
-        };
-
-        const { data: createdProfile, error: createError } = await supabase!
-          .from('users')
-          .insert(newProfile)
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('Error creating user profile:', createError);
-          profile = newProfile; // Use the data we tried to insert
-        } else {
-          profile = createdProfile;
-        }
-      } else if (error) {
-        console.error('Error fetching user profile:', error);
-        // Create a basic profile from Supabase user data
-        profile = {
-          id: supabaseUser.id,
-          email: supabaseUser.email!,
-          name: supabaseUser.user_metadata?.full_name || 
-                supabaseUser.user_metadata?.name || 
-                supabaseUser.email!.split('@')[0],
-          avatar_url: supabaseUser.user_metadata?.avatar_url,
-          created_at: supabaseUser.created_at,
-          updated_at: new Date().toISOString(),
-        };
-      }
-
-      const user: User = {
-        id: profile.id,
-        email: profile.email,
-        name: profile.name,
-        avatar: profile.avatar_url,
-        createdAt: new Date(profile.created_at || supabaseUser.created_at),
-        isGuest: false,
-        subscriptionTier: profile.subscription_tier || 'free',
-        preferences: profile.preferences || {},
-        privacySettings: profile.privacy_settings || {
-          shareProgress: false,
-          allowAnalytics: true,
-          parentNotifications: true
-        }
-      };
-
-      setUser(user);
-      localStorage.removeItem("guestUser");
-    } catch (error) {
-      console.error('Error handling Supabase user:', error);
-      // Fallback to basic user creation
       const user: User = {
         id: supabaseUser.id,
         email: supabaseUser.email!,
@@ -175,47 +123,37 @@ export function AuthProvider({ children }: AuthProviderProps) {
         createdAt: new Date(supabaseUser.created_at),
         isGuest: false,
       };
+
       setUser(user);
       localStorage.removeItem("guestUser");
+    } catch (error) {
+      console.error('Error handling Supabase user:', error);
     }
   };
 
   const handleSignOut = () => {
     const guestUser = createGuestUser();
     setUser(guestUser);
-    try {
-      localStorage.removeItem("guestUser");
-      localStorage.setItem("guestUser", JSON.stringify(guestUser));
-    } catch (error) {
-      console.error('Error saving guest user:', error);
-    }
+    localStorage.removeItem("guestUser");
+    localStorage.setItem("guestUser", JSON.stringify(guestUser));
   };
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Only try Supabase if it's properly configured
       if (hasSupabase && supabase) {
-        try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-          if (error) {
-            console.warn('Supabase auth failed, falling back to demo auth:', error.message);
-            throw new Error('Supabase auth failed');
-          }
-
-          // User will be set through the auth state change listener
+        if (!error) {
+          setIsLoading(false);
           return;
-        } catch (supabaseError) {
-          console.warn('Supabase authentication failed, using demo authentication');
-          // Fall through to demo authentication
         }
       }
 
-      // Demo authentication for development/testing
+      // Demo authentication
       const demoAccounts = [
         { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
@@ -227,77 +165,52 @@ export function AuthProvider({ children }: AuthProviderProps) {
         account => account.email.toLowerCase() === email.toLowerCase() && account.password === password
       );
 
-      if (demoAccount) {
+      if (demoAccount || (email.includes('@') && password.length >= 6)) {
         const authenticatedUser: User = {
           id: "demo-" + Date.now(),
-          email: demoAccount.email,
-          name: demoAccount.name,
+          email: demoAccount?.email || email,
+          name: demoAccount?.name || email.split("@")[0],
           createdAt: new Date(),
           isGuest: false,
         };
 
         setUser(authenticatedUser);
         localStorage.removeItem("guestUser");
-        return;
-      }
-
-      // For any other valid email/password combination, create a user (for demo purposes)
-      if (email && password && email.includes('@') && password.length >= 6) {
-        const authenticatedUser: User = {
-          id: "user-" + Date.now(),
-          email,
-          name: email.split("@")[0],
-          createdAt: new Date(),
-          isGuest: false,
-        };
-
-        setUser(authenticatedUser);
-        localStorage.removeItem("guestUser");
+        setIsLoading(false);
         return;
       }
 
       throw new Error('Invalid credentials');
     } catch (error) {
-      console.error('Sign in failed:', error);
-      throw error;
-    } finally {
       setIsLoading(false);
+      throw error;
     }
   };
 
   const signUp = async (email: string, password: string, name: string, birthDate?: string, parentEmail?: string) => {
     setIsLoading(true);
     try {
-      // Only try Supabase if it's properly configured
       if (hasSupabase && supabase) {
-        try {
-          const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-              data: {
-                full_name: name,
-                name: name,
-                birth_date: birthDate,
-                parent_email: parentEmail
-              }
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: name,
+              name: name,
+              birth_date: birthDate,
+              parent_email: parentEmail
             }
-          });
-
-          if (error) {
-            console.warn('Supabase signup failed, falling back to demo:', error.message);
-            throw new Error('Supabase signup failed');
           }
+        });
 
-          // User will be set through the auth state change listener
+        if (!error) {
+          setIsLoading(false);
           return;
-        } catch (supabaseError) {
-          console.warn('Supabase registration failed, using demo registration');
-          // Fall through to demo registration
         }
       }
 
-      // Demo registration for development/testing
+      // Demo registration
       const newUser: User = {
         id: "user-" + Date.now(),
         email,
@@ -308,11 +221,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setUser(newUser);
       localStorage.removeItem("guestUser");
-    } catch (error) {
-      console.error('Sign up failed:', error);
-      throw error;
-    } finally {
       setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      throw error;
     }
   };
 
@@ -322,42 +234,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
       console.log('🔍 Google OAuth Debug Info:');
       console.log('- hasSupabase:', hasSupabase);
       console.log('- supabase client:', !!supabase);
-      console.log('- Current URL:', window.location.origin);
-
+      
       if (hasSupabase && supabase) {
-        try {
-          console.log('🚀 Attempting Supabase OAuth...');
-          const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo: `${window.location.origin}/auth/callback`,
-              queryParams: {
-                access_type: 'offline',
-                prompt: 'consent',
-              }
+        console.log('🚀 Attempting Supabase OAuth...');
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
+            queryParams: {
+              access_type: 'offline',
+              prompt: 'consent',
             }
-          });
-
-          console.log('📊 OAuth Response:', { data, error });
-
-          if (error) {
-            console.error('❌ Supabase OAuth error:', error);
-            // Fall back to demo user if OAuth setup is incomplete
-            throw new Error(`OAuth configuration error: ${error.message}`);
           }
+        });
 
+        console.log('📊 OAuth Response:', { data, error });
+
+        if (!error) {
           console.log('✅ OAuth initiated successfully, redirecting...');
-          // The redirect will handle the authentication
           return;
-        } catch (supabaseError) {
-          console.warn('⚠️ Supabase OAuth failed:', supabaseError);
-          // Fall through to demo authentication
         }
-      } else {
-        console.log('❌ Supabase not available - hasSupabase:', hasSupabase, 'supabase:', !!supabase);
+        
+        console.error('❌ Supabase OAuth error:', error);
       }
 
-      // Demo/fallback Google authentication for development
+      // Demo Google authentication
+      console.log('⚠️ Using demo Google authentication');
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
@@ -369,11 +271,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       setUser(demoGoogleUser);
       localStorage.removeItem("guestUser");
-
-      // Small delay to simulate OAuth flow
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Show success message for demo auth
       console.log('✅ تم تسجيل الدخول بنجاح باستخدام الحساب التجريبي');
     } catch (error) {
       console.error('Google sign in failed:', error);
@@ -386,21 +285,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signOut = async () => {
     try {
       if (hasSupabase && supabase) {
-        const { error } = await supabase.auth.signOut();
-        if (error) throw error;
+        await supabase.auth.signOut();
       }
-      
       handleSignOut();
     } catch (error) {
       console.error('Sign out failed:', error);
-      // Still proceed with local sign out
       handleSignOut();
     }
   };
 
   const requestParentalConsent = async (parentEmail: string) => {
     console.log('Parental consent requested for:', parentEmail);
-    // TODO: Implement parental consent email functionality
   };
 
   const value: AuthContextType = {
