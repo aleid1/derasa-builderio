@@ -33,6 +33,15 @@ const createGuestUser = (): User => ({
   isGuest: true,
 });
 
+// Check environment variables immediately
+const envUrl = import.meta.env.VITE_SUPABASE_URL;
+const envKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+console.log('🔧 Environment Check on Load:');
+console.log('- URL:', envUrl || 'Not set');
+console.log('- Key:', envKey ? 'Set' : 'Not set');
+console.log('- Supabase client:', !!supabase);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User>(createGuestUser);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,27 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      if (supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (!error && data.user) {
-          const authenticatedUser: User = {
-            id: data.user.id,
-            email: data.user.email!,
-            name: data.user.user_metadata?.full_name || data.user.email!.split('@')[0],
-            avatar: data.user.user_metadata?.avatar_url,
-            createdAt: new Date(data.user.created_at),
-            isGuest: false,
-          };
-          setUser(authenticatedUser);
-          return;
-        }
-      }
-
-      // Demo fallback
+      // Demo accounts
       const demoAccounts = [
         { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
@@ -92,29 +81,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      if (supabase) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: name, name: name }
-          }
-        });
-
-        if (!error && data.user) {
-          const newUser: User = {
-            id: data.user.id,
-            email: data.user.email!,
-            name: name,
-            createdAt: new Date(),
-            isGuest: false,
-          };
-          setUser(newUser);
-          return;
-        }
-      }
-
-      // Demo fallback
       const newUser: User = {
         id: "user-" + Date.now(),
         email,
@@ -131,72 +97,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
-      console.log('🔍 Google OAuth Debug:');
-      console.log('- VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-      console.log('- VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set');
-      console.log('- supabase client available:', !!supabase);
+      // Direct environment check
+      const url = import.meta.env.VITE_SUPABASE_URL;
+      const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+      
+      console.log('🚀 Google OAuth Attempt:');
+      console.log('- URL present:', !!url);
+      console.log('- Key present:', !!key);
+      console.log('- URL value:', url);
+      console.log('- Supabase client:', !!supabase);
 
-      if (!supabase || !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-        console.log('❌ Supabase configuration missing, using demo');
-        throw new Error('Supabase not configured');
-      }
-
-      console.log('✅ Starting Google OAuth...');
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
+      if (url && key && supabase) {
+        console.log('✅ Calling Supabase OAuth...');
+        
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: `${window.location.origin}/auth/callback`,
           }
+        });
+
+        console.log('📊 OAuth result:', { data, error });
+
+        if (error) {
+          throw error;
         }
-      });
 
-      console.log('📊 OAuth response:', { data, error });
-
-      if (error) {
-        console.error('❌ OAuth error:', error);
-        throw error;
+        console.log('🎯 OAuth initiated successfully');
+        return;
+      } else {
+        console.log('❌ Missing configuration - using demo');
+        throw new Error('Configuration missing');
       }
-
-      console.log('🚀 OAuth initiated - redirecting to Google...');
-      // OAuth initiated successfully - redirect will happen
-      return;
-
+      
     } catch (error) {
-      console.error('❌ Google OAuth failed:', error);
-
-      // Fallback to demo user
-      console.log('���� Using demo Google user');
-      const demoGoogleUser: User = {
+      console.error('❌ OAuth failed:', error);
+      
+      // Demo user
+      const demoUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
-        name: "مستخدم تجريبي Google",
+        name: "مستخدم Google تجريبي",
         avatar: "https://via.placeholder.com/40?text=G",
         createdAt: new Date(),
         isGuest: false,
       };
-      setUser(demoGoogleUser);
+      setUser(demoUser);
+    } finally {
       setIsLoading(false);
     }
   };
 
   const signOut = async () => {
-    try {
-      if (supabase) {
-        await supabase.auth.signOut();
-      }
-    } catch (error) {
-      console.error('Sign out error:', error);
-    }
-    
     setUser(createGuestUser());
   };
 
-  const requestParentalConsent = async (parentEmail: string) => {
-    console.log('Parental consent requested for:', parentEmail);
-  };
+  const requestParentalConsent = async () => {};
 
   const value: AuthContextType = {
     user,
