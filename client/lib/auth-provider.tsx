@@ -4,19 +4,27 @@ import { User as SupabaseUser } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { User } from "./chat-types";
 
-// Environment check
+// Environment check with detailed debugging
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+console.log('🔧 Environment Variables Debug:');
+console.log('- Raw VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+console.log('- Raw VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
+console.log('- SUPABASE_URL:', SUPABASE_URL);
+console.log('- SUPABASE_ANON_KEY length:', SUPABASE_ANON_KEY.length);
+console.log('- URL includes supabase.co:', SUPABASE_URL.includes('.supabase.co'));
+console.log('- Key length > 20:', SUPABASE_ANON_KEY.length > 20);
+
 const isSupabaseConfigured = !!(
-  SUPABASE_URL && 
-  SUPABASE_ANON_KEY && 
+  SUPABASE_URL &&
+  SUPABASE_ANON_KEY &&
   SUPABASE_URL.includes('.supabase.co') &&
   SUPABASE_ANON_KEY.length > 20
 );
 
-console.log('🔧 Auth Provider Configuration:');
-console.log('- Supabase configured:', isSupabaseConfigured);
+console.log('- Final isSupabaseConfigured:', isSupabaseConfigured);
+console.log('- Supabase client available:', !!supabase);
 
 interface AuthContextType {
   user: User | null;
@@ -58,7 +66,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // Demo accounts
       const demoAccounts = [
-        { email: "test@test.com", password: "123456", name: "ح��اب تجريبي" },
+        { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
         { email: "student@test.com", password: "student", name: "طالب تجريبي" },
         { email: "admin@admin.com", password: "admin123", name: "مدير النظام" },
