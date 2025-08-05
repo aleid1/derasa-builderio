@@ -270,7 +270,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
+      console.log('🔍 Starting Google OAuth...');
+      console.log('- hasSupabase:', hasSupabase);
+      console.log('- supabase available:', !!supabase);
+      console.log('- Current origin:', window.location.origin);
+
       if (hasSupabase && supabase) {
+        console.log('📡 Calling supabase.auth.signInWithOAuth...');
+
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
@@ -282,16 +289,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         });
 
-        if (!error) {
-          // OAuth initiated successfully, the redirect will handle authentication
-          return;
+        console.log('📊 OAuth response received:');
+        console.log('- data:', data);
+        console.log('- error:', error);
+
+        if (error) {
+          console.error('❌ OAuth initiation failed:', error);
+          throw new Error(`OAuth failed: ${error.message}`);
         }
 
-        console.error('Supabase OAuth error:', error);
-        throw new Error(`OAuth configuration error: ${error.message}`);
+        console.log('✅ OAuth initiated - should redirect to Google now');
+        // Don't set loading to false here - the redirect should happen
+        return;
+      } else {
+        console.log('❌ Supabase not available, using demo auth');
+        throw new Error('Supabase not configured');
       }
+    } catch (error) {
+      console.error('❌ Google OAuth failed:', error);
 
-      // Demo Google authentication fallback
+      // Fallback to demo authentication
+      console.log('🔄 Falling back to demo authentication');
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
@@ -305,9 +323,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       localStorage.removeItem("guestUser");
 
       await new Promise(resolve => setTimeout(resolve, 1000));
-    } catch (error) {
-      console.error('Google sign in failed:', error);
-      throw error;
     } finally {
       setIsLoading(false);
     }
