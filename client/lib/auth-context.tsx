@@ -319,8 +319,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
+      console.log('🔍 Google OAuth Debug Info:');
+      console.log('- hasSupabase:', hasSupabase);
+      console.log('- supabase client:', !!supabase);
+      console.log('- Current URL:', window.location.origin);
+
       if (hasSupabase && supabase) {
         try {
+          console.log('🚀 Attempting Supabase OAuth...');
           const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
@@ -332,17 +338,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }
           });
 
+          console.log('📊 OAuth Response:', { data, error });
+
           if (error) {
-            console.error('Supabase OAuth error:', error);
+            console.error('❌ Supabase OAuth error:', error);
             // Fall back to demo user if OAuth setup is incomplete
-            throw new Error('OAuth configuration incomplete');
+            throw new Error(`OAuth configuration error: ${error.message}`);
           }
+
+          console.log('✅ OAuth initiated successfully, redirecting...');
           // The redirect will handle the authentication
           return;
         } catch (supabaseError) {
-          console.warn('Supabase OAuth not configured, using demo authentication');
+          console.warn('⚠️ Supabase OAuth failed:', supabaseError);
           // Fall through to demo authentication
         }
+      } else {
+        console.log('❌ Supabase not available - hasSupabase:', hasSupabase, 'supabase:', !!supabase);
       }
 
       // Demo/fallback Google authentication for development
