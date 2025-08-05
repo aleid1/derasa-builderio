@@ -1,30 +1,5 @@
-// @refresh reset
 import React, { createContext, useContext, useState } from "react";
-import { User as SupabaseUser } from '@supabase/supabase-js'
-import { supabase } from './supabase'
 import { User } from "./chat-types";
-
-// Environment check with detailed debugging
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
-
-console.log('🔧 Environment Variables Debug:');
-console.log('- Raw VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
-console.log('- Raw VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY);
-console.log('- SUPABASE_URL:', SUPABASE_URL);
-console.log('- SUPABASE_ANON_KEY length:', SUPABASE_ANON_KEY.length);
-console.log('- URL includes supabase.co:', SUPABASE_URL.includes('.supabase.co'));
-console.log('- Key length > 20:', SUPABASE_ANON_KEY.length > 20);
-
-const isSupabaseConfigured = !!(
-  SUPABASE_URL &&
-  SUPABASE_ANON_KEY &&
-  SUPABASE_URL.includes('.supabase.co') &&
-  SUPABASE_ANON_KEY.length > 20
-);
-
-console.log('- Final isSupabaseConfigured:', isSupabaseConfigured);
-console.log('- Supabase client available:', !!supabase);
 
 interface AuthContextType {
   user: User | null;
@@ -49,117 +24,48 @@ export function useAuth() {
   return context;
 }
 
-const createGuestUser = (): User => ({
-  id: "guest-" + Date.now(),
+const guestUser: User = {
+  id: "guest-123",
   name: "طالب ضيف",
   email: undefined,
   createdAt: new Date(),
   isGuest: true,
-});
+};
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User>(createGuestUser);
+  const [user] = useState<User>(guestUser);
   const [isLoading, setIsLoading] = useState(false);
 
   const signIn = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      // Demo accounts
-      const demoAccounts = [
-        { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
-        { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
-        { email: "student@test.com", password: "student", name: "طالب تجريبي" },
-        { email: "admin@admin.com", password: "admin123", name: "مدير النظام" },
-      ];
-
-      const demoAccount = demoAccounts.find(
-        account => account.email.toLowerCase() === email.toLowerCase() && account.password === password
-      );
-
-      if (demoAccount || (email.includes('@') && password.length >= 6)) {
-        const authenticatedUser: User = {
-          id: "demo-" + Date.now(),
-          email: demoAccount?.email || email,
-          name: demoAccount?.name || email.split("@")[0],
-          createdAt: new Date(),
-          isGuest: false,
-        };
-        setUser(authenticatedUser);
-        return;
-      }
-
-      throw new Error('Invalid credentials');
-    } finally {
-      setIsLoading(false);
-    }
+    alert("تم تسجيل الدخول كحساب تجريبي");
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    setIsLoading(true);
-    try {
-      const newUser: User = {
-        id: "user-" + Date.now(),
-        email,
-        name,
-        createdAt: new Date(),
-        isGuest: false,
-      };
-      setUser(newUser);
-    } finally {
-      setIsLoading(false);
-    }
+    alert("تم إنشاء حساب تجريبي");
   };
 
   const signInWithGoogle = async () => {
     setIsLoading(true);
-    try {
-      console.log('🚀 Google OAuth attempt...');
-      
-      if (isSupabaseConfigured && supabase) {
-        console.log('✅ Supabase configured, attempting OAuth...');
-        
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `${window.location.origin}/auth/callback`,
-          }
-        });
-
-        if (error) {
-          console.error('❌ OAuth error:', error);
-          throw error;
-        }
-
-        console.log('🔄 Redirecting to Google...');
-        return;
-      } else {
-        console.log('❌ Supabase not configured');
-        throw new Error('Supabase not configured');
-      }
-    } catch (error) {
-      console.error('❌ Google OAuth failed:', error);
-      
-      // Fallback demo user
-      const demoUser: User = {
-        id: "google-demo-" + Date.now(),
-        email: "user@gmail.com",
-        name: "مستخدم تجريبي Google",
-        avatar: "https://via.placeholder.com/40?text=G",
-        createdAt: new Date(),
-        isGuest: false,
-      };
-      setUser(demoUser);
-    } finally {
-      setIsLoading(false);
+    
+    // Check if environment variables are set
+    const hasUrl = !!import.meta.env.VITE_SUPABASE_URL;
+    const hasKey = !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+    
+    if (hasUrl && hasKey) {
+      alert("Google OAuth configured - redirecting would happen here");
+    } else {
+      alert("تم استخدام حساب Google تجريبي");
     }
+    
+    setIsLoading(false);
   };
 
   const signOut = async () => {
-    setUser(createGuestUser());
+    alert("تم تسجيل الخروج");
   };
 
-  const requestParentalConsent = async (parentEmail: string) => {
-    console.log('Parental consent requested for:', parentEmail);
+  const requestParentalConsent = async () => {
+    // Empty implementation
   };
 
   const value: AuthContextType = {
@@ -169,7 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signInWithGoogle,
     signOut,
-    isAuthenticated: user !== null && !user.isGuest,
+    isAuthenticated: false,
     isMinor: false,
     hasParentalConsent: true,
     requestParentalConsent,
