@@ -270,12 +270,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
-      console.log('🔍 Google OAuth Debug Info:');
-      console.log('- hasSupabase:', hasSupabase);
-      console.log('- supabase client:', !!supabase);
-      
       if (hasSupabase && supabase) {
-        console.log('🚀 Attempting Supabase OAuth...');
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
@@ -287,36 +282,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
           }
         });
 
-        console.log('📊 OAuth Response:', { data, error });
-
         if (!error) {
-          console.log('✅ OAuth initiated successfully, redirecting...');
+          // OAuth initiated successfully, the redirect will handle authentication
           return;
         }
-        
-        console.error('❌ Supabase OAuth error:', error);
-      } else {
-        console.log('❌ Supabase not available - hasSupabase:', hasSupabase, 'supabase:', !!supabase);
+
+        console.error('Supabase OAuth error:', error);
+        throw new Error(`OAuth configuration error: ${error.message}`);
       }
 
-      // Demo Google authentication
-      console.log('⚠️ Using demo Google authentication');
+      // Demo Google authentication fallback
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
-        name: "مستخدم تجريبي",
+        name: "مستخدم تجريبي Google",
         avatar: "https://via.placeholder.com/40?text=G",
         createdAt: new Date(),
         isGuest: false,
       };
 
       setUser(demoGoogleUser);
-      try {
-        localStorage.removeItem("guestUser");
-      } catch {}
-      
+      localStorage.removeItem("guestUser");
+
       await new Promise(resolve => setTimeout(resolve, 1000));
-      console.log('✅ تم تسجيل الدخول بنجاح باستخدام الحساب التجريبي');
     } catch (error) {
       console.error('Google sign in failed:', error);
       throw error;
