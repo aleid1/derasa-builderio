@@ -14,14 +14,6 @@ interface AuthContextType {
   requestParentalConsent: (parentEmail: string) => Promise<void>;
 }
 
-const defaultUser: User = {
-  id: "guest-123",
-  name: "طالب ضيف",
-  email: undefined,
-  createdAt: new Date(),
-  isGuest: true,
-};
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function useAuth() {
@@ -32,64 +24,90 @@ export function useAuth() {
   return context;
 }
 
+const guestUser: User = {
+  id: "guest-123",
+  name: "طالب ضيف",
+  email: undefined,
+  createdAt: new Date(),
+  isGuest: true,
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user] = useState<User>(defaultUser);
+  const [user, setUser] = useState<User>(guestUser);
   const [isLoading, setIsLoading] = useState(false);
 
   const signIn = async (email: string, password: string) => {
-    alert("تم تسجيل الدخول كحساب تجريبي");
+    const demoAccounts = [
+      { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
+      { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
+      { email: "student@test.com", password: "student", name: "طالب تجريبي" },
+    ];
+
+    const account = demoAccounts.find(
+      a => a.email.toLowerCase() === email.toLowerCase() && a.password === password
+    );
+
+    if (account) {
+      setUser({
+        id: "demo-" + Date.now(),
+        email: account.email,
+        name: account.name,
+        createdAt: new Date(),
+        isGuest: false,
+      });
+    } else {
+      throw new Error('Invalid credentials');
+    }
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    alert("تم إنشاء حساب تجريبي");
+    setUser({
+      id: "user-" + Date.now(),
+      email,
+      name,
+      createdAt: new Date(),
+      isGuest: false,
+    });
   };
 
   const signInWithGoogle = async () => {
     setIsLoading(true);
     
+    // Direct redirect to Supabase OAuth
+    const redirectUrl = `https://uevtchccvbnazkmwlswu.supabase.co/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin + '/auth/callback')}`;
+    
     try {
-      // Test environment variables
-      const url = import.meta.env.VITE_SUPABASE_URL;
-      const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-      
-      console.log('Environment test:');
-      console.log('URL:', url || 'NOT SET');
-      console.log('Key:', key ? 'SET' : 'NOT SET');
-      
-      if (url && key) {
-        // Import supabase dynamically to avoid module loading issues
-        const { supabase } = await import('./supabase');
-        
-        if (supabase) {
-          console.log('Attempting Google OAuth...');
-          const { data, error } = await supabase.auth.signInWithOAuth({
-            provider: 'google',
-            options: {
-              redirectTo: `${window.location.origin}/auth/callback`,
-            }
-          });
-          
-          if (error) {
-            throw error;
-          }
-          
-          console.log('OAuth initiated successfully');
-          alert("تم تحويلك لتسجيل الدخول عبر Google");
-          return;
+      // Test if we can reach Supabase
+      const response = await fetch('https://uevtchccvbnazkmwlswu.supabase.co/rest/v1/', {
+        method: 'HEAD',
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVldnRjaGNjdmJuYXprbXdsc3d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQwNDkzNDQsImV4cCI6MjA2OTYyNTM0NH0.4e_oE-URVauH5LsLKcFxgJuQ8i5mJoNz3kf9naqlb8g'
         }
+      });
+
+      if (response.ok) {
+        console.log('✅ Supabase accessible, redirecting to Google OAuth...');
+        window.location.href = redirectUrl;
+        return;
       }
-      
-      alert("البيئة غير مكونة - استخدام حساب تجريبي");
     } catch (error) {
-      console.error('OAuth failed:', error);
-      alert("حدث خطأ - تم استخدام حساب تجريبي");
-    } finally {
-      setIsLoading(false);
+      console.log('❌ Supabase connection failed:', error);
     }
+
+    // Fallback
+    setUser({
+      id: "google-demo-" + Date.now(),
+      email: "user@gmail.com", 
+      name: "مستخدم Google تجريبي",
+      avatar: "https://via.placeholder.com/40?text=G",
+      createdAt: new Date(),
+      isGuest: false,
+    });
+    setIsLoading(false);
   };
 
   const signOut = async () => {
-    alert("تم تسجيل الخروج");
+    setUser(guestUser);
   };
 
   const requestParentalConsent = async () => {};
@@ -101,7 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signInWithGoogle,
     signOut,
-    isAuthenticated: false,
+    isAuthenticated: !user.isGuest,
     isMinor: false,
     hasParentalConsent: true,
     requestParentalConsent,
