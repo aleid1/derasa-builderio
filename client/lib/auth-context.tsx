@@ -131,10 +131,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     setIsLoading(true);
     try {
-      if (!supabase) {
+      console.log('🔍 Google OAuth Debug:');
+      console.log('- VITE_SUPABASE_URL:', import.meta.env.VITE_SUPABASE_URL);
+      console.log('- VITE_SUPABASE_ANON_KEY:', import.meta.env.VITE_SUPABASE_ANON_KEY ? 'Set' : 'Not set');
+      console.log('- supabase client available:', !!supabase);
+
+      if (!supabase || !import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+        console.log('❌ Supabase configuration missing, using demo');
         throw new Error('Supabase not configured');
       }
 
+      console.log('✅ Starting Google OAuth...');
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
@@ -146,17 +153,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       });
 
+      console.log('📊 OAuth response:', { data, error });
+
       if (error) {
+        console.error('❌ OAuth error:', error);
         throw error;
       }
 
+      console.log('🚀 OAuth initiated - redirecting to Google...');
       // OAuth initiated successfully - redirect will happen
       return;
-      
+
     } catch (error) {
-      console.error('Google OAuth failed:', error);
-      
+      console.error('❌ Google OAuth failed:', error);
+
       // Fallback to demo user
+      console.log('���� Using demo Google user');
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
