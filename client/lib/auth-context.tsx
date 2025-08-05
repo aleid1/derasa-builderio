@@ -199,7 +199,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      // Demo accounts only - no Supabase operations for now
+      if (hasSupabase && supabase) {
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (!error) {
+          // User will be set through the auth state change listener
+          setIsLoading(false);
+          return;
+        }
+        console.warn('Supabase auth failed, falling back to demo auth:', error.message);
+      }
+
+      // Demo accounts fallback
       const demoAccounts = [
         { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
@@ -221,13 +235,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
         };
 
         setUser(authenticatedUser);
-        try {
-          localStorage.removeItem("guestUser");
-        } catch {}
+        localStorage.removeItem("guestUser");
         return;
       }
 
       throw new Error('Invalid credentials');
+    } catch (error) {
+      throw error;
     } finally {
       setIsLoading(false);
     }
