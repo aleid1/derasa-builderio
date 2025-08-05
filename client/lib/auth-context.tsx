@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import { User as SupabaseUser } from '@supabase/supabase-js'
 import { supabase } from './supabase'
 import { hasSupabase } from './env'
@@ -40,120 +40,24 @@ const createGuestUser = (): User => ({
 });
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  // Initialize with guest user immediately - no async operations
+  const [user, setUser] = useState<User>(() => {
+    try {
+      const saved = localStorage.getItem("guestUser");
+      return saved ? JSON.parse(saved) : createGuestUser();
+    } catch {
+      return createGuestUser();
+    }
+  });
+  
+  const [isLoading, setIsLoading] = useState(false);
   const [isMinor] = useState(false);
   const [hasParentalConsent] = useState(true);
-
-  // Initialize auth state
-  useEffect(() => {
-    let isMounted = true;
-
-    const initializeAuth = async () => {
-      try {
-        // Check for existing Supabase session first
-        if (hasSupabase && supabase) {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user && isMounted) {
-            await handleSupabaseUser(session.user);
-            setIsLoading(false);
-            return;
-          }
-        }
-
-        // Fall back to guest user
-        if (isMounted) {
-          const savedUser = localStorage.getItem("guestUser");
-          if (savedUser) {
-            try {
-              setUser(JSON.parse(savedUser));
-            } catch {
-              const guestUser = createGuestUser();
-              setUser(guestUser);
-              localStorage.setItem("guestUser", JSON.stringify(guestUser));
-            }
-          } else {
-            const guestUser = createGuestUser();
-            setUser(guestUser);
-            localStorage.setItem("guestUser", JSON.stringify(guestUser));
-          }
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-        if (isMounted) {
-          const guestUser = createGuestUser();
-          setUser(guestUser);
-          localStorage.setItem("guestUser", JSON.stringify(guestUser));
-          setIsLoading(false);
-        }
-      }
-    };
-
-    initializeAuth();
-
-    // Set up Supabase auth listener
-    const subscription = hasSupabase && supabase 
-      ? supabase.auth.onAuthStateChange(async (event, session) => {
-          if (!isMounted) return;
-          
-          if (event === 'SIGNED_IN' && session?.user) {
-            await handleSupabaseUser(session.user);
-          } else if (event === 'SIGNED_OUT') {
-            handleSignOut();
-          }
-        })
-      : null;
-
-    return () => {
-      isMounted = false;
-      subscription?.data.subscription.unsubscribe();
-    };
-  }, []);
-
-  const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
-    try {
-      const user: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email!,
-        name: supabaseUser.user_metadata?.full_name || 
-              supabaseUser.user_metadata?.name || 
-              supabaseUser.email!.split('@')[0],
-        avatar: supabaseUser.user_metadata?.avatar_url,
-        createdAt: new Date(supabaseUser.created_at),
-        isGuest: false,
-      };
-
-      setUser(user);
-      localStorage.removeItem("guestUser");
-    } catch (error) {
-      console.error('Error handling Supabase user:', error);
-    }
-  };
-
-  const handleSignOut = () => {
-    const guestUser = createGuestUser();
-    setUser(guestUser);
-    localStorage.removeItem("guestUser");
-    localStorage.setItem("guestUser", JSON.stringify(guestUser));
-  };
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      if (hasSupabase && supabase) {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-
-        if (!error) {
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Demo authentication
+      // Demo accounts only - no Supabase operations for now
       const demoAccounts = [
         { email: "test@test.com", password: "123456", name: "حساب تجريبي" },
         { email: "demo@demo.com", password: "demo123", name: "مستخدم تجريبي" },
@@ -175,42 +79,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
         };
 
         setUser(authenticatedUser);
-        localStorage.removeItem("guestUser");
-        setIsLoading(false);
+        try {
+          localStorage.removeItem("guestUser");
+        } catch {}
         return;
       }
 
       throw new Error('Invalid credentials');
-    } catch (error) {
+    } finally {
       setIsLoading(false);
-      throw error;
     }
   };
 
-  const signUp = async (email: string, password: string, name: string, birthDate?: string, parentEmail?: string) => {
+  const signUp = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     try {
-      if (hasSupabase && supabase) {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: {
-              full_name: name,
-              name: name,
-              birth_date: birthDate,
-              parent_email: parentEmail
-            }
-          }
-        });
-
-        if (!error) {
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      // Demo registration
       const newUser: User = {
         id: "user-" + Date.now(),
         email,
@@ -220,11 +103,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
 
       setUser(newUser);
-      localStorage.removeItem("guestUser");
+      try {
+        localStorage.removeItem("guestUser");
+      } catch {}
+    } finally {
       setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      throw error;
     }
   };
 
@@ -256,10 +139,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
         
         console.error('❌ Supabase OAuth error:', error);
+      } else {
+        console.log('❌ Supabase not available - hasSupabase:', hasSupabase, 'supabase:', !!supabase);
       }
 
       // Demo Google authentication
-      console.log('⚠️ Using demo Google authentication');
+      console.log('⚠�� Using demo Google authentication');
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
@@ -270,7 +155,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
 
       setUser(demoGoogleUser);
-      localStorage.removeItem("guestUser");
+      try {
+        localStorage.removeItem("guestUser");
+      } catch {}
       
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('✅ تم تسجيل الدخول بنجاح باستخدام الحساب التجريبي');
@@ -283,15 +170,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signOut = async () => {
+    const guestUser = createGuestUser();
+    setUser(guestUser);
     try {
-      if (hasSupabase && supabase) {
-        await supabase.auth.signOut();
-      }
-      handleSignOut();
-    } catch (error) {
-      console.error('Sign out failed:', error);
-      handleSignOut();
-    }
+      localStorage.removeItem("guestUser");
+      localStorage.setItem("guestUser", JSON.stringify(guestUser));
+    } catch {}
   };
 
   const requestParentalConsent = async (parentEmail: string) => {
