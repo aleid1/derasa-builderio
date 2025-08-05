@@ -40,19 +40,161 @@ const createGuestUser = (): User => ({
 });
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  // Initialize with guest user immediately - no async operations
-  const [user, setUser] = useState<User>(() => {
-    try {
-      const saved = localStorage.getItem("guestUser");
-      return saved ? JSON.parse(saved) : createGuestUser();
-    } catch {
-      return createGuestUser();
-    }
-  });
-  
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [isMinor] = useState(false);
   const [hasParentalConsent] = useState(true);
+
+  // Initialize auth state
+  useEffect(() => {
+    let isMounted = true;
+
+    const initializeAuth = async () => {
+      try {
+        if (hasSupabase && supabase) {
+          // Check for existing Supabase session
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.user && isMounted) {
+            await handleSupabaseUser(session.user);
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Fall back to guest user
+        if (isMounted) {
+          const saved = localStorage.getItem("guestUser");
+          if (saved) {
+            try {
+              setUser(JSON.parse(saved));
+            } catch {
+              const guestUser = createGuestUser();
+              setUser(guestUser);
+              localStorage.setItem("guestUser", JSON.stringify(guestUser));
+            }
+          } else {
+            const guestUser = createGuestUser();
+            setUser(guestUser);
+            localStorage.setItem("guestUser", JSON.stringify(guestUser));
+          }
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+        if (isMounted) {
+          const guestUser = createGuestUser();
+          setUser(guestUser);
+          localStorage.setItem("guestUser", JSON.stringify(guestUser));
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeAuth();
+
+    // Set up Supabase auth listener
+    const subscription = hasSupabase && supabase
+      ? supabase.auth.onAuthStateChange(async (event, session) => {
+          if (!isMounted) return;
+
+          if (event === 'SIGNED_IN' && session?.user) {
+            await handleSupabaseUser(session.user);
+          } else if (event === 'SIGNED_OUT') {
+            handleSignOut();
+          }
+        })
+      : null;
+
+    return () => {
+      isMounted = false;
+      subscription?.data.subscription.unsubscribe();
+    };
+  }, []);
+
+  const handleSupabaseUser = async (supabaseUser: SupabaseUser) => {
+    try {
+      // Get or create user profile
+      let { data: profile, error } = await supabase!
+        .from('users')
+        .select('*')
+        .eq('id', supabaseUser.id)
+        .single();
+
+      if (error && error.code === 'PGRST116') {
+        // User doesn't exist, create one
+        const newProfile = {
+          id: supabaseUser.id,
+          email: supabaseUser.email!,
+          name: supabaseUser.user_metadata?.full_name ||
+                supabaseUser.user_metadata?.name ||
+                supabaseUser.email!.split('@')[0],
+          avatar_url: supabaseUser.user_metadata?.avatar_url,
+          consent_given: true,
+          subscription_tier: 'free',
+          preferences: {},
+          privacy_settings: {
+            shareProgress: false,
+            allowAnalytics: true,
+            parentNotifications: true
+          }
+        };
+
+        const { data: createdProfile, error: createError } = await supabase!
+          .from('users')
+          .insert(newProfile)
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating user profile:', createError);
+          profile = newProfile;
+        } else {
+          profile = createdProfile;
+        }
+      }
+
+      const user: User = {
+        id: profile.id,
+        email: profile.email,
+        name: profile.name,
+        avatar: profile.avatar_url,
+        createdAt: new Date(profile.created_at || supabaseUser.created_at),
+        isGuest: false,
+        subscriptionTier: profile.subscription_tier || 'free',
+        preferences: profile.preferences || {},
+        privacySettings: profile.privacy_settings || {
+          shareProgress: false,
+          allowAnalytics: true,
+          parentNotifications: true
+        }
+      };
+
+      setUser(user);
+      localStorage.removeItem("guestUser");
+    } catch (error) {
+      console.error('Error handling Supabase user:', error);
+      // Fallback to basic user creation
+      const user: User = {
+        id: supabaseUser.id,
+        email: supabaseUser.email!,
+        name: supabaseUser.user_metadata?.full_name ||
+              supabaseUser.user_metadata?.name ||
+              supabaseUser.email!.split('@')[0],
+        avatar: supabaseUser.user_metadata?.avatar_url,
+        createdAt: new Date(supabaseUser.created_at),
+        isGuest: false,
+      };
+      setUser(user);
+      localStorage.removeItem("guestUser");
+    }
+  };
+
+  const handleSignOut = () => {
+    const guestUser = createGuestUser();
+    setUser(guestUser);
+    localStorage.removeItem("guestUser");
+    localStorage.setItem("guestUser", JSON.stringify(guestUser));
+  };
 
   const signIn = async (email: string, password: string) => {
     setIsLoading(true);
@@ -144,7 +286,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       // Demo Google authentication
-      console.log('⚠�� Using demo Google authentication');
+      console.log('⚠️ Using demo Google authentication');
       const demoGoogleUser: User = {
         id: "google-demo-" + Date.now(),
         email: "user@gmail.com",
